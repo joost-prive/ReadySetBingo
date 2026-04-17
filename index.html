@@ -1070,31 +1070,17 @@
                 <h2>🎵 Spotify Bingo</h2>
             </div>
 
-            <!-- Stap 1: Client ID + playlist URL -->
+            <!-- Stap 1: playlist URL -->
             <div id="spotify-step1">
-                <label>Client ID <span class="gen-hint">(Spotify Developer App)</span></label>
-                <input type="text" id="spotify-client-id" placeholder="Plak hier je Spotify Client ID" oninput="spotifySaveClientId()">
-
-                <label style="margin-top:12px;">Afspeellijst URL</label>
+                <label>Afspeellijst URL</label>
                 <input type="text" id="spotify-playlist-url"
                        placeholder="https://open.spotify.com/playlist/...">
 
                 <button class="btn-primary" onclick="spotifyConnect()" style="margin-top:14px;">
-                    ▶ Verbinden &amp; Laden
+                    🎵 Genereer Bingo-kaart
                 </button>
 
                 <div id="spotify-status" style="display:none;"></div>
-
-                <details class="spotify-setup-box" id="spotify-setup-details">
-                    <summary>⚙️ Hoe stel je de Spotify koppeling in?</summary>
-                    <ol>
-                        <li>Ga naar <a href="https://developer.spotify.com/dashboard" target="_blank">developer.spotify.com/dashboard</a></li>
-                        <li>Klik op <strong>Create App</strong>, vink <em>Web API</em> aan</li>
-                        <li>Voeg als Redirect URI toe:<br><code id="spotify-redirect-uri-display">—</code></li>
-                        <li>Kopieer de <strong>Client ID</strong> en plak die hierboven</li>
-                        <li>Zet de afspeellijst op <em>Openbaar</em> in Spotify</li>
-                    </ol>
-                </details>
             </div>
 
             <!-- Stap 2: Playlist preview + opties -->
@@ -2176,29 +2162,10 @@ h1{font-size:13pt;text-align:center;margin-bottom:6mm;}
             }
         }
 
-        // ─── Spotify PKCE ─────────────────────────────────────────────────────────
-        let spotifyPlaylistData  = null;
-        let spotifyGridSize_sp   = 4;
+        // ─── Spotify Bingo ────────────────────────────────────────────────────────
+        let spotifyPlaylistData   = null;
+        let spotifyGridSize_sp    = 4;
         let spotifyGeneratedCards = [];
-
-        function spotifyGetRedirectURI() {
-            return window.location.origin + window.location.pathname;
-        }
-
-        window.spotifySaveClientId = function() {
-            const v = document.getElementById('spotify-client-id').value.trim();
-            if (v) localStorage.setItem('spotifyClientId', v);
-        };
-
-        async function generateCodeVerifier() {
-            const a = new Uint8Array(32); crypto.getRandomValues(a);
-            return btoa(String.fromCharCode(...a)).replace(/\+/g,'-').replace(/\//g,'_').replace(/=/g,'');
-        }
-        async function generateCodeChallenge(v) {
-            const d = new TextEncoder().encode(v);
-            const h = await crypto.subtle.digest('SHA-256', d);
-            return btoa(String.fromCharCode(...new Uint8Array(h))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=/g,'');
-        }
 
         function showSpotifyStatus(msg, type) {
             const el = document.getElementById('spotify-status');
@@ -2213,117 +2180,22 @@ h1{font-size:13pt;text-align:center;margin-bottom:6mm;}
         }
 
         window.spotifyConnect = async function() {
-            const clientId   = document.getElementById('spotify-client-id').value.trim();
             const playlistUrl = document.getElementById('spotify-playlist-url').value.trim();
-            if (!clientId)   { showSpotifyStatus('Voer eerst je Spotify Client ID in.', 'error'); return; }
-            const playlistId = spotifyExtractPlaylistId(playlistUrl);
+            const playlistId  = spotifyExtractPlaylistId(playlistUrl);
             if (!playlistId) { showSpotifyStatus('Geen geldige Spotify afspeellijst URL.', 'error'); return; }
 
-            sessionStorage.setItem('spotifyClientId',   clientId);
-            sessionStorage.setItem('spotifyPlaylistId', playlistId);
-            localStorage.setItem('spotifyClientId', clientId);
-
-            const verifier  = await generateCodeVerifier();
-            const challenge = await generateCodeChallenge(verifier);
-            sessionStorage.setItem('spotifyVerifier', verifier);
-
-            const state = 'bgo-' + Math.random().toString(36).slice(2);
-            sessionStorage.setItem('spotifyState', state);
-
-            const params = new URLSearchParams({
-                client_id: clientId,
-                response_type: 'code',
-                redirect_uri: spotifyGetRedirectURI(),
-                code_challenge_method: 'S256',
-                code_challenge: challenge,
-                state,
-                scope: 'playlist-read-private playlist-read-collaborative',
-            });
-            window.location.href = 'https://accounts.spotify.com/authorize?' + params;
-        };
-
-        async function spotifyHandleCallback() {
-            const params = new URLSearchParams(window.location.search);
-            const code   = params.get('code');
-            const state  = params.get('state');
-            const error  = params.get('error');
-            if (!code && !error) return;
-
-            history.replaceState(null, '', window.location.pathname + '#spotify');
-
-            if (error) {
-                switchScreen('screen-spotify');
-                showSpotifyStatus('Spotify autorisatie geweigerd: ' + error, 'error');
-                return;
-            }
-            if (state !== sessionStorage.getItem('spotifyState')) {
-                switchScreen('screen-spotify');
-                showSpotifyStatus('Ongeldige state. Probeer opnieuw.', 'error');
-                return;
-            }
-
-            switchScreen('screen-spotify');
-            showSpotifyStatus('⏳ Verbinding maken met Spotify…', 'loading');
-
-            const verifier    = sessionStorage.getItem('spotifyVerifier');
-            const clientId    = sessionStorage.getItem('spotifyClientId');
-            const playlistId  = sessionStorage.getItem('spotifyPlaylistId');
-
-            const ciInput = document.getElementById('spotify-client-id');
-            if (ciInput && clientId) ciInput.value = clientId;
-
-            try {
-                const tr = await fetch('https://accounts.spotify.com/api/token', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: new URLSearchParams({
-                        grant_type: 'authorization_code', code,
-                        redirect_uri: spotifyGetRedirectURI(),
-                        client_id: clientId, code_verifier: verifier,
-                    }),
-                });
-                const td = await tr.json();
-                if (!tr.ok) throw new Error(td.error_description || td.error);
-                sessionStorage.setItem('spotifyToken', td.access_token);
-                await spotifyLoadPlaylistById(td.access_token, playlistId);
-            } catch(e) {
-                showSpotifyStatus('Fout bij verbinden: ' + e.message, 'error');
-            }
-        }
-
-        async function spotifyLoadPlaylistById(token, playlistId) {
             showSpotifyStatus('⏳ Afspeellijst ophalen…', 'loading');
             try {
-                const plRes = await fetch(
-                    `https://api.spotify.com/v1/playlists/${playlistId}?fields=name,images,tracks.total`,
-                    { headers: { Authorization: 'Bearer ' + token } }
-                );
-                if (!plRes.ok) throw new Error('Afspeellijst niet gevonden (status ' + plRes.status + ')');
-                const pl = await plRes.json();
-
-                let tracks = [], url =
-                    `https://api.spotify.com/v1/playlists/${playlistId}/tracks?limit=100` +
-                    `&fields=next,items(track(name,artists(name),is_local))`;
-                while (url) {
-                    const r = await fetch(url, { headers: { Authorization: 'Bearer ' + token } });
-                    if (!r.ok) throw new Error('Fout bij ophalen nummers');
-                    const d = await r.json();
-                    tracks = tracks.concat(d.items.filter(i => i.track && !i.track.is_local));
-                    url = d.next;
-                }
-
-                spotifyPlaylistData = {
-                    id: playlistId,
-                    name: pl.name,
-                    image: pl.images?.[0]?.url || '',
-                    tracks: tracks.map(i => ({ name: i.track.name, artist: i.track.artists?.[0]?.name || '' }))
-                };
+                const res = await fetch('/api/spotify-playlist?id=' + playlistId);
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error || 'Onbekende fout');
+                spotifyPlaylistData = data;
                 document.getElementById('spotify-status').style.display = 'none';
                 renderSpotifyStep2();
             } catch(e) {
                 showSpotifyStatus('Fout: ' + e.message, 'error');
             }
-        }
+        };
 
         function renderSpotifyStep2() {
             const pl = spotifyPlaylistData;
@@ -2423,29 +2295,13 @@ h1{font-size:13pt;text-align:center;margin-bottom:6mm;}
             document.getElementById('spotify-step3').style.display = 'block';
         };
 
-        // ─── Init: restore client ID, show redirect URI, handle OAuth callback ────
+        // ─── Init: restore screen from hash ──────────────────────────────────────
         (function initExtras() {
-            // Fill stored Client ID
-            const storedId = localStorage.getItem('spotifyClientId');
-            const ciEl = document.getElementById('spotify-client-id');
-            if (storedId && ciEl) ciEl.value = storedId;
-
-            // Show redirect URI in setup box
-            const uriEl = document.getElementById('spotify-redirect-uri-display');
-            if (uriEl) uriEl.textContent = spotifyGetRedirectURI();
-
-            // Handle Spotify OAuth callback
-            if (window.location.search.includes('code=') || window.location.search.includes('error=')) {
-                spotifyHandleCallback();
-            } else {
-                // Restore screen from hash
-                const hash = window.location.hash.replace('#', '');
-                const knownScreens = ['home','select','game','admin','generate','mycards',
-                                      'spotify','scenario','wk','card-picker','saved-game'];
-                if (hash && knownScreens.includes(hash)) {
-                    // will be overridden by initFirebase → switchScreen('screen-home') unless we delay
-                    sessionStorage.setItem('restoreScreen', 'screen-' + hash);
-                }
+            const hash = window.location.hash.replace('#', '');
+            const knownScreens = ['home','select','game','admin','generate','mycards',
+                                  'spotify','scenario','wk','card-picker','saved-game'];
+            if (hash && knownScreens.includes(hash)) {
+                sessionStorage.setItem('restoreScreen', 'screen-' + hash);
             }
         })();
 
