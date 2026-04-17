@@ -1074,25 +1074,16 @@
                 <h2>🎵 Spotify Bingo</h2>
             </div>
 
-            <!-- Stap 1: URL of handmatig -->
+            <!-- Stap 1: handmatig invoeren -->
             <div id="spotify-step1">
-                <label>Afspeellijst URL</label>
-                <input type="text" id="spotify-playlist-url"
-                       placeholder="https://open.spotify.com/playlist/...">
-                <button class="btn-primary" onclick="spotifyConnect()" style="margin-top:10px;">
-                    🎵 Laden via URL
-                </button>
-
-                <div style="text-align:center;color:var(--text-muted);font-size:.82rem;margin:18px 0 10px;">── of voer nummers handmatig in ──</div>
-
                 <label>Songnamen <span class="gen-hint">(één per regel)</span></label>
-                <textarea id="spotify-manual-input" rows="8"
+                <p style="font-size:.78rem;color:var(--text-muted);margin:4px 0 10px;">💡 Tip: maak een foto van je playlist en vraag een AI: <em>"Zet alle songtitels en artiesten op een rij, één per regel."</em></p>
+                <textarea id="spotify-manual-input" rows="10"
                     style="width:100%;background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:12px;padding:12px;color:var(--text-main);font-family:inherit;font-size:.88rem;resize:vertical;line-height:1.6;"
-                    placeholder="Lied 1&#10;Lied 2&#10;Lied 3&#10;..."></textarea>
-                <button class="btn-primary" onclick="spotifyLoadManual()" style="margin-top:10px;">
-                    🎵 Laden via tekst
+                    placeholder="Lied 1 - Artiest 1&#10;Lied 2 - Artiest 2&#10;Lied 3 - Artiest 3&#10;..."></textarea>
+                <button class="btn-primary" onclick="spotifyLoadManual()" style="margin-top:12px;">
+                    🎵 Genereer Bingo-kaart
                 </button>
-
                 <div id="spotify-status" style="display:none;"></div>
             </div>
 
