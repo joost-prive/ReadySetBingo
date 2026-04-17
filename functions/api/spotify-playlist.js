@@ -42,17 +42,20 @@ export async function onRequestGet(context) {
 
     const pl = await plRes.json();
 
-    // Alle tracks ophalen (gepagineerd)
+    // Alle tracks ophalen (gepagineerd, zonder fields-filter om encoding-problemen te vermijden)
     let tracks = [];
-    let url = `https://api.spotify.com/v1/playlists/${playlistId}/tracks?limit=100` +
-              `&fields=next,items(track(name,artists(name),is_local))`;
+    let url = `https://api.spotify.com/v1/playlists/${playlistId}/tracks?limit=100`;
 
     while (url) {
         const r = await fetch(url, { headers: { Authorization: 'Bearer ' + access_token } });
-        if (!r.ok) break;
+        if (!r.ok) {
+            const errText = await r.text();
+            return json({ error: `Tracks ophalen mislukt (${r.status}): ${errText}` }, 502);
+        }
         const d = await r.json();
-        tracks = tracks.concat(d.items.filter(i => i.track && !i.track.is_local));
-        url = d.next;
+        const pageTracks = (d.items || []).filter(i => i.track && i.track.name && !i.track.is_local);
+        tracks = tracks.concat(pageTracks);
+        url = d.next || null;
     }
 
     return json({
