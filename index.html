@@ -533,17 +533,18 @@
             font-size:.72rem; font-weight:700; color:var(--text-muted);
             text-transform:uppercase; letter-spacing:1px; margin-bottom:8px;
         }
-        .gen-card-grid { display:grid; gap:4px; }
+        .gen-card-grid { display:grid; gap:4px; aspect-ratio:1/1; width:100%; grid-auto-rows:1fr; }
         .gen-card-cell {
             background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.08);
             border-radius:5px; padding:3px 2px; text-align:center;
-            font-size:.6rem; line-height:1.2; min-height:28px;
+            font-size:.6rem; line-height:1.2;
             display:flex; align-items:center; justify-content:center;
             word-break:break-word; hyphens:auto; color:#e2e8f0;
+            aspect-ratio:1/1; overflow:hidden;
         }
 
         /* ── KAARTONTWERP ── */
-        .gen-card.themed { padding:0; border:none; border-radius:12px; overflow:hidden; }
+        .gen-card.themed { padding:0; border:none; border-radius:12px; overflow:hidden; position:relative; }
         .gen-card-header { padding:8px 10px 5px; text-align:center; }
         .gen-card-main-title { font-size:.85rem; font-weight:800; letter-spacing:.3px; line-height:1.2; }
         .gen-card-sub-title  { font-size:.62rem; font-weight:600; opacity:.85; margin-top:2px; }
@@ -574,6 +575,29 @@
             cursor:pointer; flex-shrink:0; margin:0;
         }
         body.light .theme-item { background:rgba(255,255,255,.7); }
+
+        /* ── THEMA AFBEELDING EDITOR ── */
+        .theme-img-preview {
+            position:relative; width:100%; aspect-ratio:1/1;
+            border-radius:8px; overflow:hidden;
+            margin:10px 0; user-select:none; cursor:default;
+        }
+        .theme-img-grid-overlay {
+            position:absolute; inset:0; display:flex; flex-direction:column;
+            pointer-events:none; z-index:1;
+        }
+        .theme-img-grid-header { height:18%; display:flex; align-items:center;
+            justify-content:center; background:rgba(0,0,0,.15); }
+        .theme-img-grid-body   { flex:1; display:grid; padding:4% 5%; gap:3%; }
+        .theme-img-grid-footer { height:10%; background:rgba(0,0,0,.1); }
+        .theme-img-grid-cell   { background:rgba(255,255,255,.22); border-radius:2px; }
+        .theme-img-handle {
+            position:absolute; touch-action:none;
+            border:2px dashed rgba(255,255,255,.65); border-radius:4px;
+            box-sizing:border-box; z-index:10; cursor:grab;
+        }
+        .theme-img-handle:active { cursor:grabbing; }
+        .theme-img-handle img { width:100%; display:block; pointer-events:none; }
 
         /* ── SPOTIFY BINGO ──────────────────────────────────────── */
         .spotify-status-box {
@@ -1094,10 +1118,22 @@
             <div id="theme-form" class="gen-config-box" style="display:none;margin-top:12px;">
                 <p class="gen-sec-title" id="theme-form-title">Nieuw thema</p>
                 <input type="text" id="tf-name" placeholder="Naam" style="margin-bottom:10px;">
-                <div class="theme-form-row"><label>Frameachtergrond</label><input type="color" id="tf-bg" value="#9F1F96"></div>
+                <div class="theme-form-row"><label>Frameachtergrond</label><input type="color" id="tf-bg" value="#9F1F96" oninput="updateThemePreviewBg(this.value)"></div>
                 <div class="theme-form-row"><label>Celachtergrond</label><input type="color" id="tf-cellBg" value="#FFFFFF"></div>
                 <div class="theme-form-row"><label>Celtekst</label><input type="color" id="tf-cellColor" value="#351C75"></div>
                 <div class="theme-form-row"><label>Kop- &amp; labeltekst</label><input type="color" id="tf-headColor" value="#FFFFFF"></div>
+
+                <p class="gen-sec-title" style="margin:14px 0 4px;">Afbeeldingen</p>
+                <div id="theme-img-preview" class="theme-img-preview" style="background:#9F1F96;">
+                    <div class="theme-img-grid-overlay">
+                        <div class="theme-img-grid-header"></div>
+                        <div class="theme-img-grid-body" id="theme-img-grid-body"></div>
+                        <div class="theme-img-grid-footer"></div>
+                    </div>
+                </div>
+                <div id="tf-img-list" style="margin-bottom:10px;"></div>
+                <button onclick="addThemeImage()" style="width:auto;padding:8px 14px;font-size:.8rem;margin:0 0 14px;background:rgba(255,255,255,.1);color:var(--text-muted);border-radius:8px;">+ Afbeelding uploaden</button>
+
                 <div style="display:flex;gap:8px;margin-top:4px;">
                     <button class="btn-primary btn-full" onclick="saveThemeForm()" style="margin:0;">Opslaan</button>
                     <button class="btn-secondary" onclick="document.getElementById('theme-form').style.display='none'" style="width:auto;padding:12px 16px;margin:0;">✕</button>
@@ -2066,6 +2102,156 @@
 
         let _editingThemeId = null;
 
+        // ─── Thema afbeeldingen ───────────────────────────────────────────────────
+
+        let _themeImages = [];
+
+        function compressImage(src, callback) {
+            const img = new Image();
+            img.onload = () => {
+                const max = 500;
+                let w = img.naturalWidth, h = img.naturalHeight;
+                if (w > max || h > max) {
+                    if (w > h) { h = Math.round(h * max / w); w = max; }
+                    else       { w = Math.round(w * max / h); h = max; }
+                }
+                const c = document.createElement('canvas');
+                c.width = w; c.height = h;
+                c.getContext('2d').drawImage(img, 0, 0, w, h);
+                callback(c.toDataURL('image/jpeg', 0.78), w / h);
+            };
+            img.src = src;
+        }
+
+        function initThemeImgPreview() {
+            const preview = document.getElementById('theme-img-preview');
+            if (!preview) return;
+            preview.style.background = document.getElementById('tf-bg').value;
+            const body = document.getElementById('theme-img-grid-body');
+            body.innerHTML = '';
+            body.style.gridTemplateColumns = 'repeat(4,1fr)';
+            for (let i = 0; i < 16; i++) {
+                const cell = document.createElement('div');
+                cell.className = 'theme-img-grid-cell';
+                body.appendChild(cell);
+            }
+            preview.querySelectorAll('.theme-img-handle').forEach(el => el.remove());
+            _themeImages.forEach(img => addImgHandle(preview, img));
+        }
+
+        function addImgHandle(preview, imgData) {
+            const handle = document.createElement('div');
+            handle.className = 'theme-img-handle';
+            handle.style.cssText = `left:${imgData.x}%;top:${imgData.y}%;width:${imgData.w}%;`;
+            const imgEl = document.createElement('img');
+            imgEl.src = imgData.src;
+            imgEl.draggable = false;
+            handle.appendChild(imgEl);
+
+            handle.addEventListener('pointerdown', (e) => {
+                e.preventDefault();
+                handle.setPointerCapture(e.pointerId);
+                const pRect = preview.getBoundingClientRect();
+                const hRect = handle.getBoundingClientRect();
+                const ox = e.clientX - hRect.left;
+                const oy = e.clientY - hRect.top;
+
+                const onMove = (ev) => {
+                    const pW = pRect.width, pH = pRect.height;
+                    const iW = handle.offsetWidth, iH = handle.offsetHeight;
+                    let nx = Math.max(0, Math.min(ev.clientX - pRect.left - ox, pW - iW));
+                    let ny = Math.max(0, Math.min(ev.clientY - pRect.top  - oy, pH - iH));
+                    handle.style.left = (nx / pW * 100) + '%';
+                    handle.style.top  = (ny / pH * 100) + '%';
+                };
+                const onUp = () => {
+                    const d = _themeImages.find(i => i.id === imgData.id);
+                    if (d) { d.x = parseFloat(handle.style.left); d.y = parseFloat(handle.style.top); }
+                    handle.removeEventListener('pointermove', onMove);
+                    handle.removeEventListener('pointerup',   onUp);
+                };
+                handle.addEventListener('pointermove', onMove);
+                handle.addEventListener('pointerup',   onUp);
+            });
+
+            preview.appendChild(handle);
+        }
+
+        window.updateThemePreviewBg = function(val) {
+            const p = document.getElementById('theme-img-preview');
+            if (p) p.style.background = val;
+        };
+
+        window.addThemeImage = function() {
+            const input = document.createElement('input');
+            input.type = 'file'; input.accept = 'image/*';
+            input.onchange = (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = (ev) => {
+                    compressImage(ev.target.result, (src, ar) => {
+                        const imgData = { id: 'ti_' + Date.now(), src, x: 5, y: 5, w: 30, ar };
+                        _themeImages.push(imgData);
+                        const preview = document.getElementById('theme-img-preview');
+                        addImgHandle(preview, imgData);
+                        renderThemeImgList();
+                    });
+                };
+                reader.readAsDataURL(file);
+            };
+            input.click();
+        };
+
+        function renderThemeImgList() {
+            const list = document.getElementById('tf-img-list');
+            if (!list) return;
+            list.innerHTML = '';
+            if (!_themeImages.length) {
+                list.innerHTML = '<p style="font-size:.75rem;color:var(--text-muted);margin:0 0 8px;">Sleep afbeeldingen in de preview om ze te positioneren.</p>';
+                return;
+            }
+            _themeImages.forEach(img => {
+                const row = document.createElement('div');
+                row.style.cssText = 'display:flex;align-items:center;gap:8px;margin-bottom:8px;';
+                row.innerHTML = `
+                    <img src="${img.src}" style="width:36px;height:36px;object-fit:cover;border-radius:4px;flex-shrink:0;">
+                    <div style="flex:1;">
+                        <div style="font-size:.7rem;color:var(--text-muted);margin-bottom:3px;">Grootte: <span id="sz-${img.id}">${Math.round(img.w)}</span>%</div>
+                        <input type="range" min="5" max="85" value="${img.w}"
+                               oninput="resizeThemeImage('${img.id}',this.value)"
+                               style="width:100%;margin:0;padding:0;height:18px;">
+                    </div>
+                    <button onclick="removeThemeImage('${img.id}')" style="width:auto;padding:5px 8px;font-size:.72rem;margin:0;background:rgba(255,51,51,.15);color:#fca5a5;border-radius:6px;">🗑</button>`;
+                list.appendChild(row);
+            });
+        }
+
+        window.resizeThemeImage = function(id, val) {
+            const img = _themeImages.find(i => i.id === id);
+            if (!img) return;
+            img.w = parseFloat(val);
+            const lbl = document.getElementById('sz-' + id);
+            if (lbl) lbl.textContent = Math.round(val);
+            const preview = document.getElementById('theme-img-preview');
+            if (preview) {
+                const handle = preview.querySelector(`[data-imgid="${id}"]`);
+                if (handle) handle.style.width = val + '%';
+            }
+            // Re-render handle with updated width via data attribute approach
+            preview.querySelectorAll('.theme-img-handle').forEach((h, i) => {
+                if (_themeImages[i]?.id === id) h.style.width = val + '%';
+            });
+        };
+
+        window.removeThemeImage = function(id) {
+            _themeImages = _themeImages.filter(i => i.id !== id);
+            initThemeImgPreview();
+            renderThemeImgList();
+        };
+
+        // ─────────────────────────────────────────────────────────────────────────
+
         window.openThemeForm = function(id) {
             _editingThemeId = id;
             const theme = id ? getThemes().find(t => t.id === id) : null;
@@ -2075,9 +2261,11 @@
             document.getElementById('tf-cellColor').value = theme?.cellColor || '#351C75';
             document.getElementById('tf-headColor').value = theme?.headColor || '#FFFFFF';
             document.getElementById('theme-form-title').textContent = id ? 'Thema bewerken' : 'Nieuw thema';
+            _themeImages = theme?.images ? JSON.parse(JSON.stringify(theme.images)) : [];
             const form = document.getElementById('theme-form');
             form.style.display = 'block';
             form.scrollIntoView({ behavior:'smooth', block:'start' });
+            setTimeout(() => { initThemeImgPreview(); renderThemeImgList(); }, 50);
         };
 
         window.saveThemeForm = function() {
@@ -2091,6 +2279,7 @@
                 cellBg:    document.getElementById('tf-cellBg').value,
                 cellColor: document.getElementById('tf-cellColor').value,
                 headColor: document.getElementById('tf-headColor').value,
+                images:    _themeImages,
             };
             if (_editingThemeId) {
                 const idx = custom.findIndex(t => t.id === _editingThemeId);
@@ -2157,6 +2346,14 @@
                     ftr.innerHTML = `<span>Kaart ${i+1}</span>${footer ? `<span>${footer}</span>` : ''}`;
                     el.appendChild(ftr);
 
+                    // Afbeeldingen over de kaart heen
+                    (theme.images || []).forEach(img => {
+                        const imgEl = document.createElement('img');
+                        imgEl.src = img.src;
+                        imgEl.style.cssText = `position:absolute;left:${img.x}%;top:${img.y}%;width:${img.w}%;pointer-events:none;z-index:5;display:block;`;
+                        el.appendChild(imgEl);
+                    });
+
                 } else {
                     const grid = document.createElement('div');
                     grid.className = 'gen-card-grid';
@@ -2215,10 +2412,14 @@
                     const ftr = `<div class="cf" style="background:${theme.bg};color:${theme.headColor};">
                                      <span>${label}</span>${footer ? `<span>${footer}</span>` : ''}
                                  </div>`;
-                    rows += `<div class="card" style="border-color:${theme.bg};">
+                    const imgOverlays = (theme.images || []).map(img =>
+                        `<img src="${img.src}" style="position:absolute;left:${img.x}%;top:${img.y}%;width:${img.w}%;pointer-events:none;z-index:5;display:block;">`
+                    ).join('');
+                    rows += `<div class="card" style="border-color:${theme.bg};position:relative;">
                                  ${hdr}
                                  <div class="cg" style="grid-template-columns:repeat(${n},1fr);background:${theme.bg};">${cells}</div>
                                  ${ftr}
+                                 ${imgOverlays}
                              </div>`;
                 } else {
                     const lbl = title ? `${label} — ${title}` : label;
