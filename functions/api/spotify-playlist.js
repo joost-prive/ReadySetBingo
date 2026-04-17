@@ -24,38 +24,45 @@ export async function onRequestGet(context) {
     });
 
     if (!tokenRes.ok) {
-        return json({ error: 'Spotify token ophalen mislukt' }, 500);
+        const errText = await tokenRes.text();
+        return json({ error: `Token mislukt (${tokenRes.status}): ${errText}` }, 500);
     }
 
-    const { access_token } = await tokenRes.json();
+    const tokenData = await tokenRes.json();
+    if (!tokenData.access_token) {
+        return json({ error: 'Geen access_token ontvangen', detail: tokenData }, 500);
+    }
+    const token = tokenData.access_token;
 
-    // Playlist ophalen inclusief eerste pagina tracks (vermijdt de /tracks sub-endpoint)
-    const plRes = await fetch(
-        `https://api.spotify.com/v1/playlists/${playlistId}?limit=100`,
-        { headers: { Authorization: 'Bearer ' + access_token } }
-    );
+    // Stap 1: playlist-metadata + eerste 100 tracks via fields-parameter
+    // (vermijdt de /tracks sub-endpoint die 403 geeft)
+    const firstUrl = `https://api.spotify.com/v1/playlists/${playlistId}` +
+        `?fields=name%2Cimages%2Ctracks(items(track(name%2Cartists(name)%2Cis_local))%2Cnext%2Ctotal)`;
+
+    const plRes = await fetch(firstUrl, {
+        headers: { Authorization: 'Bearer ' + token },
+    });
 
     if (!plRes.ok) {
         const errText = await plRes.text();
         const status = plRes.status === 404 ? 404 : 502;
-        return json({ error: `Afspeellijst ophalen mislukt (${plRes.status}): ${errText}` }, status);
+        return json({ error: `Playlist ophalen mislukt (${plRes.status}): ${errText}` }, status);
     }
 
     const pl = await plRes.json();
 
-    // Eerste pagina tracks uit playlist-response
-    let tracks = (pl.tracks?.items || []).filter(i => i.track && i.track.name && !i.track.is_local);
+    let tracks = (pl.tracks?.items || []).filter(i => i.track?.name && !i.track.is_local);
     let nextUrl = pl.tracks?.next || null;
 
-    // Vervolgpagina's ophalen indien aanwezig
+    // Vervolgpagina's ophalen via de next-URL die Spotify zelf aanlevert
     while (nextUrl) {
-        const r = await fetch(nextUrl, { headers: { Authorization: 'Bearer ' + access_token } });
+        const r = await fetch(nextUrl, { headers: { Authorization: 'Bearer ' + token } });
         if (!r.ok) {
             const errText = await r.text();
-            return json({ error: `Tracks ophalen mislukt (${r.status}): ${errText}` }, 502);
+            return json({ error: `Pagina ophalen mislukt (${r.status}): ${errText}` }, 502);
         }
         const d = await r.json();
-        tracks = tracks.concat((d.items || []).filter(i => i.track && i.track.name && !i.track.is_local));
+        tracks = tracks.concat((d.items || []).filter(i => i.track?.name && !i.track.is_local));
         nextUrl = d.next || null;
     }
 
