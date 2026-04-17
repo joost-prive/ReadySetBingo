@@ -1060,10 +1060,56 @@
                 <button class="btn-back" onclick="goHome()">← Terug</button>
                 <h2>🎪 Scenario Bingo</h2>
             </div>
-            <div class="coming-soon">
-                <div class="cs-icon">🎡</div>
-                <h3>In ontwikkeling</h3>
-                <p>Bingo-kaarten voor festival, kermis, trouwerij en andere speciale gelegenheden.</p>
+
+            <label>Kies een thema</label>
+            <select id="scen-theme" onchange="scenarioThemeChange()"
+                    style="width:100%;padding:10px 12px;border-radius:10px;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.07);color:var(--text-main);font-family:inherit;font-size:.9rem;margin-bottom:4px;">
+                <option value="">-- Kies een thema --</option>
+                <option value="kermis">🎡 Kermis</option>
+                <option value="festival">🎵 Festival</option>
+                <option value="trouwerij">💍 Trouwerij</option>
+                <option value="verjaardag">🎂 Verjaardag</option>
+            </select>
+
+            <div id="scen-words-wrap" style="display:none;">
+                <label style="margin-top:14px;display:block;">
+                    Woorden <span class="gen-hint" id="scen-words-hint"></span>
+                </label>
+                <p style="font-size:.78rem;color:var(--text-muted);margin:2px 0 8px;">
+                    Je kunt de woorden aanpassen voordat je genereert.
+                </p>
+                <textarea id="scen-words" rows="9" oninput="updateScenHint()"
+                    style="width:100%;background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:12px;padding:12px;color:var(--text-main);font-family:inherit;font-size:.85rem;resize:vertical;line-height:1.6;"></textarea>
+
+                <div class="gen-options-row" style="margin-top:12px;">
+                    <div>
+                        <div class="gen-label-sm">Rastergrootte</div>
+                        <div class="gen-toggle-group">
+                            <button class="gen-tog-btn active" data-scval="4" onclick="setScenarioGrid(4)">4×4</button>
+                            <button class="gen-tog-btn"        data-scval="5" onclick="setScenarioGrid(5)">5×5</button>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="gen-label-sm">Aantal kaarten</div>
+                        <input type="number" id="scen-num-cards" class="gen-small-num" value="10" min="1" max="200">
+                    </div>
+                </div>
+
+                <button class="btn-primary" onclick="generateScenarioCards()" style="margin-top:4px;">🎲 Genereer kaarten</button>
+
+                <div id="scen-progress" class="gen-progress" style="display:none;">
+                    Bezig met genereren… <span id="scen-prog-txt"></span>
+                </div>
+                <div id="scen-error" class="gen-error" style="display:none;"></div>
+
+                <div id="scen-output" style="display:none;">
+                    <div class="gen-output-header">
+                        <h3 id="scen-output-title"></h3>
+                        <button class="btn-primary" onclick="saveScenarioCards()"
+                                style="width:auto;margin:0;padding:8px 12px;font-size:.82rem;">💾 Opslaan</button>
+                    </div>
+                    <div id="scen-cards-container" class="gen-cards-grid"></div>
+                </div>
             </div>
         </div>
 
@@ -2019,7 +2065,7 @@ h1{font-size:13pt;text-align:center;margin-bottom:6mm;}
             list.forEach(cs => {
                 const d = new Date(cs.created);
                 const dateStr = d.toLocaleDateString('nl-NL', { day:'numeric', month:'short', year:'numeric' });
-                const icon = cs.source === 'spotify' ? '🎵' : '🎲';
+                const icon = cs.source === 'spotify' ? '🎵' : cs.source === 'scenario' ? '🎪' : '🎲';
                 const div = document.createElement('div');
                 div.className = 'mycard-item';
                 div.innerHTML = `
@@ -2350,6 +2396,174 @@ h1{font-size:13pt;text-align:center;margin-bottom:6mm;}
                 if (btn) btn.textContent = '🌙';
             }
         })();
+
+        // ─── Scenario Bingo ──────────────────────────────────────────────────────
+        const SCENARIO_THEMES = {
+            kermis: {
+                label: 'Kermis',
+                words: [
+                    'Irritante Pubers', 'Mini Hondje', 'Scoot Mobiel', 'Minderjarig en Rokend',
+                    'Houtkrul', 'Knal Erwten', 'Trainings Pak', 'Zichtbaar ondergoed',
+                    'Opgespoten lippen', 'Grote Knuffel', 'Ruzie', 'Gouden Ketting',
+                    'Vetrol', 'Te dik en toch vreten', 'Verveelde mannen',
+                    'Roken achter Kinderwagen', 'Huilend Kind', 'Gapende Kermis Werker',
+                    'Suiker Spin', 'Te strakke Kleren', 'Panter Print', 'Haar Extensions',
+                    'Anabolen man', 'Bont Kraagje'
+                ]
+            },
+            festival: {
+                label: 'Festival',
+                words: [
+                    'Lauwe halve liter', 'Glitter op de wangen', 'Wildplasser tegen het hek',
+                    'Mensen op de schouders', "Ik ben m'n vrienden kwijt", 'Iemand met een opblaasdier',
+                    'Verloren slipper in de modder', 'Zonnebril in de stromende regen',
+                    'Heuptasje schuin over de borst', 'Iemand die slaapt in het gras',
+                    'Muntjes vinden op de grond', 'Eindeloze rij voor de dixi',
+                    'Vreemdeling die een aansteker zoekt', 'Stoflongen van het dansen',
+                    'Kleurrijke regenponcho', 'De "trein" door het publiek',
+                    'Witte zonnebrandneus', 'Groepje met matchende shirts',
+                    'Crowdsurfer in de problemen', 'Luid vals meezingen',
+                    'Biergooier in de nek', 'Iemand met een vlaggenstok',
+                    'Modderige witte sneakers'
+                ]
+            },
+            trouwerij: {
+                label: 'Trouwerij',
+                words: [
+                    'Vader huilt bij binnenkomst', 'Speech duurt te lang', 'Kind steelt de show',
+                    'Iemand in het wit die dat niet mag', 'Neven die te vroeg dronken zijn',
+                    'Disco knuffel op de dansvloer', 'Ongemakkelijke ex aan tafel',
+                    'Naam vergeten op tafelindeling', 'Buffet eerder op dan gepland',
+                    'Onbekende familie kust je', 'Foute grap in de speech',
+                    'Fotograaf staat steeds in de weg', 'Moeder huilt bij het ja-woord',
+                    'Confetti overal behalve op het stel', 'Bruid kwijt na de ceremonie',
+                    'Slechte dj die niemand kent', 'Huwelijksaankondiging als verrassing',
+                    'Tafelschikking leidt tot ruzie', 'Bloemen die omvallen',
+                    'Drankje omgegooid op outfit', 'Laatste dans eindigt chaotisch',
+                    'Kind dat de openingsdans verstoort', 'Bruidstaart scheef gesneden',
+                    'Gasten die te vroeg naar huis gaan'
+                ]
+            },
+            verjaardag: {
+                label: 'Verjaardag',
+                words: [
+                    'Cadeautje dubbel', 'Iemand vergeet de verjaardag', 'Kaarsje opnieuw aansteken',
+                    'Kind huilt bij het zingen', 'Taart staat scheef', 'Ballonnen al leeg',
+                    'Oom die te veel vertelt', 'Speelgoed kapot bij uitpakken',
+                    'Wachten tot iedereen er is', 'Slingers die al loshangen',
+                    'Cadeaupapier overal op de grond', 'Iemand houdt niet van taart',
+                    'Kaarsjes die niet willen uitblazen', 'Foto mislukt steeds',
+                    'Verrassing uitgelekt', 'Geld als cadeau met excuus',
+                    'Gasten die te vroeg weggaan', 'Fles fris omgevallen',
+                    'Iedereen zingt vals', 'Cadeau zonder naam erbij',
+                    'Slingers in het eten', 'Jarige vergeet eigen leeftijd',
+                    'Taart te vroeg aangesneden', 'Feestmuts die niemand opzet'
+                ]
+            }
+        };
+
+        let scenarioGridSize = 4;
+        let _scenarioCards   = [];
+
+        window.scenarioThemeChange = function() {
+            const key  = document.getElementById('scen-theme').value;
+            const wrap = document.getElementById('scen-words-wrap');
+            if (!key) { wrap.style.display = 'none'; return; }
+            document.getElementById('scen-words').value = SCENARIO_THEMES[key].words.join('\n');
+            wrap.style.display = 'block';
+            document.getElementById('scen-output').style.display = 'none';
+            document.getElementById('scen-error').style.display  = 'none';
+            updateScenHint();
+        };
+
+        window.updateScenHint = function() {
+            const words     = document.getElementById('scen-words').value
+                              .split('\n').map(w => w.trim()).filter(Boolean);
+            const cellCount = scenarioGridSize * scenarioGridSize;
+            document.getElementById('scen-words-hint').textContent =
+                `(${words.length} woorden · min. ${cellCount})`;
+        };
+
+        window.setScenarioGrid = function(size) {
+            scenarioGridSize = size;
+            document.querySelectorAll('[data-scval]').forEach(b =>
+                b.classList.toggle('active', parseInt(b.dataset.scval) === size));
+            updateScenHint();
+        };
+
+        window.generateScenarioCards = async function() {
+            const words     = document.getElementById('scen-words').value
+                              .split('\n').map(w => w.trim()).filter(Boolean);
+            const cellCount = scenarioGridSize * scenarioGridSize;
+            const errEl     = document.getElementById('scen-error');
+            errEl.style.display = 'none';
+
+            if (words.length < cellCount) {
+                errEl.innerHTML     = `⚠️ Minimaal ${cellCount} woorden nodig voor ${scenarioGridSize}×${scenarioGridSize}. Nu: ${words.length}.`;
+                errEl.style.display = 'block';
+                return;
+            }
+
+            const numCards = Math.max(1, Math.min(200, parseInt(document.getElementById('scen-num-cards').value) || 10));
+            document.getElementById('scen-progress').style.display = 'block';
+            document.getElementById('scen-output').style.display   = 'none';
+            await new Promise(r => setTimeout(r, 15));
+
+            const cards       = [];
+            const existingSets = new Set();
+            for (let c = 0; c < numCards; c++) {
+                if (c % 20 === 0) {
+                    document.getElementById('scen-prog-txt').textContent = `${c}/${numCards}`;
+                    await new Promise(r => setTimeout(r, 0));
+                }
+                let card = null;
+                for (let t = 0; t < 500; t++) {
+                    const cand = pickRandom(words, cellCount);
+                    const key  = [...cand].sort().join('\x00');
+                    if (!existingSets.has(key)) { card = cand; break; }
+                }
+                if (!card) card = pickRandom(words, cellCount);
+                cards.push(card);
+                existingSets.add([...card].sort().join('\x00'));
+            }
+
+            document.getElementById('scen-progress').style.display = 'none';
+            _scenarioCards = cards;
+            const n = scenarioGridSize;
+            const container = document.getElementById('scen-cards-container');
+            container.innerHTML = '';
+            cards.forEach((card, i) => {
+                const el   = document.createElement('div');
+                el.className = 'gen-card';
+                const grid = document.createElement('div');
+                grid.className = 'gen-card-grid';
+                grid.style.gridTemplateColumns = `repeat(${n},1fr)`;
+                card.forEach(word => {
+                    const cell = document.createElement('div');
+                    cell.className = 'gen-card-cell';
+                    cell.textContent = word;
+                    grid.appendChild(cell);
+                });
+                el.innerHTML = `<div class="gen-card-title">Kaart ${i+1}</div>`;
+                el.appendChild(grid);
+                container.appendChild(el);
+            });
+            const count = cards.length;
+            document.getElementById('scen-output-title').textContent =
+                `${count} kaart${count !== 1 ? 'en' : ''} gegenereerd`;
+            document.getElementById('scen-output').style.display = 'block';
+        };
+
+        window.saveScenarioCards = function() {
+            if (!_scenarioCards.length) { alert('Geen kaarten om op te slaan.'); return; }
+            const themeKey     = document.getElementById('scen-theme').value;
+            const themeName    = themeKey ? SCENARIO_THEMES[themeKey].label : 'Scenario';
+            const defaultTitle = themeName + ' Bingo';
+            const title        = prompt('Naam voor deze kaartset?', defaultTitle);
+            if (title === null) return;
+            addCardSet(title.trim() || defaultTitle, _scenarioCards, scenarioGridSize, 'scenario');
+            alert(`${_scenarioCards.length} kaart${_scenarioCards.length !== 1 ? 'en' : ''} opgeslagen in Mijn Kaarten!`);
+        };
 
         // ─── Start ────────────────────────────────────────────────────────────────
         initFirebase();
