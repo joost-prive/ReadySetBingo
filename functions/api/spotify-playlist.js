@@ -6,90 +6,85 @@ export async function onRequestGet(context) {
         return json({ error: 'Ontbrekend playlist ID' }, 400);
     }
 
-    const clientId     = context.env.SPOTIFY_CLIENT_ID;
-    const clientSecret = context.env.SPOTIFY_CLIENT_SECRET;
-    const refreshToken = context.env.SPOTIFY_REFRESH_TOKEN;
-
-    if (!clientId || !clientSecret) {
-        return json({ error: 'Spotify credentials niet geconfigureerd' }, 500);
-    }
-
-    // Token ophalen: refresh token (gebruiker) heeft voorrang boven client credentials
-    let access_token;
-    if (refreshToken) {
-        const res = await fetch('https://accounts.spotify.com/api/token', {
-            method: 'POST',
-            headers: {
-                'Content-Type':  'application/x-www-form-urlencoded',
-                'Authorization': 'Basic ' + btoa(clientId + ':' + clientSecret),
-            },
-            body: new URLSearchParams({
-                grant_type:    'refresh_token',
-                refresh_token: refreshToken,
-            }),
-        });
-        if (!res.ok) {
-            const err = await res.text();
-            return json({ error: `Token refresh mislukt (${res.status}): ${err}` }, 500);
-        }
-        access_token = (await res.json()).access_token;
-    } else {
-        const res = await fetch('https://accounts.spotify.com/api/token', {
-            method: 'POST',
-            headers: {
-                'Content-Type':  'application/x-www-form-urlencoded',
-                'Authorization': 'Basic ' + btoa(clientId + ':' + clientSecret),
-            },
-            body: 'grant_type=client_credentials',
-        });
-        if (!res.ok) {
-            const err = await res.text();
-            return json({ error: `Client credentials mislukt (${res.status}): ${err}` }, 500);
-        }
-        access_token = (await res.json()).access_token;
-    }
-
-    if (!access_token) {
-        return json({ error: 'Geen access token ontvangen' }, 500);
-    }
-
-    // Playlist ophalen
-    const plRes = await fetch(
-        `https://api.spotify.com/v1/playlists/${playlistId}`,
-        { headers: { Authorization: 'Bearer ' + access_token } }
-    );
-
-    if (!plRes.ok) {
-        const err = await plRes.text();
-        return json({ error: `Playlist ophalen mislukt (${plRes.status}): ${err}` }, plRes.status === 404 ? 404 : 502);
-    }
-
-    const pl = await plRes.json();
-
-    // Tracks ophalen
-    let tracks = [];
-    let nextUrl = `https://api.spotify.com/v1/playlists/${playlistId}/tracks?limit=100`;
-
-    while (nextUrl) {
-        const r = await fetch(nextUrl, { headers: { Authorization: 'Bearer ' + access_token } });
-        if (!r.ok) {
-            const err = await r.text();
-            return json({ error: `Tracks ophalen mislukt (${r.status}): ${err}` }, 502);
-        }
-        const d = await r.json();
-        tracks = tracks.concat((d.items || []).filter(i => i.track?.name && !i.track.is_local));
-        nextUrl = d.next || null;
-    }
-
-    return json({
-        id:     playlistId,
-        name:   pl.name,
-        image:  pl.images?.[0]?.url || '',
-        tracks: tracks.map(i => ({
-            name:   i.track.name,
-            artist: i.track.artists?.[0]?.name || '',
-        })),
+    // Haal de publieke Spotify-webpagina op en parse de tracklijst daaruit
+    const pageRes = await fetch(`https://open.spotify.com/playlist/${playlistId}`, {
+        headers: {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+            'Accept-Language': 'nl-NL,nl;q=0.9,en;q=0.8',
+        },
     });
+
+    if (!pageRes.ok) {
+        return json({ error: `Spotify pagina niet bereikbaar (${pageRes.status})` }, 502);
+    }
+
+    const html = await pageRes.text();
+
+    // Spotify rendert data in een __NEXT_DATA__ script-tag
+    const match = html.match(/<script id="__NEXT_DATA__" type="application\/json">([\s\S]*?)<\/script>/);
+    if (!match) {
+        return json({ error: 'Geen trackdata gevonden op Spotify-pagina. Probeer een publieke playlist.' }, 502);
+    }
+
+    let data;
+    try {
+        data = JSON.parse(match[1]);
+    } catch {
+        return json({ error: 'Kon Spotify-data niet verwerken.' }, 502);
+    }
+
+    // Zoek tracks in de geneste JSON-structuur
+    const tracks = extractTracks(data);
+
+    if (tracks.length === 0) {
+        return json({ error: 'Geen nummers gevonden. Controleer of de playlist publiek is.' }, 404);
+    }
+
+    // Naam en afbeelding ophalen
+    const name  = findDeep(data, 'name',  v => typeof v === 'string' && v.length > 0) || 'Playlist';
+    const image = findDeep(data, 'url',   v => typeof v === 'string' && v.includes('mosaic.scdn.co')) ||
+                  findDeep(data, 'url',   v => typeof v === 'string' && v.includes('i.scdn.co')) || '';
+
+    return json({ id: playlistId, name, image, tracks });
+}
+
+function extractTracks(obj) {
+    const tracks = [];
+    const seen   = new Set();
+
+    function walk(node) {
+        if (!node || typeof node !== 'object') return;
+        if (Array.isArray(node)) { node.forEach(walk); return; }
+
+        // Spotify's track object heeft altijd name + artists
+        if (node.name && node.artists && Array.isArray(node.artists)) {
+            const key = node.name + '|' + (node.artists[0]?.name || '');
+            if (!seen.has(key)) {
+                seen.add(key);
+                tracks.push({ name: node.name, artist: node.artists[0]?.name || '' });
+            }
+            return;
+        }
+        Object.values(node).forEach(walk);
+    }
+
+    walk(obj);
+    return tracks;
+}
+
+function findDeep(obj, key, test) {
+    if (!obj || typeof obj !== 'object') return null;
+    if (Array.isArray(obj)) {
+        for (const v of obj) { const r = findDeep(v, key, test); if (r) return r; }
+        return null;
+    }
+    for (const [k, v] of Object.entries(obj)) {
+        if (k === key && test(v)) return v;
+        const r = findDeep(v, key, test);
+        if (r) return r;
+    }
+    return null;
 }
 
 function json(data, status = 200) {

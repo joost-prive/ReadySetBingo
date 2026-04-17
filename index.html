@@ -1074,15 +1074,23 @@
                 <h2>🎵 Spotify Bingo</h2>
             </div>
 
-            <!-- Stap 1: handmatig invoeren -->
+            <!-- Stap 1: URL of handmatig -->
             <div id="spotify-step1">
-                <label>Songnamen <span class="gen-hint">(één per regel)</span></label>
-                <textarea id="spotify-manual-input" rows="10"
-                    style="width:100%;background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:12px;padding:12px;color:var(--text-main);font-family:inherit;font-size:.88rem;resize:vertical;line-height:1.6;"
-                    placeholder="Lied 1&#10;Lied 2&#10;Lied 3&#10;&#10;Tip: selecteer alle nummers in Spotify, kopieer en plak ze hier."></textarea>
+                <label>Afspeellijst URL</label>
+                <input type="text" id="spotify-playlist-url"
+                       placeholder="https://open.spotify.com/playlist/...">
+                <button class="btn-primary" onclick="spotifyConnect()" style="margin-top:10px;">
+                    🎵 Laden via URL
+                </button>
 
-                <button class="btn-primary" onclick="spotifyLoadManual()" style="margin-top:14px;">
-                    🎵 Genereer Bingo-kaart
+                <div style="text-align:center;color:var(--text-muted);font-size:.82rem;margin:18px 0 10px;">── of voer nummers handmatig in ──</div>
+
+                <label>Songnamen <span class="gen-hint">(één per regel)</span></label>
+                <textarea id="spotify-manual-input" rows="8"
+                    style="width:100%;background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:12px;padding:12px;color:var(--text-main);font-family:inherit;font-size:.88rem;resize:vertical;line-height:1.6;"
+                    placeholder="Lied 1&#10;Lied 2&#10;Lied 3&#10;..."></textarea>
+                <button class="btn-primary" onclick="spotifyLoadManual()" style="margin-top:10px;">
+                    🎵 Laden via tekst
                 </button>
 
                 <div id="spotify-status" style="display:none;"></div>
