@@ -542,6 +542,39 @@
             word-break:break-word; hyphens:auto; color:#e2e8f0;
         }
 
+        /* ── KAARTONTWERP ── */
+        .gen-card.themed { padding:0; border:none; border-radius:12px; overflow:hidden; }
+        .gen-card-header { padding:8px 10px 5px; text-align:center; }
+        .gen-card-main-title { font-size:.85rem; font-weight:800; letter-spacing:.3px; line-height:1.2; }
+        .gen-card-sub-title  { font-size:.62rem; font-weight:600; opacity:.85; margin-top:2px; }
+        .gen-card-body { display:grid; gap:4px; padding:0 6px; }
+        .gen-card-footer { display:flex; justify-content:space-between; align-items:center;
+                           padding:4px 10px 6px; font-size:.6rem; font-weight:700; letter-spacing:.3px; }
+        .theme-pill {
+            padding:5px 11px; border-radius:20px; font-size:.72rem; font-weight:600;
+            border:2px solid transparent; cursor:pointer; transition:all .15s;
+            display:inline-flex; align-items:center; gap:5px;
+            width:auto; margin:0;
+        }
+        .theme-pill.active { border-color:var(--brand-primary) !important; }
+        .theme-pill-swatch { width:10px; height:10px; border-radius:2px; flex-shrink:0;
+                             border:1px solid rgba(255,255,255,.3); }
+        .theme-item { display:flex; align-items:center; gap:10px; padding:10px 12px;
+                      background:var(--glass-bg); border:1px solid var(--glass-border);
+                      border-radius:10px; margin-bottom:8px; }
+        .theme-item-swatch { width:28px; height:28px; border-radius:6px; flex-shrink:0;
+                             border:1px solid rgba(255,255,255,.15); }
+        .theme-item-name { flex:1; font-size:.88rem; font-weight:600; }
+        .theme-form-row { display:flex; align-items:center; gap:10px; margin-bottom:10px; }
+        .theme-form-row label { flex:1; font-size:.8rem; color:var(--text-muted);
+                                font-weight:600; margin:0; text-transform:none; letter-spacing:0; }
+        .theme-form-row input[type="color"] {
+            width:44px; height:32px; padding:2px; border-radius:6px;
+            border:1px solid var(--glass-border); background:none;
+            cursor:pointer; flex-shrink:0; margin:0;
+        }
+        body.light .theme-item { background:rgba(255,255,255,.7); }
+
         /* ── SPOTIFY BINGO ──────────────────────────────────────── */
         .spotify-status-box {
             padding:12px 16px; border-radius:12px; font-size:.83rem; margin-top:10px;
@@ -990,6 +1023,18 @@
                 </div>
             </div>
 
+            <!-- Kaartontwerp -->
+            <div class="gen-config-box" style="margin-top:6px;">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+                    <p class="gen-sec-title" style="margin:0;">Kaartontwerp</p>
+                    <button onclick="goTo('screen-themes')" style="width:auto;padding:4px 10px;font-size:.72rem;margin:0;background:rgba(255,255,255,.08);color:var(--text-muted);border-radius:8px;">⚙ Thema's</button>
+                </div>
+                <div id="gen-theme-pills" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;"></div>
+                <input type="text" id="gen-design-title" placeholder="Koptekst (bijv. Hitsig Bingo)" style="margin-bottom:8px;">
+                <input type="text" id="gen-design-subtitle" placeholder="Subtitel (optioneel)" style="margin-bottom:8px;">
+                <input type="text" id="gen-design-footer" placeholder="Voettekst (optioneel)" style="margin-bottom:0;">
+            </div>
+
             <button class="btn-primary" onclick="generateBingoCards()" style="margin-top:4px;">🎲 Genereer kaarten</button>
 
             <div id="gen-progress" class="gen-progress" style="display:none;">
@@ -1036,6 +1081,28 @@
                 Kies je kaartnummer — hetzelfde nummer geeft altijd dezelfde kaart, handig voor meerdere spelers!
             </p>
             <div class="cardpicker-grid" id="cardpicker-grid"></div>
+        </div>
+
+        <!-- ══════════════════════════ THEMA'S BEHEREN ═════════════════════════ -->
+        <div id="screen-themes" class="screen">
+            <div class="screen-header">
+                <button class="btn-back" onclick="goTo('screen-generate')">← Terug</button>
+                <h2>🎨 Kaartthema's</h2>
+            </div>
+            <div id="theme-list"></div>
+            <button class="btn-primary" onclick="openThemeForm(null)">+ Nieuw thema</button>
+            <div id="theme-form" class="gen-config-box" style="display:none;margin-top:12px;">
+                <p class="gen-sec-title" id="theme-form-title">Nieuw thema</p>
+                <input type="text" id="tf-name" placeholder="Naam" style="margin-bottom:10px;">
+                <div class="theme-form-row"><label>Frameachtergrond</label><input type="color" id="tf-bg" value="#9F1F96"></div>
+                <div class="theme-form-row"><label>Celachtergrond</label><input type="color" id="tf-cellBg" value="#FFFFFF"></div>
+                <div class="theme-form-row"><label>Celtekst</label><input type="color" id="tf-cellColor" value="#351C75"></div>
+                <div class="theme-form-row"><label>Kop- &amp; labeltekst</label><input type="color" id="tf-headColor" value="#FFFFFF"></div>
+                <div style="display:flex;gap:8px;margin-top:4px;">
+                    <button class="btn-primary btn-full" onclick="saveThemeForm()" style="margin:0;">Opslaan</button>
+                    <button class="btn-secondary" onclick="document.getElementById('theme-form').style.display='none'" style="width:auto;padding:12px 16px;margin:0;">✕</button>
+                </div>
+            </div>
         </div>
 
         <!-- ══════════════════════════ OPGESLAGEN KAART SPELEN ════════════════ -->
@@ -1937,26 +2004,183 @@
             el.style.display = 'block';
         }
 
+        // ─── Kaartthema's ────────────────────────────────────────────────────────
+
+        const BUILTIN_THEMES = [
+            { id:'default', name:'Standaard',    bg:null,      cellBg:null,      cellColor:null,      headColor:null,     builtIn:true },
+            { id:'hitsig',  name:'Hitsig Bingo', bg:'#9F1F96', cellBg:'#FFFFFF', cellColor:'#351C75', headColor:'#FFFFFF', builtIn:true },
+            { id:'nacht',   name:'Nacht',        bg:'#1a1a2e', cellBg:'#FFFFFF', cellColor:'#1a1a2e', headColor:'#FFFFFF', builtIn:true },
+        ];
+
+        let _activeThemeId = localStorage.getItem('genTheme') || 'default';
+
+        function getThemes() {
+            const custom = JSON.parse(localStorage.getItem('bingoThemes') || '[]');
+            return [...BUILTIN_THEMES, ...custom];
+        }
+
+        function getActiveTheme() {
+            return getThemes().find(t => t.id === _activeThemeId) || BUILTIN_THEMES[0];
+        }
+
+        function setActiveTheme(id) {
+            _activeThemeId = id;
+            localStorage.setItem('genTheme', id);
+            renderThemePills();
+        }
+
+        function renderThemePills() {
+            const container = document.getElementById('gen-theme-pills');
+            if (!container) return;
+            container.innerHTML = '';
+            getThemes().forEach(theme => {
+                const isActive = theme.id === _activeThemeId;
+                const pill = document.createElement('button');
+                pill.className = 'theme-pill' + (isActive ? ' active' : '');
+                pill.style.cssText = `background:${theme.bg || 'rgba(255,255,255,.07)'};color:${theme.headColor || 'var(--text-main)'};border-color:${isActive ? 'var(--brand-primary)' : 'transparent'};`;
+                const swatch = theme.cellBg ? `<span class="theme-pill-swatch" style="background:${theme.cellBg};"></span>` : '';
+                pill.innerHTML = swatch + theme.name;
+                pill.onclick = () => setActiveTheme(theme.id);
+                container.appendChild(pill);
+            });
+        }
+
+        function renderThemeList() {
+            const list = document.getElementById('theme-list');
+            if (!list) return;
+            list.innerHTML = '';
+            getThemes().forEach(theme => {
+                const item = document.createElement('div');
+                item.className = 'theme-item';
+                item.innerHTML = `
+                    <div class="theme-item-swatch" style="background:${theme.bg || 'rgba(255,255,255,.08)'};"></div>
+                    <span class="theme-item-name">${theme.name}</span>
+                    ${!theme.builtIn
+                        ? `<button onclick="openThemeForm('${theme.id}')" style="width:auto;padding:5px 10px;font-size:.72rem;margin:0;background:rgba(255,255,255,.08);color:var(--text-muted);border-radius:6px;">✏️</button>
+                           <button onclick="deleteTheme('${theme.id}')" style="width:auto;padding:5px 10px;font-size:.72rem;margin:0;background:rgba(255,51,51,.15);color:#fca5a5;border-radius:6px;">🗑</button>`
+                        : `<span style="font-size:.6rem;color:var(--text-muted);padding:3px 7px;background:rgba(255,255,255,.06);border-radius:4px;">Ingebouwd</span>`
+                    }`;
+                list.appendChild(item);
+            });
+        }
+
+        let _editingThemeId = null;
+
+        window.openThemeForm = function(id) {
+            _editingThemeId = id;
+            const theme = id ? getThemes().find(t => t.id === id) : null;
+            document.getElementById('tf-name').value = theme?.name || '';
+            document.getElementById('tf-bg').value = theme?.bg || '#9F1F96';
+            document.getElementById('tf-cellBg').value = theme?.cellBg || '#FFFFFF';
+            document.getElementById('tf-cellColor').value = theme?.cellColor || '#351C75';
+            document.getElementById('tf-headColor').value = theme?.headColor || '#FFFFFF';
+            document.getElementById('theme-form-title').textContent = id ? 'Thema bewerken' : 'Nieuw thema';
+            const form = document.getElementById('theme-form');
+            form.style.display = 'block';
+            form.scrollIntoView({ behavior:'smooth', block:'start' });
+        };
+
+        window.saveThemeForm = function() {
+            const name = document.getElementById('tf-name').value.trim();
+            if (!name) { alert('Geef het thema een naam.'); return; }
+            const custom = JSON.parse(localStorage.getItem('bingoThemes') || '[]');
+            const newTheme = {
+                id:        _editingThemeId || ('c_' + Date.now()),
+                name,
+                bg:        document.getElementById('tf-bg').value,
+                cellBg:    document.getElementById('tf-cellBg').value,
+                cellColor: document.getElementById('tf-cellColor').value,
+                headColor: document.getElementById('tf-headColor').value,
+            };
+            if (_editingThemeId) {
+                const idx = custom.findIndex(t => t.id === _editingThemeId);
+                if (idx >= 0) custom[idx] = newTheme; else custom.push(newTheme);
+            } else {
+                custom.push(newTheme);
+            }
+            localStorage.setItem('bingoThemes', JSON.stringify(custom));
+            document.getElementById('theme-form').style.display = 'none';
+            renderThemeList();
+            renderThemePills();
+        };
+
+        window.deleteTheme = function(id) {
+            if (!confirm('Thema verwijderen?')) return;
+            const custom = JSON.parse(localStorage.getItem('bingoThemes') || '[]').filter(t => t.id !== id);
+            localStorage.setItem('bingoThemes', JSON.stringify(custom));
+            if (_activeThemeId === id) setActiveTheme('default');
+            renderThemeList();
+            renderThemePills();
+        };
+
         function renderGenCards(cards) {
             const container = document.getElementById('gen-cards-container');
             container.innerHTML = '';
-            const n = genGridSize;
+            const n        = genGridSize;
+            const theme    = getActiveTheme();
+            const title    = document.getElementById('gen-design-title').value.trim();
+            const subtitle = document.getElementById('gen-design-subtitle').value.trim();
+            const footer   = document.getElementById('gen-design-footer').value.trim();
+            const themed   = !!theme.bg;
+
             cards.forEach((card, i) => {
-                const el   = document.createElement('div');
-                el.className = 'gen-card';
-                const grid = document.createElement('div');
-                grid.className = 'gen-card-grid';
-                grid.style.gridTemplateColumns = `repeat(${n},1fr)`;
-                card.forEach(word => {
-                    const cell = document.createElement('div');
-                    cell.className = 'gen-card-cell';
-                    cell.textContent = word;
-                    grid.appendChild(cell);
-                });
-                el.innerHTML = `<div class="gen-card-title">Kaart ${i+1}</div>`;
-                el.appendChild(grid);
+                const el = document.createElement('div');
+                el.className = 'gen-card' + (themed ? ' themed' : '');
+
+                if (themed) {
+                    el.style.background = theme.bg;
+
+                    if (title || subtitle) {
+                        const hdr = document.createElement('div');
+                        hdr.className = 'gen-card-header';
+                        hdr.style.color = theme.headColor;
+                        if (title)    hdr.innerHTML += `<div class="gen-card-main-title">${title}</div>`;
+                        if (subtitle) hdr.innerHTML += `<div class="gen-card-sub-title">${subtitle}</div>`;
+                        el.appendChild(hdr);
+                    }
+
+                    const body = document.createElement('div');
+                    body.className = 'gen-card-body';
+                    body.style.gridTemplateColumns = `repeat(${n},1fr)`;
+                    card.forEach(word => {
+                        const cell = document.createElement('div');
+                        cell.className = 'gen-card-cell';
+                        cell.style.cssText = `background:${theme.cellBg};color:${theme.cellColor};border:none;`;
+                        cell.textContent = word;
+                        body.appendChild(cell);
+                    });
+                    el.appendChild(body);
+
+                    const ftr = document.createElement('div');
+                    ftr.className = 'gen-card-footer';
+                    ftr.style.color = theme.headColor;
+                    ftr.innerHTML = `<span>Kaart ${i+1}</span>${footer ? `<span>${footer}</span>` : ''}`;
+                    el.appendChild(ftr);
+
+                } else {
+                    const grid = document.createElement('div');
+                    grid.className = 'gen-card-grid';
+                    grid.style.gridTemplateColumns = `repeat(${n},1fr)`;
+                    card.forEach(word => {
+                        const cell = document.createElement('div');
+                        cell.className = 'gen-card-cell';
+                        cell.textContent = word;
+                        grid.appendChild(cell);
+                    });
+                    const lbl = title ? `Kaart ${i+1} — ${title}` : `Kaart ${i+1}`;
+                    el.innerHTML = `<div class="gen-card-title">${lbl}</div>`;
+                    el.appendChild(grid);
+                    if (footer) {
+                        const ftrEl = document.createElement('div');
+                        ftrEl.style.cssText = 'font-size:.6rem;color:var(--text-muted);margin-top:6px;text-align:center;';
+                        ftrEl.textContent = footer;
+                        el.appendChild(ftrEl);
+                    }
+                }
+
                 container.appendChild(el);
             });
+
             const count = cards.length;
             document.getElementById('gen-output-title').textContent =
                 `${count} kaart${count !== 1 ? 'en' : ''} gegenereerd`;
@@ -1967,29 +2191,64 @@
         window.printBingoCards = function() {
             const cards = document.querySelectorAll('.gen-card');
             if (!cards.length) return;
-            const n  = genGridSize;
-            const fs = n === 5 ? '6.5' : '7.5';
-            const mh = n === 5 ? '18'  : '22';
+            const n        = genGridSize;
+            const fs       = n === 5 ? '6.5' : '7.5';
+            const theme    = getActiveTheme();
+            const title    = document.getElementById('gen-design-title').value.trim();
+            const subtitle = document.getElementById('gen-design-subtitle').value.trim();
+            const footer   = document.getElementById('gen-design-footer').value.trim();
+            const themed   = !!theme.bg;
+
             let rows = '';
-            cards.forEach(card => {
-                const t  = card.querySelector('.gen-card-title').textContent;
-                const cs = [...card.querySelectorAll('.gen-card-cell')]
-                    .map(c => `<div class="c">${c.textContent}</div>`).join('');
-                rows += `<div class="card"><div class="ct">${t}</div>` +
-                        `<div class="cg" style="grid-template-columns:repeat(${n},1fr)">${cs}</div></div>`;
+            cards.forEach((card, i) => {
+                const words = [...card.querySelectorAll('.gen-card-cell')].map(c => c.textContent);
+                const cells = words.map(w => `<div class="c">${w}</div>`).join('');
+                const label = `Kaart ${i+1}`;
+
+                if (themed) {
+                    const hdr = (title || subtitle)
+                        ? `<div class="ct" style="background:${theme.bg};color:${theme.headColor};text-align:center;padding:5px 8px;">
+                               ${title    ? `<div style="font-size:9pt;font-weight:800;letter-spacing:.3px;">${title}</div>`    : ''}
+                               ${subtitle ? `<div style="font-size:6pt;opacity:.85;margin-top:1px;">${subtitle}</div>` : ''}
+                           </div>`
+                        : '';
+                    const ftr = `<div class="cf" style="background:${theme.bg};color:${theme.headColor};">
+                                     <span>${label}</span>${footer ? `<span>${footer}</span>` : ''}
+                                 </div>`;
+                    rows += `<div class="card" style="border-color:${theme.bg};">
+                                 ${hdr}
+                                 <div class="cg" style="grid-template-columns:repeat(${n},1fr);background:${theme.bg};">${cells}</div>
+                                 ${ftr}
+                             </div>`;
+                } else {
+                    const lbl = title ? `${label} — ${title}` : label;
+                    rows += `<div class="card">
+                                 <div class="ct">${lbl}</div>
+                                 <div class="cg" style="grid-template-columns:repeat(${n},1fr);">${cells}</div>
+                                 ${footer ? `<div class="cf" style="color:#555;">${footer}</div>` : ''}
+                             </div>`;
+                }
             });
+
+            const cellStyle = themed
+                ? `background:${theme.cellBg};color:${theme.cellColor};border:none;`
+                : `background:#fff;color:#000;border:1px solid #ccc;`;
+            const fontLink = `@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@600;800&display=swap');`;
+
             const win = window.open('', '_blank');
             win.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8">
 <style>
-body{font-family:Arial,sans-serif;margin:0;padding:8mm;background:#fff;color:#000;}
+${themed ? fontLink : ''}
+body{font-family:${themed ? "'Montserrat'" : 'Arial'},sans-serif;margin:0;padding:8mm;background:#fff;color:#000;}
 h1{font-size:13pt;text-align:center;margin-bottom:6mm;}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:8mm;}
-.card{border:2px solid #bbb;border-radius:8px;padding:8px;page-break-inside:avoid;display:flex;flex-direction:column;}
-.ct{font-size:8pt;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#555;margin-bottom:6px;}
-.cg{display:grid;gap:4px;flex:1;aspect-ratio:1/1;}
-.c{border:1px solid #ccc;border-radius:5px;padding:4px;text-align:center;font-size:${fs}pt;
+.card{border:2px solid #bbb;border-radius:8px;overflow:hidden;page-break-inside:avoid;display:flex;flex-direction:column;}
+.ct{font-size:8pt;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#555;padding:5px 8px 4px;}
+.cg{display:grid;gap:3px;flex:1;aspect-ratio:1/1;padding:0 4px 4px;}
+.c{border-radius:4px;padding:3px;text-align:center;font-size:${fs}pt;${cellStyle}
    display:flex;align-items:center;justify-content:center;
    word-break:break-word;hyphens:auto;line-height:1.2;font-weight:600;}
+.cf{display:flex;justify-content:space-between;align-items:center;padding:3px 8px 5px;font-size:6pt;font-weight:700;letter-spacing:.3px;}
 @media print{@page{size:A4;margin:10mm;} .grid{gap:6mm;}}
 </style></head><body>
 <h1>Bingo-kaarten</h1>
@@ -2085,7 +2344,9 @@ h1{font-size:13pt;text-align:center;margin-bottom:6mm;}
         // Render mycards when that screen is opened
         const _origGoTo = window.goTo;
         window.goTo = function(id) {
-            if (id === 'screen-mycards') renderMyCards();
+            if (id === 'screen-mycards')  renderMyCards();
+            if (id === 'screen-generate') renderThemePills();
+            if (id === 'screen-themes')   renderThemeList();
             _origGoTo(id);
         };
         window.goHome = () => { window.goTo('screen-home'); };
@@ -2376,7 +2637,7 @@ h1{font-size:13pt;text-align:center;margin-bottom:6mm;}
         (function initExtras() {
             const hash = window.location.hash.replace('#', '');
             const knownScreens = ['home','select','game','admin','generate','mycards',
-                                  'spotify','scenario','wk','card-picker','saved-game'];
+                                  'spotify','scenario','wk','card-picker','saved-game','themes'];
             if (hash && knownScreens.includes(hash)) {
                 sessionStorage.setItem('restoreScreen', 'screen-' + hash);
             }
