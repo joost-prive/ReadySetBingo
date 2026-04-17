@@ -29,33 +29,34 @@ export async function onRequestGet(context) {
 
     const { access_token } = await tokenRes.json();
 
-    // Playlist metadata
+    // Playlist ophalen inclusief eerste pagina tracks (vermijdt de /tracks sub-endpoint)
     const plRes = await fetch(
-        `https://api.spotify.com/v1/playlists/${playlistId}?fields=name,images,tracks.total`,
+        `https://api.spotify.com/v1/playlists/${playlistId}?limit=100`,
         { headers: { Authorization: 'Bearer ' + access_token } }
     );
 
     if (!plRes.ok) {
+        const errText = await plRes.text();
         const status = plRes.status === 404 ? 404 : 502;
-        return json({ error: 'Afspeellijst niet gevonden' }, status);
+        return json({ error: `Afspeellijst ophalen mislukt (${plRes.status}): ${errText}` }, status);
     }
 
     const pl = await plRes.json();
 
-    // Alle tracks ophalen (gepagineerd, zonder fields-filter om encoding-problemen te vermijden)
-    let tracks = [];
-    let url = `https://api.spotify.com/v1/playlists/${playlistId}/tracks?limit=100`;
+    // Eerste pagina tracks uit playlist-response
+    let tracks = (pl.tracks?.items || []).filter(i => i.track && i.track.name && !i.track.is_local);
+    let nextUrl = pl.tracks?.next || null;
 
-    while (url) {
-        const r = await fetch(url, { headers: { Authorization: 'Bearer ' + access_token } });
+    // Vervolgpagina's ophalen indien aanwezig
+    while (nextUrl) {
+        const r = await fetch(nextUrl, { headers: { Authorization: 'Bearer ' + access_token } });
         if (!r.ok) {
             const errText = await r.text();
             return json({ error: `Tracks ophalen mislukt (${r.status}): ${errText}` }, 502);
         }
         const d = await r.json();
-        const pageTracks = (d.items || []).filter(i => i.track && i.track.name && !i.track.is_local);
-        tracks = tracks.concat(pageTracks);
-        url = d.next || null;
+        tracks = tracks.concat((d.items || []).filter(i => i.track && i.track.name && !i.track.is_local));
+        nextUrl = d.next || null;
     }
 
     return json({
