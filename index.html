@@ -1,0 +1,2470 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Ready Set Bingooooo!</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-base:              #290101;
+            --glass-bg:             rgba(255, 255, 255, 0.08);
+            --glass-border:         rgba(255, 255, 255, 0.15);
+            --brand-gradient:       linear-gradient(135deg, #ff9966 0%, #ff5e62 100%);
+            --brand-primary:        #ff5e62;
+            --text-main:            #fff1f2;
+            --text-muted:           #fca5a5;
+            --cell-bg:              rgba(255, 255, 255, 0.06);
+            --cell-checked-gradient:linear-gradient(135deg, #2dd4bf 0%, #0d9488 100%);
+            --teal:                 #2dd4bf;
+            --danger:               #ff3333;
+        }
+
+        /* ── LIGHT MODE VARIABELEN ── */
+        body.light {
+            --bg-base:              #fff8ee;
+            --glass-bg:             rgba(255, 255, 255, 0.78);
+            --glass-border:         rgba(0, 0, 0, 0.09);
+            --brand-gradient:       linear-gradient(135deg, #ff9966 0%, #ff5e62 100%);
+            --brand-primary:        #ff5e62;
+            --text-main:            #1c1028;
+            --text-muted:           #7b5ea7;
+            --cell-bg:              rgba(255, 255, 255, 0.90);
+            --cell-checked-gradient:linear-gradient(135deg, #2dd4bf 0%, #0d9488 100%);
+            --teal:                 #0d9488;
+            --danger:               #dc2626;
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-base);
+            margin: 0; padding: 20px;
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex; flex-direction: column; align-items: center;
+            overflow-x: hidden;
+        }
+
+        /* ── ACHTERGROND BLOBS ── */
+        .background-shapes {
+            position: fixed; inset: 0; z-index: -1;
+            overflow: hidden; pointer-events: none;
+        }
+        .blob {
+            position: absolute; border-radius: 50%;
+            filter: blur(80px); opacity: 0.5;
+            animation: float 14s infinite ease-in-out alternate;
+        }
+        .blob-1 { top:-10%; left:-10%;  width:400px; height:400px; background:#ff512f; animation-duration:16s; }
+        .blob-2 { bottom:0%; right:-10%; width:350px; height:350px; background:#dd2476; animation-duration:12s; animation-delay:1s; }
+        .blob-3 { top:40%; left:30%;    width:200px; height:200px; background:#f09819; opacity:.3; animation-duration:20s; animation-delay:2s; }
+        @keyframes float {
+            0%   { transform: translate(0,0) scale(1); }
+            100% { transform: translate(30px,50px) scale(1.1); }
+        }
+
+        /* ── HEADER / LOGO ── */
+        header {
+            margin-bottom: 20px;
+            text-align: center;
+            position: relative; z-index: 2;
+            flex-shrink: 0; width: 100%; max-width: 500px;
+        }
+
+        .logo-container {
+            display: flex; align-items: center; justify-content: center;
+            gap: 10px; margin-bottom: 6px;
+            flex-wrap: wrap;
+        }
+
+        .logo-icon {
+            width: 40px; height: 40px; flex-shrink: 0;
+            background: var(--brand-gradient);
+            border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 4px 20px rgba(255,94,98,.5);
+        }
+        .logo-icon svg { width: 24px; height: 24px; fill: white; }
+
+        .logo-text-group {
+            display: flex; align-items: center; gap: 4px;
+        }
+
+        .logo-text {
+            font-size: clamp(1.6rem, 5vw, 2.2rem);
+            font-weight: 800; margin: 0;
+            background: var(--brand-gradient);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            letter-spacing: -1px; line-height: 1;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,.3));
+        }
+
+        /* De 5 bingo-vakjes die de "ooooo" vormen */
+        .logo-squares {
+            display: inline-flex; gap: 3px; align-items: center;
+            padding-bottom: 2px;
+        }
+        .logo-sq {
+            width: 13px; height: 13px;
+            border-radius: 3px;
+            border: 2px solid rgba(255,153,102,.5);
+            background: transparent;
+            animation: sqWave 4s infinite ease-in-out;
+        }
+        .logo-sq:nth-child(1) { animation-delay: 0s;    }
+        .logo-sq:nth-child(2) { animation-delay: 0.35s; }
+        .logo-sq:nth-child(3) { animation-delay: 0.7s;  }
+        .logo-sq:nth-child(4) { animation-delay: 1.05s; }
+        .logo-sq:nth-child(5) { animation-delay: 1.4s;  }
+        @keyframes sqWave {
+            0%,  25%  { background:transparent; border-color:rgba(255,153,102,.5); box-shadow:none; }
+            40%,  65% { background:#2dd4bf;     border-color:#2dd4bf; box-shadow:0 0 6px rgba(45,212,191,.6); }
+            80%, 100% { background:transparent; border-color:rgba(255,153,102,.5); box-shadow:none; }
+        }
+
+        .tagline { font-size:.85rem; color:var(--text-muted); letter-spacing:.5px; }
+
+        .offline-badge {
+            display:inline-block;
+            background:rgba(255,255,255,.15);
+            padding:4px 12px; border-radius:20px;
+            font-size:.7rem; margin-top:6px;
+            color:#fbbf24; border:1px solid rgba(251,191,36,.3);
+        }
+
+        /* Info-knop (alleen zichtbaar bij TV Bingo) */
+        .btn-info {
+            position:absolute; top:5px; right:0;
+            width:36px; height:36px; border-radius:50%;
+            background:rgba(255,255,255,.1);
+            border:1px solid rgba(255,255,255,.3);
+            display:none; align-items:center; justify-content:center;
+            cursor:pointer; z-index:50; padding:0;
+            color:var(--text-muted); transition:all .2s;
+        }
+        .btn-info.visible { display:flex; }
+        .btn-info:hover { background:rgba(255,255,255,.25); color:white; }
+        .btn-info svg { width:20px; height:20px; fill:currentColor; }
+
+        /* ── CONTAINER ── */
+        .container {
+            width:100%; max-width:500px;
+            background:var(--glass-bg);
+            backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
+            border:1px solid var(--glass-border);
+            padding:20px; border-radius:28px;
+            box-shadow:0 25px 50px rgba(0,0,0,.3);
+            display:flex; flex-direction:column;
+            position:relative;
+            overflow-y:auto; overflow-x:hidden;
+            max-height:85vh; z-index:2;
+        }
+
+        /* ── SCREENS ── */
+        .screen { display:none; width:100%; animation:fadeIn .3s ease; }
+        .screen.active { display:block; }
+        @keyframes fadeIn {
+            from { opacity:0; transform:translateY(8px); }
+            to   { opacity:1; transform:translateY(0); }
+        }
+
+        /* Scherm-header met terug-knop */
+        .screen-header {
+            display:flex; align-items:center; gap:10px;
+            margin-bottom:18px;
+        }
+        .screen-header h2 { margin:0; font-size:1.1rem; }
+
+        /* ── HOME MENU ── */
+        .menu-grid {
+            display:grid;
+            grid-template-columns:1fr 1fr;
+            gap:10px;
+        }
+
+        .menu-tile {
+            background:rgba(255,255,255,.07);
+            border:1px solid rgba(255,255,255,.12);
+            border-radius:18px;
+            padding:18px 10px 14px;
+            text-align:center; cursor:pointer;
+            transition:all .15s ease;
+            display:flex; flex-direction:column;
+            align-items:center; gap:5px;
+            position:relative; overflow:hidden;
+            user-select:none;
+        }
+        .menu-tile:hover  { background:rgba(255,255,255,.13); }
+        .menu-tile:active { transform:scale(.96); }
+
+        .tile-icon  { font-size:1.9rem; line-height:1; }
+        .tile-title { font-size:.8rem; font-weight:700; color:var(--text-main); line-height:1.2; }
+        .tile-desc  { font-size:.65rem; color:var(--text-muted); line-height:1.3; }
+
+        /* Badge rechtsbovenin een tegel */
+        .tile-badge {
+            position:absolute; top:8px; right:8px;
+            background:var(--brand-gradient);
+            color:white; font-size:.5rem; font-weight:700;
+            padding:2px 6px; border-radius:10px;
+            letter-spacing:.5px;
+        }
+
+        /* ── COMING SOON ── */
+        .coming-soon {
+            display:flex; flex-direction:column;
+            align-items:center; justify-content:center;
+            padding:40px 20px; text-align:center; gap:10px;
+        }
+        .coming-soon .cs-icon { font-size:3rem; }
+        .coming-soon h3 { font-size:1.1rem; margin:0; }
+        .coming-soon p  { color:var(--text-muted); font-size:.9rem; margin:0; }
+
+        /* ── GENERIEKE CONTROLS ── */
+        h2 { font-size:1.2rem; margin-bottom:15px; font-weight:600; }
+
+        label {
+            display:block; margin-bottom:8px;
+            font-size:.85rem; color:var(--text-muted);
+            font-weight:600; text-transform:uppercase; letter-spacing:1px;
+        }
+
+        select, input, textarea {
+            width:100%; padding:14px 16px; margin-bottom:20px;
+            border-radius:14px; border:1px solid var(--glass-border);
+            background:rgba(0,0,0,.25); color:white;
+            font-family:'Poppins',sans-serif; font-size:1rem;
+            outline:none; transition:border .3s, background .3s;
+        }
+        select:focus, input:focus, textarea:focus {
+            border-color:var(--brand-primary); background:rgba(0,0,0,.4);
+        }
+        select option { background:#290101; color:white; }
+
+        /* ── BUTTONS ── */
+        button {
+            width:100%; padding:16px; border-radius:14px; border:none;
+            font-family:'Poppins',sans-serif; font-weight:700; font-size:1rem;
+            cursor:pointer; transition:transform .1s, filter .2s;
+            margin-bottom:10px; color:white; position:relative; overflow:hidden;
+        }
+        button:active   { transform:scale(.97); }
+        button:disabled { opacity:.5; cursor:not-allowed; filter:grayscale(1); }
+
+        .btn-primary   { background:var(--brand-gradient); box-shadow:0 4px 15px rgba(255,94,98,.4); text-shadow:0 1px 2px rgba(0,0,0,.2); }
+        .btn-secondary { background:rgba(255,255,255,.1); color:var(--text-muted); }
+        .btn-secondary:hover { background:rgba(255,255,255,.2); color:white; }
+        .btn-danger    { background:#ef4444; color:white; }
+
+        .btn-back {
+            width:auto; margin-bottom:0; flex-shrink:0;
+            padding:7px 14px; font-size:.8rem; border-radius:20px;
+            background:rgba(255,255,255,.1);
+            border:1px solid rgba(255,255,255,.2);
+            color:var(--text-muted);
+        }
+        .btn-back:hover { background:rgba(255,255,255,.2); color:white; }
+
+        .btn-link {
+            background:transparent; color:var(--text-muted);
+            font-size:.8rem; margin-top:10px;
+            width:auto; padding:10px;
+        }
+        .btn-link:hover { color:white; text-decoration:underline; }
+
+        /* ── SPEL (game screen) ── */
+        .game-header {
+            display:flex; justify-content:space-between;
+            align-items:center; margin-bottom:15px;
+        }
+
+        .btn-shuffle {
+            width:auto; margin-bottom:0; padding:6px 12px;
+            font-size:.8rem; border-radius:20px;
+            background:rgba(255,255,255,.1);
+            border:1px solid rgba(255,255,255,.2);
+            display:flex; align-items:center; gap:6px;
+            color:var(--text-muted);
+        }
+        .btn-shuffle svg { width:14px; height:14px; fill:currentColor; transition:transform .4s ease; }
+        .btn-shuffle:hover:not(:disabled) { background:rgba(255,255,255,.2); color:white; }
+        .btn-shuffle:hover:not(:disabled) svg { transform:rotate(180deg); }
+        .btn-shuffle:disabled { opacity:.4; cursor:default; border-color:transparent; }
+        .shuffle-count { font-weight:800; color:var(--brand-primary); }
+
+        /* Admin icon-knoppen */
+        .admin-actions { display:flex; gap:10px; margin-bottom:10px; }
+        .btn-icon  { padding:12px; width:auto; flex-grow:0; margin-bottom:0; }
+        .btn-full  { flex-grow:1; margin-bottom:0; }
+
+        /* ── BINGO GRID ── */
+        .grid-wrapper { position:relative; margin-top:10px; width:100%; }
+
+        .bingo-grid {
+            display:grid;
+            grid-template-columns:repeat(4,1fr);
+            grid-auto-rows:1fr;
+            gap:6px; width:100%; aspect-ratio:1/1;
+        }
+        .bingo-cell {
+            background:var(--cell-bg); border-radius:8px;
+            display:flex; align-items:center; justify-content:center;
+            text-align:center; padding:2px;
+            font-size:.7rem; line-height:1.1;
+            width:100%; height:100%;
+            overflow:hidden; word-break:break-word; hyphens:auto;
+            cursor:pointer; user-select:none;
+            border:1px solid rgba(255,255,255,.05);
+            transition:all .2s cubic-bezier(.175,.885,.32,1.275);
+            color:#e2e8f0; font-weight:600;
+            box-shadow:0 4px 6px rgba(0,0,0,.1); z-index:1;
+        }
+        @media (min-width:380px) { .bingo-cell { font-size:.8rem;  padding:4px; } .bingo-grid { gap:8px; } }
+        @media (min-width:500px) { .bingo-cell { font-size:.95rem; padding:8px; } }
+
+        .bingo-cell.flash { animation:flashCell .4s ease; }
+        @keyframes flashCell {
+            0%   { opacity:1; transform:scale(1); }
+            50%  { opacity:.5; transform:scale(.95); background:white; color:black; }
+            100% { opacity:1; transform:scale(1); }
+        }
+        .bingo-cell:active { transform:scale(.9); }
+        .bingo-cell.checked {
+            background:var(--cell-checked-gradient); color:white;
+            border-color:rgba(255,255,255,.6); transform:scale(.96);
+            box-shadow:inset 0 2px 5px rgba(0,0,0,.2), 0 0 15px rgba(45,212,191,.4);
+            text-shadow:0 1px 2px rgba(0,0,0,.3);
+        }
+
+        /* ── STREEPLIJNEN ── */
+        #bingo-lines {
+            position:absolute; inset:0;
+            pointer-events:none; z-index:10;
+            overflow:hidden; border-radius:8px;
+        }
+        .strike-line {
+            position:absolute; background:var(--danger);
+            box-shadow:0 0 10px rgba(255,51,51,.6);
+            border-radius:99px; opacity:0;
+            animation:drawLine .3s forwards ease-out;
+        }
+        @keyframes drawLine     { from{opacity:0;transform:scaleX(0)} to{opacity:.9;transform:scaleX(1)} }
+        @keyframes drawLineVert { from{opacity:0;transform:scaleY(0)} to{opacity:.9;transform:scaleY(1)} }
+
+        .strike-row-0 { top:12.5%; left:2%; width:96%; height:6px; transform-origin:left; }
+        .strike-row-1 { top:37.5%; left:2%; width:96%; height:6px; transform-origin:left; }
+        .strike-row-2 { top:62.5%; left:2%; width:96%; height:6px; transform-origin:left; }
+        .strike-row-3 { top:87.5%; left:2%; width:96%; height:6px; transform-origin:left; }
+        .strike-col-0 { left:12.5%; top:2%; height:96%; width:6px; transform-origin:top; animation-name:drawLineVert !important; }
+        .strike-col-1 { left:37.5%; top:2%; height:96%; width:6px; transform-origin:top; animation-name:drawLineVert !important; }
+        .strike-col-2 { left:62.5%; top:2%; height:96%; width:6px; transform-origin:top; animation-name:drawLineVert !important; }
+        .strike-col-3 { left:87.5%; top:2%; height:96%; width:6px; transform-origin:top; animation-name:drawLineVert !important; }
+        .strike-diag-1 { top:0; left:0;  height:6px; width:141%; transform-origin:top left;  transform:rotate(45deg);  animation:drawDiag1 .3s forwards ease-out !important; }
+        .strike-diag-2 { top:0; right:0; height:6px; width:141%; transform-origin:top right; transform:rotate(-45deg); animation:drawDiag2 .3s forwards ease-out !important; }
+        @keyframes drawDiag1 { from{opacity:0;width:0} to{opacity:.9;width:141%} }
+        @keyframes drawDiag2 { from{opacity:0;width:0} to{opacity:.9;width:141%} }
+
+        /* ── OVERLAYS ── */
+        .overlay {
+            position:fixed; inset:0;
+            background:rgba(41,1,1,.9); backdrop-filter:blur(10px);
+            display:none; align-items:center; justify-content:center;
+            flex-direction:column; color:white;
+            z-index:100; text-align:center; padding:20px;
+        }
+        .overlay.show { display:flex; animation:popIn .3s; }
+        @keyframes popIn { from{opacity:0;transform:scale(.95)} to{opacity:1;transform:scale(1)} }
+
+        .bingo-text {
+            font-size:4rem; font-weight:800; margin:0; line-height:1;
+            background:var(--brand-gradient);
+            -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+            filter:drop-shadow(0 2px 10px rgba(255,94,98,.3));
+        }
+
+        .info-list {
+            text-align:left; max-width:320px; margin:20px 0;
+            font-size:.9rem; line-height:1.6;
+            list-style-type:none; padding:0;
+        }
+        .info-list li { margin-bottom:12px; display:flex; align-items:flex-start; gap:10px; }
+        .info-icon { min-width:20px; }
+
+        /* Loader */
+        #loader {
+            font-size:.9rem; color:var(--text-muted);
+            margin-top:10px; padding:20px;
+            border:1px solid rgba(255,255,255,.1); border-radius:10px;
+            max-width:90%; background:var(--glass-bg); backdrop-filter:blur(5px);
+        }
+
+        /* ── GENEREER KAARTEN ── */
+        .gen-options-row {
+            display:flex; gap:14px; margin-bottom:14px; flex-wrap:wrap;
+        }
+        .gen-options-row > div { flex:1; min-width:120px; }
+        .gen-label-sm {
+            font-size:.7rem; font-weight:700; color:var(--text-muted);
+            text-transform:uppercase; letter-spacing:1px; margin-bottom:5px;
+        }
+        .gen-toggle-group {
+            display:flex; border-radius:10px; overflow:hidden;
+            border:1px solid rgba(255,255,255,.15);
+        }
+        .gen-tog-btn {
+            flex:1; padding:7px 12px; border:none; border-radius:0; margin:0;
+            background:rgba(255,255,255,.06); color:var(--text-muted);
+            font-family:'Poppins',sans-serif; font-size:.82rem; font-weight:600;
+            cursor:pointer; transition:all .15s; width:auto;
+        }
+        .gen-tog-btn:not(:last-child) { border-right:1px solid rgba(255,255,255,.1); }
+        .gen-tog-btn.active { background:var(--brand-gradient); color:white; box-shadow:0 2px 8px rgba(255,94,98,.3); }
+        .gen-tog-btn:active { transform:none; }
+        .gen-hint { font-size:.75rem; color:var(--text-muted); text-transform:none; letter-spacing:0; font-weight:400; }
+        .gen-inline-row {
+            display:flex; align-items:center; justify-content:space-between;
+            gap:10px; margin-bottom:14px;
+        }
+        .gen-check-label {
+            display:flex; align-items:center; gap:8px;
+            font-size:.9rem; font-weight:600; color:var(--text-main);
+            cursor:pointer; text-transform:none; letter-spacing:0; margin:0; flex-shrink:0;
+        }
+        .gen-check-label input[type="checkbox"] {
+            width:18px; height:18px; margin:0; padding:0;
+            accent-color:var(--brand-primary); cursor:pointer; flex-shrink:0;
+        }
+        .gen-num-row {
+            display:flex; align-items:center; gap:8px; flex-shrink:0;
+        }
+        .gen-num-row span {
+            font-size:.8rem; font-weight:600; color:var(--text-muted);
+            text-transform:uppercase; letter-spacing:1px; white-space:nowrap;
+        }
+        .gen-small-num {
+            width:72px !important; padding:8px 10px !important;
+            margin:0 !important; text-align:center;
+        }
+        .gen-config-box {
+            background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.12);
+            border-radius:16px; padding:16px; margin-bottom:14px;
+        }
+        .gen-sec-title {
+            font-size:.78rem; font-weight:700; color:var(--text-muted);
+            text-transform:uppercase; letter-spacing:1px; margin:0 0 8px;
+        }
+        .gen-info-box {
+            background:rgba(45,212,191,.12); border:1px solid rgba(45,212,191,.35);
+            border-radius:10px; padding:10px 12px; font-size:.82rem;
+            color:var(--text-main); margin-bottom:10px; line-height:1.5;
+        }
+        .gen-info-box p { margin:4px 0 0; color:var(--text-muted); font-size:.8rem; }
+        .gen-info-close {
+            width:auto; margin:8px 0 0; padding:4px 12px; font-size:.78rem;
+            background:rgba(255,255,255,.1); color:var(--text-muted); border-radius:8px;
+        }
+        .gen-info-icon {
+            width:auto; margin:0 0 0 4px; padding:0 2px; background:transparent;
+            color:var(--teal); font-size:.82rem; border:none; cursor:pointer;
+            vertical-align:middle; display:inline; font-weight:400; font-style:normal;
+        }
+        .gen-info-icon:active { transform:none; }
+        .gen-table {
+            width:100%; border-collapse:collapse; font-size:.85rem; margin-bottom:4px;
+        }
+        .gen-table th {
+            color:var(--text-muted); font-size:.7rem; text-transform:uppercase;
+            letter-spacing:.5px; padding:5px 6px; text-align:left;
+            border-bottom:1px solid rgba(255,255,255,.1); font-weight:600;
+        }
+        .gen-table td { padding:6px 6px; border-bottom:1px solid rgba(255,255,255,.04); }
+        .gen-table tr:last-child td { border-bottom:none; }
+        .gen-table td:first-child { color:var(--text-main); font-size:.82rem; }
+        .gen-table td:nth-child(2) { text-align:center; width:52px; }
+        .gen-table td:nth-child(3) { width:96px; }
+        .gen-table input[type="checkbox"] {
+            width:17px; height:17px; margin:0; padding:0;
+            accent-color:var(--teal); cursor:pointer;
+        }
+        .gen-table input[type="number"] {
+            width:82px !important; padding:5px 7px !important; margin:0 !important; font-size:.8rem !important;
+        }
+        .gen-table input[type="number"]:disabled { opacity:.3; cursor:not-allowed; }
+        .gen-sec-row td {
+            font-size:.68rem; font-weight:700; color:var(--text-muted);
+            padding:7px 6px 2px; text-transform:uppercase; letter-spacing:.5px;
+            border-bottom:none !important;
+        }
+        .gen-voorwaarde {
+            display:flex; align-items:center; gap:10px; margin-bottom:10px; flex-wrap:wrap;
+        }
+        .gen-cond-label {
+            display:flex; align-items:center; gap:8px; font-size:.88rem; font-weight:500;
+            color:var(--text-main); cursor:pointer; text-transform:none; letter-spacing:0; margin:0;
+        }
+        .gen-cond-label input[type="checkbox"] {
+            width:17px; height:17px; margin:0; padding:0; accent-color:var(--teal); cursor:pointer;
+        }
+        .gen-progress {
+            text-align:center; padding:12px; color:var(--text-muted); font-size:.9rem;
+        }
+        .gen-error {
+            background:rgba(239,68,68,.15); border:1px solid rgba(239,68,68,.4);
+            border-radius:10px; padding:12px; color:#fca5a5; font-size:.82rem; margin-top:10px;
+            line-height:1.6;
+        }
+        .gen-output-header {
+            display:flex; align-items:center; justify-content:space-between;
+            gap:10px; margin:14px 0 10px;
+        }
+        .gen-output-header h3 { margin:0; font-size:.95rem; font-weight:700; }
+        .gen-cards-grid { display:grid; gap:14px; }
+        .gen-card {
+            background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.1);
+            border-radius:12px; padding:10px;
+        }
+        .gen-card-title {
+            font-size:.72rem; font-weight:700; color:var(--text-muted);
+            text-transform:uppercase; letter-spacing:1px; margin-bottom:8px;
+        }
+        .gen-card-grid { display:grid; gap:4px; }
+        .gen-card-cell {
+            background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.08);
+            border-radius:5px; padding:3px 2px; text-align:center;
+            font-size:.6rem; line-height:1.2; min-height:28px;
+            display:flex; align-items:center; justify-content:center;
+            word-break:break-word; hyphens:auto; color:#e2e8f0;
+        }
+
+        /* ── SPOTIFY BINGO ──────────────────────────────────────── */
+        .spotify-status-box {
+            padding:12px 16px; border-radius:12px; font-size:.83rem; margin-top:10px;
+        }
+        .spotify-status-box.loading { background:rgba(255,255,255,.07); color:var(--text-muted); }
+        .spotify-status-box.error   { background:rgba(255,51,51,.13); color:#fca5a5; border:1px solid rgba(255,51,51,.3); }
+        .spotify-status-box.success { background:rgba(45,212,191,.08); color:#2dd4bf; border:1px solid rgba(45,212,191,.2); }
+
+        .spotify-playlist-card {
+            background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.12);
+            border-radius:14px; padding:12px 14px; margin-top:10px;
+            display:flex; gap:12px; align-items:center;
+        }
+        .spotify-playlist-card img {
+            width:52px; height:52px; border-radius:8px; object-fit:cover;
+            flex-shrink:0; background:rgba(255,255,255,.1);
+        }
+        .spotify-playlist-info { flex:1; min-width:0; }
+        .spotify-playlist-name { font-weight:700; font-size:.92rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+        .spotify-playlist-meta { font-size:.73rem; color:var(--text-muted); margin-top:2px; }
+
+        .spotify-tracks-preview {
+            max-height:150px; overflow-y:auto;
+            background:rgba(0,0,0,.2); border-radius:10px; padding:7px 10px; margin-top:10px;
+        }
+        .spotify-track-row {
+            display:flex; align-items:center; gap:8px; padding:3px 0;
+            border-bottom:1px solid rgba(255,255,255,.05); font-size:.78rem;
+        }
+        .spotify-track-row:last-child { border-bottom:none; }
+        .spotify-track-num  { color:var(--text-muted); width:22px; flex-shrink:0; text-align:right; font-size:.7rem; }
+        .spotify-track-name { flex:1; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+        .spotify-track-artist { color:var(--text-muted); font-size:.7rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:90px; }
+
+        .spotify-setup-box {
+            background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.1);
+            border-radius:12px; padding:12px 14px; margin-top:12px;
+            font-size:.8rem; color:var(--text-muted);
+        }
+        .spotify-setup-box summary {
+            cursor:pointer; color:var(--text-main); font-weight:600; font-size:.83rem; outline:none;
+        }
+        .spotify-setup-box ol  { margin:8px 0 0 16px; padding:0; line-height:1.9; }
+        .spotify-setup-box a   { color:var(--teal); }
+        .spotify-setup-box code {
+            background:rgba(255,255,255,.1); border-radius:4px; padding:1px 5px;
+            font-family:monospace; font-size:.78rem; color:#fbbf24; word-break:break-all;
+        }
+
+        /* ── MIJN KAARTEN ──────────────────────────────────────── */
+        .mycard-list { display:flex; flex-direction:column; gap:10px; }
+
+        .mycard-item {
+            background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.12);
+            border-radius:14px; padding:12px 14px;
+            display:flex; gap:10px; align-items:center;
+        }
+        .mycard-icon { font-size:1.7rem; flex-shrink:0; }
+        .mycard-info { flex:1; min-width:0; }
+        .mycard-title-text { font-weight:700; font-size:.88rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+        .mycard-meta-text  { font-size:.7rem; color:var(--text-muted); margin-top:2px; }
+        .mycard-actions    { display:flex; gap:6px; flex-shrink:0; }
+        .mycard-btn-play {
+            background:var(--brand-gradient); color:#fff; border:none;
+            border-radius:8px; padding:7px 12px; font-size:.78rem; font-weight:700; cursor:pointer;
+            font-family:inherit;
+        }
+        .mycard-btn-del {
+            background:rgba(255,51,51,.18); color:#fca5a5;
+            border:1px solid rgba(255,51,51,.3); border-radius:8px;
+            padding:7px 10px; font-size:.78rem; cursor:pointer; font-family:inherit;
+        }
+        .mycard-btn-del:hover { background:rgba(255,51,51,.32); }
+
+        /* Card-picker (kies kaart #N om te spelen) */
+        .cardpicker-grid {
+            display:grid; grid-template-columns:repeat(auto-fill,minmax(52px,1fr)); gap:6px; margin-top:10px;
+        }
+        .cardpicker-btn {
+            background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.12);
+            border-radius:8px; padding:10px 4px; text-align:center;
+            font-size:.82rem; font-weight:600; cursor:pointer;
+            transition:all .15s; font-family:inherit; color:var(--text-main);
+        }
+        .cardpicker-btn:hover  { background:rgba(255,255,255,.15); }
+        .cardpicker-btn:active { transform:scale(.94); }
+
+        /* ── THEME TOGGLE KNOP ── */
+        .btn-theme-toggle {
+            position:absolute; top:5px; left:0;
+            width:36px; height:36px; border-radius:50%;
+            background:rgba(255,255,255,.1);
+            border:1px solid rgba(255,255,255,.3);
+            display:flex; align-items:center; justify-content:center;
+            cursor:pointer; z-index:50; padding:0; margin:0;
+            color:var(--text-muted); transition:all .2s;
+            font-size:1.1rem; line-height:1;
+        }
+        .btn-theme-toggle:hover { background:rgba(255,255,255,.25); color:white; transform:none; }
+        body.light .btn-theme-toggle {
+            background:rgba(0,0,0,.07);
+            border-color:rgba(0,0,0,.18);
+            color:var(--text-muted);
+        }
+        body.light .btn-theme-toggle:hover { background:rgba(0,0,0,.14); color:var(--text-main); }
+
+        /* ── LIGHT MODE COMPONENT OVERRIDES ── */
+        body.light { background-color:var(--bg-base); }
+
+        body.light .blob-1 { background:#ffb347; opacity:.45; }
+        body.light .blob-2 { background:#ff6b9d; opacity:.35; }
+        body.light .blob-3 { background:#ffd700; opacity:.30; }
+
+        body.light .container { box-shadow:0 25px 50px rgba(0,0,0,.10); }
+
+        body.light .menu-tile {
+            background:rgba(255,255,255,.72); border-color:rgba(0,0,0,.08);
+        }
+        body.light .menu-tile:hover { background:rgba(255,255,255,.95); }
+
+        body.light select,
+        body.light input:not([type="checkbox"]),
+        body.light textarea {
+            background:rgba(255,255,255,.75); color:var(--text-main);
+            border-color:rgba(0,0,0,.12);
+        }
+        body.light select:focus,
+        body.light input:not([type="checkbox"]):focus,
+        body.light textarea:focus { background:white; border-color:var(--brand-primary); }
+        body.light select option { background:white; color:#1c1028; }
+
+        body.light .btn-secondary { background:rgba(0,0,0,.06); color:var(--text-muted); }
+        body.light .btn-secondary:hover { background:rgba(0,0,0,.12); color:var(--text-main); }
+        body.light .btn-back {
+            background:rgba(0,0,0,.06); border-color:rgba(0,0,0,.12); color:var(--text-muted);
+        }
+        body.light .btn-back:hover { background:rgba(0,0,0,.12); color:var(--text-main); }
+        body.light .btn-shuffle {
+            background:rgba(0,0,0,.06); border-color:rgba(0,0,0,.12); color:var(--text-muted);
+        }
+        body.light .btn-shuffle:hover:not(:disabled) { background:rgba(0,0,0,.12); color:var(--text-main); }
+        body.light .btn-link { color:var(--text-muted); }
+        body.light .btn-link:hover { color:var(--text-main); }
+        body.light .btn-info {
+            background:rgba(0,0,0,.06); border-color:rgba(0,0,0,.15); color:var(--text-muted);
+        }
+        body.light .btn-info:hover { background:rgba(0,0,0,.15); color:var(--text-main); }
+
+        body.light .bingo-cell {
+            background:rgba(255,255,255,.88); border-color:rgba(0,0,0,.08);
+            color:#1c1028; box-shadow:0 4px 6px rgba(0,0,0,.06);
+        }
+
+        body.light .offline-badge {
+            background:rgba(0,0,0,.07); color:#b45309; border-color:rgba(180,83,9,.25);
+        }
+
+        body.light .overlay { background:rgba(255,240,215,.96); color:var(--text-main); }
+
+        body.light #loader { border-color:rgba(0,0,0,.1); color:var(--text-muted); background:rgba(255,255,255,.6); }
+
+        body.light .gen-toggle-group { border-color:rgba(0,0,0,.12); }
+        body.light .gen-tog-btn { background:rgba(0,0,0,.04); color:var(--text-muted); }
+        body.light .gen-tog-btn:not(:last-child) { border-right-color:rgba(0,0,0,.08); }
+        body.light .gen-config-box { background:rgba(255,255,255,.62); border-color:rgba(0,0,0,.09); }
+        body.light .gen-card { background:rgba(255,255,255,.62); border-color:rgba(0,0,0,.09); }
+        body.light .gen-card-cell {
+            background:rgba(255,255,255,.82); border-color:rgba(0,0,0,.08); color:#1c1028;
+        }
+        body.light .gen-table th { border-bottom-color:rgba(0,0,0,.1); }
+        body.light .gen-table td { border-bottom-color:rgba(0,0,0,.05); }
+        body.light .gen-info-box {
+            background:rgba(13,148,136,.1); border-color:rgba(13,148,136,.3);
+        }
+
+        body.light .spotify-playlist-card { background:rgba(255,255,255,.72); border-color:rgba(0,0,0,.09); }
+        body.light .spotify-tracks-preview { background:rgba(0,0,0,.05); }
+        body.light .spotify-track-row { border-bottom-color:rgba(0,0,0,.06); }
+        body.light .spotify-setup-box { background:rgba(255,255,255,.62); border-color:rgba(0,0,0,.09); }
+        body.light .spotify-setup-box code { background:rgba(0,0,0,.07); color:#c2410c; }
+
+        body.light .mycard-item { background:rgba(255,255,255,.72); border-color:rgba(0,0,0,.09); }
+        body.light .cardpicker-btn {
+            background:rgba(255,255,255,.72); border-color:rgba(0,0,0,.09); color:var(--text-main);
+        }
+        body.light .cardpicker-btn:hover { background:white; }
+
+        body.light ::-webkit-scrollbar-thumb { background:rgba(0,0,0,.15); }
+    </style>
+</head>
+<body>
+
+    <div class="background-shapes">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <header>
+        <!-- Theme toggle: dark ↔ light -->
+        <button class="btn-theme-toggle" id="btn-theme-toggle" onclick="toggleTheme()" aria-label="Wissel thema">🌙</button>
+
+        <!-- Info-knop: alleen zichtbaar bij TV Bingo -->
+        <button class="btn-info" id="btn-info-header" onclick="openInfo()" aria-label="Speluitleg">
+            <svg viewBox="0 0 24 24">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+            </svg>
+        </button>
+
+        <div class="logo-container">
+            <div class="logo-icon">
+                <svg viewBox="0 0 24 24">
+                    <path d="M21 6H3C1.9 6 1 6.9 1 8v10c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2z"/>
+                    <path d="M8 2l4 4 4-4" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                    <path d="M7 13l3 3 7-7" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                </svg>
+            </div>
+            <div class="logo-text-group">
+                <h1 class="logo-text">Ready Set Bingo</h1>
+                <div class="logo-squares">
+                    <div class="logo-sq"></div>
+                    <div class="logo-sq"></div>
+                    <div class="logo-sq"></div>
+                    <div class="logo-sq"></div>
+                    <div class="logo-sq"></div>
+                </div>
+            </div>
+        </div>
+        <div class="tagline">Bingo voor elk moment</div>
+        <div id="offline-badge" class="offline-badge" style="display:none;">⚡ Offline Modus</div>
+    </header>
+
+    <div class="container">
+        <div id="loader">Verbinden...</div>
+
+        <!-- ════════════════════════════════ HOME ════════════════════════════════ -->
+        <div id="screen-home" class="screen">
+            <div class="menu-grid">
+
+                <div class="menu-tile" onclick="goTo('screen-generate')">
+                    <div class="tile-icon">🎲</div>
+                    <div class="tile-title">Genereer Bingo-kaarten</div>
+                    <div class="tile-desc">Maak je eigen kaarten</div>
+                </div>
+
+                <div class="menu-tile" onclick="goTo('screen-mycards')">
+                    <div class="tile-icon">🃏</div>
+                    <div class="tile-title">Mijn Bingo-kaarten</div>
+                    <div class="tile-desc">Speel je opgeslagen kaarten</div>
+                </div>
+
+                <div class="menu-tile" onclick="goTo('screen-select')">
+                    <div class="tile-icon">📺</div>
+                    <div class="tile-title">TV Bingo</div>
+                    <div class="tile-desc">Bingo bij series, films en programma's</div>
+                </div>
+
+                <div class="menu-tile" onclick="goTo('screen-scenario')">
+                    <div class="tile-icon">🎪</div>
+                    <div class="tile-title">Scenario Bingo</div>
+                    <div class="tile-desc">Festival, kermis en meer</div>
+                </div>
+
+                <div class="menu-tile" onclick="goTo('screen-spotify')">
+                    <div class="tile-icon">🎵</div>
+                    <div class="tile-title">Spotify Bingo</div>
+                    <div class="tile-desc">Bingo met jouw afspeellijst</div>
+                </div>
+
+                <div class="menu-tile" onclick="goTo('screen-wk')">
+                    <div class="tile-icon">⚽</div>
+                    <div class="tile-title">WK Bingo</div>
+                    <div class="tile-desc">Bingo tijdens het WK</div>
+                    <div class="tile-badge">2026</div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ══════════════════════════════ TV BINGO ══════════════════════════════ -->
+        <div id="screen-select" class="screen">
+            <div class="screen-header">
+                <button class="btn-back" onclick="goHome()">← Terug</button>
+                <h2>📺 TV Bingo</h2>
+            </div>
+
+            <label>1. Kies Programma</label>
+            <select id="program-select"><option value="">Laden...</option></select>
+
+            <div id="category-wrapper">
+                <label>2. Kies Scenario</label>
+                <select id="category-select" disabled><option value="">-- Eerst programma kiezen --</option></select>
+            </div>
+
+            <div style="margin-top:20px;"></div>
+            <button onclick="startGame()" id="start-btn" class="btn-primary" disabled>Start Bingo</button>
+            <div style="text-align:center; margin-top:10px;">
+                <button class="btn-link" onclick="openAdminLogin()">Admin Login</button>
+            </div>
+        </div>
+
+        <div id="screen-game" class="screen">
+            <div class="game-header">
+                <h2 id="game-title" style="margin:0; font-size:1rem;">Programma</h2>
+                <button class="btn-shuffle" id="btn-shuffle" onclick="refreshCard()">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M17.65 6.35A7.96 7.96 0 0 0 12 4c-4.42 0-8 3.58-8 8s3.58 8 8 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0 1 12 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>
+                    </svg>
+                    <span class="shuffle-count" id="shuffle-count">3</span>
+                </button>
+            </div>
+            <div class="grid-wrapper">
+                <div class="bingo-grid" id="bingo-grid"></div>
+                <div id="bingo-lines"></div>
+            </div>
+            <div style="margin-top:20px;">
+                <button class="btn-secondary" onclick="resetGame()">Stoppen</button>
+            </div>
+        </div>
+
+        <div id="screen-admin" class="screen">
+            <div class="screen-header">
+                <button class="btn-back" onclick="closeAdmin()">← Terug</button>
+                <h2>Admin Panel</h2>
+            </div>
+            <p style="font-size:.8rem; color:var(--text-muted); margin-top:0;">
+                Wijzigingen worden opgeslagen op basis van je modus (Online/Offline).
+            </p>
+
+            <label>Programma</label>
+            <select id="admin-prog-select" onchange="adminSelectProgram()">
+                <option value="">-- Nieuw Programma --</option>
+            </select>
+            <div style="margin-bottom:20px;">
+                <input type="text" id="admin-prog-input" placeholder="Naam van programma..." style="margin-bottom:10px;">
+                <div class="admin-actions" id="admin-prog-actions" style="display:none;">
+                    <button class="btn-secondary btn-icon" onclick="moveProgram(-1)" title="Omhoog">↑</button>
+                    <button class="btn-secondary btn-icon" onclick="moveProgram(1)"  title="Omlaag">↓</button>
+                    <button class="btn-danger btn-full" onclick="deleteProgram()">Verwijder</button>
+                </div>
+            </div>
+
+            <div id="admin-cat-container" style="display:none; margin-top:20px;">
+                <label>Categorie / Scenario</label>
+                <select id="admin-cat-select" onchange="adminSelectCategory()">
+                    <option value="">-- Nieuwe Categorie --</option>
+                </select>
+                <input type="text" id="admin-cat-input" placeholder="Naam van categorie...">
+                <button class="btn-danger" id="btn-del-cat" onclick="deleteCategory()"
+                        style="display:none; padding:10px; font-size:.8rem;">Verwijder Categorie</button>
+            </div>
+
+            <div id="admin-word-container" style="display:none; margin-top:20px;">
+                <label>Woordenlijst (1 per regel)</label>
+                <textarea id="word-editor" placeholder="Typ woorden..."></textarea>
+                <button class="btn-primary" onclick="saveAdminData()">💾 Opslaan</button>
+            </div>
+        </div>
+
+        <!-- ══════════════════════════ GENEREER BINGO-KAARTEN ════════════════════ -->
+        <div id="screen-generate" class="screen">
+            <div class="screen-header">
+                <button class="btn-back" onclick="goHome()">← Terug</button>
+                <h2>🎲 Genereer Bingo-kaarten</h2>
+            </div>
+
+            <label>Woorden / termen <span id="gen-words-hint" class="gen-hint">(min. 16 woorden)</span></label>
+            <textarea id="gen-words" rows="7" placeholder="Voer hier alle woorden in, één per regel&#10;Bijv:&#10;Immuniteit&#10;Eilandraad&#10;Kampvuur&#10;..."></textarea>
+
+            <!-- Modus + Rastergrootte -->
+            <div class="gen-options-row">
+                <div>
+                    <div class="gen-label-sm">Modus</div>
+                    <div class="gen-toggle-group">
+                        <button class="gen-tog-btn active" data-val="print" onclick="setGenMode('print')">🖨️ Printen</button>
+                        <button class="gen-tog-btn" data-val="online" onclick="setGenMode('online')">📱 Online</button>
+                    </div>
+                </div>
+                <div>
+                    <div class="gen-label-sm">Rastergrootte</div>
+                    <div class="gen-toggle-group">
+                        <button class="gen-tog-btn active" data-val="4" onclick="setGridSize(4)">4×4</button>
+                        <button class="gen-tog-btn" data-val="5" onclick="setGridSize(5)">5×5</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Volgorde + Aantal -->
+            <div class="gen-inline-row" style="margin-top:6px;">
+                <label class="gen-check-label">
+                    <input type="checkbox" id="gen-order-known" onchange="onOrderKnownChange()">
+                    Volgorde vooraf bekend?
+                </label>
+                <div id="gen-antal-wrap" class="gen-num-row">
+                    <span>Aantal:</span>
+                    <input type="number" id="gen-num-cards" class="gen-small-num" value="10" min="1" max="500">
+                </div>
+            </div>
+
+            <!-- Configuratie (volgorde bekend) -->
+            <div id="gen-config-panel" style="display:none;">
+                <div class="gen-config-box">
+                    <p style="margin:0 0 14px; font-size:.95rem; font-weight:700; color:var(--text-main);">Configureer bingokaarten</p>
+
+                    <p class="gen-sec-title">Type Bingo</p>
+
+                    <div id="gen-min-info-box" class="gen-info-box" style="display:none;">
+                        <strong>Wat is het Minimale nummer?</strong>
+                        <p>Het vroegste oproepnummer waarop dit bingo-type <em>mag</em> vallen.</p>
+                        <p>Voorbeeld: "Tweede rij – min. 15" betekent dat de kaart zo gegenereerd wordt dat de 2e volledige lijn (horizontaal, verticaal of diagonaal) pas valt als minimaal het 15e woord is opgeroepen.</p>
+                        <p>Een hogere waarde = bingo valt later in het spel = meer spanning.</p>
+                        <button class="gen-info-close" onclick="document.getElementById('gen-min-info-box').style.display='none'">Sluiten ×</button>
+                    </div>
+
+                    <table class="gen-table">
+                        <thead>
+                            <tr>
+                                <th>Type</th>
+                                <th style="text-align:center;">Actief</th>
+                                <th>Min. nr <button class="gen-info-icon" type="button"
+                                    onclick="document.getElementById('gen-min-info-box').style.display='block'">ℹ</button></th>
+                            </tr>
+                        </thead>
+                        <tbody id="gen-types-tbody"></tbody>
+                    </table>
+
+                    <p class="gen-sec-title" style="margin-top:14px;">Voorwaarden</p>
+                    <div class="gen-voorwaarde">
+                        <label class="gen-cond-label">
+                            <input type="checkbox" id="gen-no-same" checked>
+                            Geen kaarten hetzelfde
+                        </label>
+                    </div>
+                    <div class="gen-voorwaarde">
+                        <label class="gen-cond-label">
+                            <input type="checkbox" id="gen-max-enabled" onchange="toggleMaxBingo()">
+                            Max tegelijk Bingo:
+                        </label>
+                        <input type="number" id="gen-max-bingo" class="gen-small-num" min="1" value="2"
+                               disabled style="opacity:.35; transition:opacity .2s;">
+                    </div>
+                </div>
+            </div>
+
+            <button class="btn-primary" onclick="generateBingoCards()" style="margin-top:4px;">🎲 Genereer kaarten</button>
+
+            <div id="gen-progress" class="gen-progress" style="display:none;">
+                Bezig met genereren… <span id="gen-prog-txt"></span>
+            </div>
+
+            <div id="gen-error" class="gen-error" style="display:none;"></div>
+
+            <div id="gen-output" style="display:none;">
+                <div class="gen-output-header">
+                    <h3 id="gen-output-title"></h3>
+                    <div style="display:flex;gap:8px;">
+                        <button id="gen-print-btn" class="btn-secondary" onclick="printBingoCards()"
+                                style="width:auto; margin:0; padding:8px 14px; font-size:.82rem;">🖨️ Afdrukken</button>
+                        <button class="btn-primary" onclick="saveCardsToMyCards('manual')"
+                                style="width:auto; margin:0; padding:8px 12px; font-size:.82rem;">💾 Opslaan</button>
+                    </div>
+                </div>
+                <div id="gen-cards-container" class="gen-cards-grid"></div>
+            </div>
+        </div>
+
+        <!-- ══════════════════════════ MIJN BINGO-KAARTEN ═══════════════════════ -->
+        <div id="screen-mycards" class="screen">
+            <div class="screen-header">
+                <button class="btn-back" onclick="goHome()">← Terug</button>
+                <h2>🃏 Mijn Bingo-kaarten</h2>
+            </div>
+            <div id="mycards-empty" class="coming-soon" style="display:none;">
+                <div class="cs-icon">📂</div>
+                <h3>Nog geen kaarten</h3>
+                <p>Genereer kaarten via <strong>Genereer Bingo-kaarten</strong> of <strong>Spotify Bingo</strong> en sla ze hier op.</p>
+            </div>
+            <div id="mycards-list" class="mycard-list"></div>
+        </div>
+
+        <!-- ══════════════════════════ KAART KIEZEN ═══════════════════════════ -->
+        <div id="screen-card-picker" class="screen">
+            <div class="screen-header">
+                <button class="btn-back" onclick="goTo('screen-mycards')">← Terug</button>
+                <h2 id="cardpicker-title">Kies kaart</h2>
+            </div>
+            <p style="font-size:.82rem;color:var(--text-muted);margin-top:0;">
+                Kies je kaartnummer — hetzelfde nummer geeft altijd dezelfde kaart, handig voor meerdere spelers!
+            </p>
+            <div class="cardpicker-grid" id="cardpicker-grid"></div>
+        </div>
+
+        <!-- ══════════════════════════ OPGESLAGEN KAART SPELEN ════════════════ -->
+        <div id="screen-saved-game" class="screen">
+            <div class="game-header">
+                <h2 id="saved-game-title" style="margin:0;font-size:1rem;">Bingo</h2>
+                <button class="btn-shuffle" id="saved-btn-shuffle" onclick="savedNextCard()"
+                        title="Volgende kaart" style="font-size:1.1rem;">→</button>
+            </div>
+            <div class="grid-wrapper">
+                <div class="bingo-grid" id="saved-bingo-grid"></div>
+                <div id="saved-bingo-lines"></div>
+            </div>
+            <div style="margin-top:20px;">
+                <button class="btn-secondary" onclick="goTo('screen-card-picker')">← Andere kaart</button>
+            </div>
+        </div>
+
+        <!-- ════════════════════════════ SCENARIO BINGO ══════════════════════════ -->
+        <div id="screen-scenario" class="screen">
+            <div class="screen-header">
+                <button class="btn-back" onclick="goHome()">← Terug</button>
+                <h2>🎪 Scenario Bingo</h2>
+            </div>
+            <div class="coming-soon">
+                <div class="cs-icon">🎡</div>
+                <h3>In ontwikkeling</h3>
+                <p>Bingo-kaarten voor festival, kermis, trouwerij en andere speciale gelegenheden.</p>
+            </div>
+        </div>
+
+        <!-- ════════════════════════════ SPOTIFY BINGO ═══════════════════════════ -->
+        <div id="screen-spotify" class="screen">
+            <div class="screen-header">
+                <button class="btn-back" onclick="goHome()">← Terug</button>
+                <h2>🎵 Spotify Bingo</h2>
+            </div>
+
+            <!-- Stap 1: Client ID + playlist URL -->
+            <div id="spotify-step1">
+                <label>Client ID <span class="gen-hint">(Spotify Developer App)</span></label>
+                <input type="text" id="spotify-client-id" placeholder="Plak hier je Spotify Client ID" oninput="spotifySaveClientId()">
+
+                <label style="margin-top:12px;">Afspeellijst URL</label>
+                <input type="text" id="spotify-playlist-url"
+                       placeholder="https://open.spotify.com/playlist/...">
+
+                <button class="btn-primary" onclick="spotifyConnect()" style="margin-top:14px;">
+                    ▶ Verbinden &amp; Laden
+                </button>
+
+                <div id="spotify-status" style="display:none;"></div>
+
+                <details class="spotify-setup-box" id="spotify-setup-details">
+                    <summary>⚙️ Hoe stel je de Spotify koppeling in?</summary>
+                    <ol>
+                        <li>Ga naar <a href="https://developer.spotify.com/dashboard" target="_blank">developer.spotify.com/dashboard</a></li>
+                        <li>Klik op <strong>Create App</strong>, vink <em>Web API</em> aan</li>
+                        <li>Voeg als Redirect URI toe:<br><code id="spotify-redirect-uri-display">—</code></li>
+                        <li>Kopieer de <strong>Client ID</strong> en plak die hierboven</li>
+                        <li>Zet de afspeellijst op <em>Openbaar</em> in Spotify</li>
+                    </ol>
+                </details>
+            </div>
+
+            <!-- Stap 2: Playlist preview + opties -->
+            <div id="spotify-step2" style="display:none;">
+                <div class="spotify-playlist-card">
+                    <img id="spotify-pl-img" src="" alt="">
+                    <div class="spotify-playlist-info">
+                        <div class="spotify-playlist-name" id="spotify-pl-name">–</div>
+                        <div class="spotify-playlist-meta" id="spotify-pl-meta">–</div>
+                    </div>
+                    <button class="btn-secondary" style="padding:7px 12px;font-size:.76rem;flex-shrink:0;"
+                            onclick="spotifyReset()">⟲ Opnieuw</button>
+                </div>
+
+                <div class="spotify-tracks-preview" id="spotify-tracks-preview"></div>
+
+                <div class="gen-options-row" style="margin-top:16px;">
+                    <div>
+                        <div class="gen-label-sm">Rastergrootte</div>
+                        <div class="gen-toggle-group">
+                            <button class="gen-tog-btn active" data-spval="4" onclick="setSpotifyGrid(4)">4×4</button>
+                            <button class="gen-tog-btn"         data-spval="5" onclick="setSpotifyGrid(5)">5×5</button>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="gen-label-sm">Aantal kaarten</div>
+                        <input type="number" id="spotify-num-cards" class="gen-small-num" value="10" min="1" max="200">
+                    </div>
+                </div>
+
+                <div class="gen-inline-row" style="margin-top:8px;">
+                    <label class="gen-check-label">
+                        <input type="checkbox" id="spotify-include-artist" checked>
+                        Artiestnaam opnemen in cel
+                    </label>
+                </div>
+
+                <div id="spotify-gen-error"    class="gen-error" style="display:none;"></div>
+                <div id="spotify-gen-progress" class="gen-progress" style="display:none;">
+                    <div class="gen-spinner"></div>
+                    <span id="spotify-gen-prog-txt">0/0</span>
+                </div>
+
+                <button class="btn-primary" onclick="generateSpotifyCards()" style="margin-top:14px;">
+                    🎲 Genereer Spotify Bingo-kaarten
+                </button>
+            </div>
+
+            <!-- Stap 3: Output -->
+            <div id="spotify-step3" style="display:none;">
+                <div class="gen-output-header">
+                    <h3 id="spotify-output-title"></h3>
+                    <div style="display:flex;gap:8px;">
+                        <button class="btn-secondary" style="padding:7px 11px;font-size:.76rem;"
+                                onclick="spotifyShowStep2()">← Opties</button>
+                        <button class="btn-primary"   style="padding:7px 12px;font-size:.8rem;"
+                                onclick="saveCardsToMyCards('spotify')">💾 Opslaan</button>
+                    </div>
+                </div>
+                <div id="spotify-cards-container" class="gen-cards-grid"></div>
+            </div>
+        </div>
+
+        <!-- ══════════════════════════════ WK BINGO ══════════════════════════════ -->
+        <div id="screen-wk" class="screen">
+            <div class="screen-header">
+                <button class="btn-back" onclick="goHome()">← Terug</button>
+                <h2>⚽ WK Bingo 2026</h2>
+            </div>
+            <div class="coming-soon">
+                <div class="cs-icon">🏆</div>
+                <h3>In ontwikkeling</h3>
+                <p>Bingo-kaarten per WK-wedstrijd: spelersnamen, landen, voetbaltermen en meer. Beschikbaar voor WK 2026!</p>
+            </div>
+        </div>
+
+    </div><!-- /container -->
+
+    <!-- ══════════════════════════════ OVERLAYS ═══════════════════════════════ -->
+    <div id="bingo-overlay" class="overlay">
+        <div class="bingo-text">BINGO!</div>
+        <p id="bingo-win-msg">Lekker gewerkt!</p>
+        <button class="btn-primary" onclick="closeOverlay()" style="max-width:200px;">Doorgaan</button>
+    </div>
+
+    <div id="login-overlay" class="overlay">
+        <h2 style="margin-bottom:10px;">Admin Login</h2>
+        <p style="margin-bottom:20px; font-size:.9rem; color:#ccc;">
+            Voer het wachtwoord in om de lijsten te beheren.
+        </p>
+        <input type="password" id="admin-password" placeholder="Wachtwoord" style="max-width:300px;">
+        <button class="btn-primary" onclick="checkLogin()" style="max-width:300px;">Inloggen</button>
+        <button class="btn-link" onclick="closeLogin()">Annuleren</button>
+    </div>
+
+    <div id="info-overlay" class="overlay">
+        <h2 style="margin-bottom:10px;">Spelregels TV Bingo</h2>
+        <ul class="info-list">
+            <li><span class="info-icon">📺</span><span>Kies een programma en een scenario.</span></li>
+            <li><span class="info-icon">👂</span><span>Hoor je een uitspraak die op je kaart staat?</span></li>
+            <li><span class="info-icon">👆</span><span>Tik op het vakje om hem af te strepen.</span></li>
+            <li><span class="info-icon">🏆</span><span>4 op een rij (horizontaal, verticaal of diagonaal)? <strong>BINGO!</strong></span></li>
+            <li><span class="info-icon">🔀</span><span>Slechte kaart? Je mag maximaal 3× husselen.</span></li>
+        </ul>
+        <button class="btn-primary" onclick="closeInfo()" style="max-width:200px;">Begrepen!</button>
+    </div>
+
+    <script type="module">
+        import { initializeApp }                                    from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged }
+                                                                    from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js";
+        import { getFirestore, doc, onSnapshot, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
+
+        // ─── Firebase config ───────────────────────────────────────────────────────
+        const manualConfig = {
+            apiKey:            "AIzaSyDBbP4qumd_CMTnLr3xKPhyROofHU-AZeo",
+            authDomain:        "bingego.firebaseapp.com",
+            projectId:         "bingego",
+            storageBucket:     "bingego.firebasestorage.app",
+            messagingSenderId: "966088068254",
+            appId:             "1:966088068254:web:8a234421149fb008b9bf8f"
+        };
+
+        // ─── Standaard data ────────────────────────────────────────────────────────
+        const defaultData = {
+            "Expeditie Robinson": {
+                "De Uitzending": ["Immuniteit","Eilandraad","Strijdlust","Winnaarseiland","Rijst","Wat kies je?","Gefeliciteerd","Mes in de rug","Kampvuur","Proef","Samensmelting","Het lot","Bondje","Strategie","Honger","Overleven","Afvallerseiland","Fysieke proef","Mentale proef","Sabotage","Held","Rugzak","Regen en storm","Wat een avontuur","Confession"]
+            },
+            "Ajax - Benfica": {
+                "Ajax wint":    ["En daar mazzelt Ajax","Wat een geluk","Eindelijk zit het mee","Ongelofelijk","Ajax draait het om","Is dit de wederopstanding?","De hand van Grim","Onverwacht succes","Dit had niemand gedacht","Een fortuinlijke goal","Het lot lacht Ajax toe","Een stunt van formaat","Ajax redt het net op tijd","Een miraculeuze redding","Het geluk lacht ze toe","Onterecht of niet, het telt","Ajax blijft overeind","Een onverwachte wending","Ze pakken het toch","Een bizarre ommekeer","Het kan verkeren","Ajax in extase","Een gelukstreffer","Het publiek kan het niet geloven","Ajax vecht zich terug","De vreugde is enorm"],
+                "Ajax verliest":["En dan gaat het rap","Zo onnodig","Dit is beschamend","Ze worden afgedroogd","Volledige wanorde","Geen enkele organisatie","Ze worden geklopt op alles","Dit is een afstraffing","Ze zijn nergens vandaag","Geen vechtlust","Pijnlijk niveau","Ze zakken door het ijs","Dit is crisisvoetbal","Ze laten zich afslachten","Totaal geen reactie","Nergens grip","Het team valt uit elkaar","Ze zijn compleet de weg kwijt","Wat een offday","Dit kan niet slechter","De boosheid druipt ervan af","Ze worden overlopen","Amper tegenstand","Geen enkele lijn in het spel","Het is één grote chaos"]
+            },
+            "Wie is de Mol": {
+                "De Uitzending": ["De Mol","De kandidaat","De pot","Jokers","Vrijstelling","Molboekje","Tunnelvisie",'"Trust nobody"',"De test","De executie","Afvaller","Penningmeester","Groepsopdracht","Laseropdracht","Verraad","Sabotage","Wie vertrouw jij?","Finalisten","Molactie","Follow the money","Ik zat volledig verkeerd","Zwarte vrijstelling","Groene schermen","Rood scherm","Bondje"]
+            }
+        };
+
+        const winMessages = [
+            "Lekker bezig!!","Hij is binnen!","Jawel hoor!","En we gaan door voor de keukenmachine!",
+            "Helemaal los!","BAM! In the pocket!","Goud! Jij bent de kampioen!","Niet te stoppen jij!",
+            "Hoppa, weer een rij vol!","Confetti! 🎊","Jij ziet ook alles!","Kampioen van de bank!",
+            "Ongekende scènes!","Dit is toch genieten?!","Kassa! 💰"
+        ];
+
+        // ─── State ────────────────────────────────────────────────────────────────
+        let appData = {}, appOrder = [];
+        let currentWords = [], winningLines = new Set();
+        let db, auth, docRef;
+        let isLocalMode = false;
+        let refreshesLeft = 3;
+        const myAppId = typeof window.__app_id !== 'undefined' ? window.__app_id : 'thuisbingo-global';
+
+        // Schermen waarbij de info-knop zichtbaar is
+        const TV_SCREENS = new Set(['screen-select', 'screen-game']);
+
+        // ─── Navigatie ────────────────────────────────────────────────────────────
+        function switchScreen(id) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            // Info-knop alleen bij TV Bingo
+            document.getElementById('btn-info-header')
+                    .classList.toggle('visible', TV_SCREENS.has(id));
+        }
+
+        window.goHome = () => switchScreen('screen-home');
+        window.goTo   = (id) => switchScreen(id);
+
+        // ─── Firebase init ────────────────────────────────────────────────────────
+        async function initFirebase() {
+            if (!window.location.protocol.startsWith('http')) {
+                startLocalMode(); return;
+            }
+            try {
+                const config = typeof window.__firebase_config !== 'undefined'
+                    ? JSON.parse(window.__firebase_config) : manualConfig;
+                const app = initializeApp(config);
+                auth = getAuth(app);
+                db   = getFirestore(app);
+                docRef = doc(db, 'artifacts', myAppId, 'public', 'data', 'bingeGoV1', 'lists');
+                try {
+                    if (typeof window.__initial_auth_token !== 'undefined' && window.__initial_auth_token)
+                        await signInWithCustomToken(auth, window.__initial_auth_token);
+                    else
+                        await signInAnonymously(auth);
+                } catch { startLocalMode(); }
+                onAuthStateChanged(auth, user => { if (user) setupRealtimeListener(); });
+            } catch { startLocalMode(); }
+        }
+
+        function startLocalMode() {
+            isLocalMode = true;
+            document.getElementById('loader').style.display = 'none';
+            document.getElementById('offline-badge').style.display = 'inline-block';
+            const saved = localStorage.getItem('bingoData');
+            if (saved) {
+                const p = JSON.parse(saved);
+                appData  = p.programs || defaultData;
+                appOrder = p.order    || Object.keys(appData).sort();
+            } else {
+                appData  = JSON.parse(JSON.stringify(defaultData));
+                appOrder = Object.keys(appData).sort();
+            }
+            populateSelects();
+            switchScreen('screen-home');
+        }
+
+        function saveToLocal() {
+            if (isLocalMode) localStorage.setItem('bingoData', JSON.stringify({ programs: appData, order: appOrder }));
+        }
+
+        function setupRealtimeListener() {
+            onSnapshot(docRef, async snap => {
+                document.getElementById('loader').style.display = 'none';
+                if (snap.exists()) {
+                    const d = snap.data();
+                    if (d.programs && d.order) { appData = d.programs; appOrder = d.order; }
+                    else {
+                        appData  = d.data || defaultData;
+                        appOrder = Object.keys(appData).sort();
+                        try { await setDoc(docRef, { programs: appData, order: appOrder }); } catch {}
+                    }
+                } else {
+                    appData  = JSON.parse(JSON.stringify(defaultData));
+                    appOrder = Object.keys(appData).sort();
+                    try { await setDoc(docRef, { programs: appData, order: appOrder }); } catch {}
+                }
+                populateSelects();
+                switchScreen('screen-home');
+            }, err => console.error(err));
+        }
+
+        // ─── Selects vullen ───────────────────────────────────────────────────────
+        const programSelect  = document.getElementById('program-select');
+        const categorySelect = document.getElementById('category-select');
+        const startBtn       = document.getElementById('start-btn');
+
+        function populateSelects() {
+            programSelect.innerHTML = '<option value="">-- Kies Programma --</option>';
+            (appOrder || []).forEach(prog => {
+                if (!appData[prog]) return;
+                const o = document.createElement('option');
+                o.value = o.innerText = prog;
+                programSelect.appendChild(o);
+            });
+
+            const adminSel   = document.getElementById('admin-prog-select');
+            const prevAdmin  = adminSel.value;
+            adminSel.innerHTML = '<option value="">-- Nieuw Programma --</option>';
+            (appOrder || []).forEach(prog => {
+                if (!appData[prog]) return;
+                const o = document.createElement('option');
+                o.value = o.innerText = prog;
+                adminSel.appendChild(o);
+            });
+            if (prevAdmin && appData[prevAdmin]) adminSel.value = prevAdmin;
+        }
+        window.populateSelects = populateSelects;
+
+        programSelect.addEventListener('change', e => {
+            const prog = e.target.value;
+            categorySelect.innerHTML = '';
+            categorySelect.disabled  = true;
+            startBtn.disabled        = true;
+            if (!prog || !appData[prog]) return;
+            const cats = Object.keys(appData[prog]);
+            if (cats.length === 1) {
+                const o = document.createElement('option');
+                o.value = o.innerText = cats[0];
+                categorySelect.appendChild(o);
+                categorySelect.value = cats[0];
+                startBtn.disabled = false;
+            } else {
+                const ph = document.createElement('option');
+                ph.value = ''; ph.innerText = '-- Kies Scenario --';
+                categorySelect.appendChild(ph);
+                cats.forEach(cat => {
+                    const o = document.createElement('option');
+                    o.value = o.innerText = cat;
+                    categorySelect.appendChild(o);
+                });
+                categorySelect.disabled = false;
+            }
+        });
+        categorySelect.addEventListener('change', e => { startBtn.disabled = !e.target.value; });
+
+        // ─── Game logic ───────────────────────────────────────────────────────────
+        window.startGame = function() {
+            const prog = programSelect.value, cat = categorySelect.value;
+            refreshesLeft = 3; updateRefreshUI();
+            generateNewWords(prog, cat);
+            document.getElementById('game-title').innerText = prog;
+            switchScreen('screen-game');
+        };
+
+        function generateNewWords(prog, cat) {
+            let pool = [...appData[prog][cat]];
+            while (pool.length < 16) pool = pool.concat(pool);
+            const selection = [];
+            for (let i = 0; i < 16; i++) {
+                const idx = Math.floor(Math.random() * pool.length);
+                selection.push(pool[idx]);
+                pool.splice(idx, 1);
+            }
+            currentWords = selection;
+            winningLines.clear();
+            document.getElementById('bingo-lines').innerHTML = '';
+            renderGrid();
+        }
+
+        function renderGrid() {
+            const grid = document.getElementById('bingo-grid');
+            grid.innerHTML = '';
+            currentWords.forEach(word => {
+                const cell = document.createElement('div');
+                cell.className = 'bingo-cell flash';
+                cell.innerText = word;
+                cell.onclick   = () => toggleCell(cell);
+                grid.appendChild(cell);
+            });
+            setTimeout(() => document.querySelectorAll('.bingo-cell').forEach(c => c.classList.remove('flash')), 500);
+        }
+
+        window.refreshCard = function() {
+            if (refreshesLeft <= 0) return;
+            refreshesLeft--; updateRefreshUI();
+            generateNewWords(programSelect.value, categorySelect.value);
+        };
+
+        function updateRefreshUI() {
+            document.getElementById('shuffle-count').innerText = refreshesLeft;
+            document.getElementById('btn-shuffle').disabled    = refreshesLeft <= 0;
+        }
+
+        function toggleCell(cell) {
+            if (navigator.vibrate) navigator.vibrate(20);
+            cell.classList.toggle('checked');
+            checkForBingo();
+        }
+
+        function checkForBingo() {
+            const cells    = document.querySelectorAll('#bingo-grid .bingo-cell');
+            const linesEl  = document.getElementById('bingo-lines');
+            const size     = 4;
+            let newBingo   = false;
+
+            const check = (indices, id, cls) => {
+                if (indices.every(i => cells[i].classList.contains('checked')) && !winningLines.has(id)) {
+                    winningLines.add(id);
+                    newBingo = true;
+                    const l = document.createElement('div');
+                    l.className = `strike-line ${cls}`;
+                    linesEl.appendChild(l);
+                }
+            };
+
+            for (let i = 0; i < size; i++) {
+                check([0,1,2,3].map(j => i*size+j), `row-${i}`, `strike-row-${i}`);
+                check([0,1,2,3].map(j => j*size+i), `col-${i}`, `strike-col-${i}`);
+            }
+            check([0,5,10,15], 'diag-1', 'strike-diag-1');
+            check([3,6,9,12],  'diag-2', 'strike-diag-2');
+
+            if (newBingo) {
+                if (navigator.vibrate) navigator.vibrate([100,50,100]);
+                document.getElementById('bingo-win-msg').innerText =
+                    winMessages[Math.floor(Math.random() * winMessages.length)];
+                document.getElementById('bingo-overlay').classList.add('show');
+            }
+        }
+
+        window.closeOverlay = () => document.getElementById('bingo-overlay').classList.remove('show');
+        window.resetGame    = () => switchScreen('screen-select');
+
+        // ─── Admin ────────────────────────────────────────────────────────────────
+        window.openAdminLogin = function() {
+            document.getElementById('login-overlay').classList.add('show');
+            document.getElementById('admin-password').value = '';
+            document.getElementById('admin-password').focus();
+        };
+        window.closeLogin = () => document.getElementById('login-overlay').classList.remove('show');
+        window.checkLogin = function() {
+            if (document.getElementById('admin-password').value === "poema") {
+                closeLogin(); showAdmin();
+            } else { alert("Wachtwoord onjuist!"); }
+        };
+
+        const adminProgSel  = document.getElementById('admin-prog-select');
+        const adminProgInput = document.getElementById('admin-prog-input');
+        const adminCatSel   = document.getElementById('admin-cat-select');
+        const adminCatInput = document.getElementById('admin-cat-input');
+        const wordEditor    = document.getElementById('word-editor');
+
+        function showAdmin() {
+            resetAdminInputs(); populateSelects();
+            switchScreen('screen-admin');
+        }
+
+        window.adminSelectProgram = function() {
+            const prog = adminProgSel.value;
+            if (!prog) {
+                adminProgInput.value = ''; adminProgInput.disabled = false;
+                document.getElementById('admin-prog-actions').style.display = 'none';
+                document.getElementById('admin-cat-container').style.display = 'block';
+                adminCatSel.innerHTML = '<option value="">-- Eerst programma opslaan --</option>';
+                adminCatSel.disabled = true;
+                adminCatInput.value = ''; adminCatInput.disabled = false;
+                document.getElementById('admin-word-container').style.display = 'block';
+                wordEditor.value = '';
+            } else {
+                adminProgInput.value = prog; adminProgInput.disabled = true;
+                document.getElementById('admin-prog-actions').style.display = 'flex';
+                document.getElementById('admin-cat-container').style.display = 'block';
+                adminCatSel.disabled = false;
+                loadAdminCats(prog);
+            }
+        };
+
+        function loadAdminCats(prog) {
+            adminCatSel.innerHTML = '<option value="">-- Nieuwe Categorie --</option>';
+            adminCatSel.value = ''; adminCatInput.value = ''; adminCatInput.disabled = false;
+            document.getElementById('btn-del-cat').style.display = 'none';
+            document.getElementById('admin-word-container').style.display = 'block';
+            wordEditor.value = '';
+            if (appData[prog]) Object.keys(appData[prog]).forEach(cat => {
+                const o = document.createElement('option');
+                o.value = o.innerText = cat; adminCatSel.appendChild(o);
+            });
+        }
+
+        window.adminSelectCategory = function() {
+            const prog = adminProgSel.value, cat = adminCatSel.value;
+            if (!cat) {
+                adminCatInput.value = ''; adminCatInput.disabled = false;
+                adminCatInput.placeholder = 'Typ naam van nieuwe categorie...';
+                adminCatInput.focus();
+                document.getElementById('btn-del-cat').style.display = 'none';
+                document.getElementById('admin-word-container').style.display = 'block';
+                wordEditor.value = '';
+            } else {
+                adminCatInput.value = cat; adminCatInput.disabled = true;
+                document.getElementById('btn-del-cat').style.display = 'inline-block';
+                document.getElementById('admin-word-container').style.display = 'block';
+                wordEditor.value = (appData[prog][cat] || []).join('\n');
+            }
+        };
+
+        window.saveAdminData = async function() {
+            const prog  = adminProgInput.value.trim();
+            const cat   = adminCatInput.value.trim();
+            const words = wordEditor.value.split('\n').map(w => w.trim()).filter(Boolean);
+            if (!prog || !cat) return alert("Vul zowel Programma-naam als Categorie-naam in.");
+            if (!words.length) return alert("Vul minimaal 1 woord in.");
+            if (!appData[prog]) { appData[prog] = {}; if (!appOrder.includes(prog)) appOrder.push(prog); }
+            appData[prog][cat] = words;
+            if (isLocalMode) { saveToLocal(); alert("Lokaal opgeslagen!"); refreshAdminAfterSave(prog, cat); return; }
+            try {
+                await setDoc(docRef, { programs: appData, order: appOrder }, { merge: true });
+                alert("Opgeslagen in database!");
+                refreshAdminAfterSave(prog, cat);
+            } catch(e) { alert("Fout bij opslaan: " + e.message); }
+        };
+
+        function refreshAdminAfterSave(prog, cat) {
+            populateSelects();
+            adminProgSel.value = prog;
+            loadAdminCats(prog);
+            adminCatSel.value = cat;
+            window.adminSelectCategory();
+        }
+
+        window.moveProgram = async function(dir) {
+            const prog = adminProgSel.value; if (!prog) return;
+            const idx  = appOrder.indexOf(prog); if (idx === -1) return;
+            if (dir === -1 && idx > 0)                    [appOrder[idx], appOrder[idx-1]] = [appOrder[idx-1], appOrder[idx]];
+            else if (dir === 1 && idx < appOrder.length-1) [appOrder[idx], appOrder[idx+1]] = [appOrder[idx+1], appOrder[idx]];
+            else return;
+            if (isLocalMode) { saveToLocal(); populateSelects(); adminProgSel.value = prog; return; }
+            try { await setDoc(docRef, { programs: appData, order: appOrder }, { merge: true }); populateSelects(); adminProgSel.value = prog; }
+            catch(e) { alert("Fout bij verplaatsen: " + e.message); }
+        };
+
+        window.deleteProgram = async function() {
+            const prog = adminProgSel.value;
+            if (!confirm(`Verwijder "${prog}"?`)) return;
+            delete appData[prog]; appOrder = appOrder.filter(p => p !== prog);
+            if (isLocalMode) { saveToLocal(); populateSelects(); resetAdminInputs(); return; }
+            await setDoc(docRef, { programs: appData, order: appOrder });
+            populateSelects(); resetAdminInputs();
+        };
+
+        window.deleteCategory = async function() {
+            const prog = adminProgSel.value, cat = adminCatSel.value;
+            if (!confirm(`Verwijder "${cat}"?`)) return;
+            delete appData[prog][cat];
+            if (isLocalMode) { saveToLocal(); loadAdminCats(prog); return; }
+            await setDoc(docRef, { programs: appData, order: appOrder });
+            loadAdminCats(prog);
+        };
+
+        function resetAdminInputs() {
+            adminProgInput.value = ''; adminCatInput.value = ''; wordEditor.value = '';
+            document.getElementById('admin-prog-actions').style.display  = 'none';
+            document.getElementById('admin-cat-container').style.display  = 'none';
+            document.getElementById('admin-word-container').style.display = 'none';
+        }
+
+        window.closeAdmin = function() { populateSelects(); switchScreen('screen-select'); };
+
+        // ─── Info overlay ─────────────────────────────────────────────────────────
+        window.openInfo  = () => document.getElementById('info-overlay').classList.add('show');
+        window.closeInfo = () => document.getElementById('info-overlay').classList.remove('show');
+
+        // ─── Genereer Bingo-kaarten ───────────────────────────────────────────────
+        // "Eerste rij" = 1 lijn compleet (hor/vert/diag), "Zesde rij" = 6 lijnen compleet, enz.
+
+        let genGridSize = 4;
+        let genMode     = 'print';
+        let genAllLines = []; // alle individuele lijnpatronen voor het huidige grid
+
+        const ORDINALS_NL = ['Eerste','Tweede','Derde','Vierde','Vijfde',
+                             'Zesde','Zevende','Achtste','Negende','Tiende','Elfde','Twaalfde'];
+
+        // Geeft alle lijnpatronen terug voor een n×n grid (rijen, kolommen, diagonalen)
+        function buildAllLines(n) {
+            const lines = [];
+            for (let r = 0; r < n; r++)
+                lines.push(Array.from({length:n}, (_,j) => r*n+j));       // rijen
+            for (let c = 0; c < n; c++)
+                lines.push(Array.from({length:n}, (_,j) => j*n+c));       // kolommen
+            lines.push(Array.from({length:n}, (_,i) => i*n+i));           // diag ↘
+            lines.push(Array.from({length:n}, (_,i) => i*n+(n-1-i)));     // diag ↙
+            return lines;  // totaal: 2n+2 lijnen
+        }
+
+        // Moment waarop een specifieke lijn compleet is (= max oproepnr van die cellen)
+        function lineMoment(card, cells, callOrder) {
+            return Math.max(...cells.map(i => callOrder[card[i]] ?? Infinity));
+        }
+
+        // Moment waarop de k-de lijn compleet is (k=1 = eerste bingo, k=2 = tweede, enz.)
+        // Sorteert alle lijn-momenten oplopend en pakt de k-de
+        function nthBingoMoment(card, k, callOrder) {
+            const moments = genAllLines.map(cells => lineMoment(card, cells, callOrder));
+            moments.sort((a, b) => a - b);
+            return moments[k - 1] ?? Infinity;
+        }
+
+        // Moment waarop alle vakjes zijn afgestreept
+        function fullCardMoment(card, callOrder) {
+            return Math.max(...card.map(w => callOrder[w] ?? Infinity));
+        }
+
+        // Alle trigger-momenten voor een kaart (voor maxSim check)
+        function triggerMoments(card, callOrder, cfg) {
+            const moments = new Set();
+            for (const [typeId, tc] of Object.entries(cfg.types)) {
+                if (!tc.active) continue;
+                const m = typeId === 'full'
+                    ? fullCardMoment(card, callOrder)
+                    : nthBingoMoment(card, parseInt(typeId.slice(1)), callOrder);
+                if (isFinite(m)) moments.add(m);
+            }
+            return moments;
+        }
+
+        // Herbouw de Type Bingo-tabel op basis van de huidige gridgrootte
+        function rebuildTypesTable() {
+            genAllLines = buildAllLines(genGridSize);
+            const maxLines = genAllLines.length; // 2n+2
+
+            const tbody = document.getElementById('gen-types-tbody');
+            tbody.innerHTML = '';
+
+            for (let k = 1; k <= maxLines; k++) {
+                const tr = tbody.insertRow();
+                tr.innerHTML = `
+                    <td>${ORDINALS_NL[k-1]} rij
+                        <span style="font-size:.68rem;color:var(--text-muted);">(${k} lijn${k!==1?'en':''} vol)</span>
+                    </td>
+                    <td style="text-align:center;">
+                        <input type="checkbox" class="gen-type-cb" data-type="n${k}" onchange="toggleMinField(this)">
+                    </td>
+                    <td>
+                        <input type="number" id="min-n${k}" min="1" placeholder="–" disabled
+                               style="width:78px!important;padding:5px 7px!important;margin:0!important;font-size:.8rem!important;">
+                    </td>`;
+            }
+            // Volle kaart
+            const trFull = tbody.insertRow();
+            trFull.innerHTML = `
+                <td>Volle kaart</td>
+                <td style="text-align:center;">
+                    <input type="checkbox" class="gen-type-cb" data-type="full" onchange="toggleMinField(this)">
+                </td>
+                <td>
+                    <input type="number" id="min-full" min="1" placeholder="–" disabled
+                           style="width:78px!important;padding:5px 7px!important;margin:0!important;font-size:.8rem!important;">
+                </td>`;
+        }
+
+        window.setGridSize = function(size) {
+            genGridSize = size;
+            document.querySelectorAll('.gen-tog-btn').forEach(b => {
+                if (b.dataset.val === '4' || b.dataset.val === '5')
+                    b.classList.toggle('active', b.dataset.val === String(size));
+            });
+            rebuildTypesTable();
+            document.getElementById('gen-words-hint').textContent = `(min. ${size*size} woorden)`;
+        };
+
+        window.setGenMode = function(mode) {
+            genMode = mode;
+            document.querySelectorAll('.gen-tog-btn').forEach(b => {
+                if (b.dataset.val === 'print' || b.dataset.val === 'online')
+                    b.classList.toggle('active', b.dataset.val === mode);
+            });
+            updateAntalVis();
+        };
+
+        function updateAntalVis() {
+            const orderKnown = document.getElementById('gen-order-known').checked;
+            const show = genMode === 'print' || (genMode === 'online' && orderKnown);
+            document.getElementById('gen-antal-wrap').style.display = show ? 'flex' : 'none';
+        }
+
+        window.onOrderKnownChange = function() {
+            const on = document.getElementById('gen-order-known').checked;
+            document.getElementById('gen-config-panel').style.display = on ? 'block' : 'none';
+            updateAntalVis();
+        };
+
+        window.toggleMinField = function(cb) {
+            const inp = document.getElementById('min-' + cb.dataset.type);
+            if (!inp) return;
+            inp.disabled = !cb.checked;
+            if (!cb.checked) inp.value = '';
+        };
+
+        window.toggleMaxBingo = function() {
+            const on  = document.getElementById('gen-max-enabled').checked;
+            const inp = document.getElementById('gen-max-bingo');
+            inp.disabled = !on;
+            inp.style.opacity = on ? '1' : '0.35';
+        };
+
+        // Kies n willekeurige woorden uit de pool (met herhaling als pool < n)
+        function pickRandom(words, n) {
+            let pool = [...words];
+            while (pool.length < n) pool = pool.concat(pool);
+            const result = [];
+            for (let i = 0; i < n; i++) {
+                const idx = Math.floor(Math.random() * pool.length);
+                result.push(pool.splice(idx, 1)[0]);
+            }
+            return result;
+        }
+
+        // Valideer een kandidaat-kaart tegen alle constraints
+        function isValidCard(card, callOrder, cfg, existingSets, bingoCounts) {
+            if (cfg.orderKnown) {
+                for (const [typeId, tc] of Object.entries(cfg.types)) {
+                    if (!tc.active || !tc.minNum) continue;
+                    const m = typeId === 'full'
+                        ? fullCardMoment(card, callOrder)
+                        : nthBingoMoment(card, parseInt(typeId.slice(1)), callOrder);
+                    if (m < tc.minNum) return false;
+                }
+            }
+            if (cfg.noSame) {
+                if (existingSets.has([...card].sort().join('\x00'))) return false;
+            }
+            if (cfg.orderKnown && cfg.maxSim > 0) {
+                for (const m of triggerMoments(card, callOrder, cfg)) {
+                    if ((bingoCounts[m] || 0) + 1 > cfg.maxSim) return false;
+                }
+            }
+            return true;
+        }
+
+        // Concrete adviezen bij mislukken
+        function buildAdvice(words, cfg, failedAt) {
+            const N = words.length;
+            const n = genGridSize;
+            const maxLines = genAllLines.length;
+            const tips = [];
+
+            if (cfg.orderKnown) {
+                for (const [typeId, tc] of Object.entries(cfg.types)) {
+                    if (!tc.active || !tc.minNum) continue;
+                    let expected;
+                    if (typeId === 'full') {
+                        expected = Math.round(N * 0.94);
+                    } else {
+                        const k = parseInt(typeId.slice(1));
+                        // k-de bingo valt ruwweg op: N · (k + n - 1) / (maxLines + n)
+                        expected = Math.round(N * (k + n - 1) / (maxLines + n));
+                    }
+                    if (tc.minNum > expected) {
+                        const label = typeId === 'full' ? 'Volle kaart' : `${ORDINALS_NL[parseInt(typeId.slice(1))-1]} rij`;
+                        tips.push(`"${label}": min. ${tc.minNum} is te streng (schatting ~${expected}). Probeer ≤&nbsp;${Math.round(expected * 0.85)}.`);
+                    }
+                }
+                if (cfg.maxSim > 0) {
+                    const activeCount = Object.values(cfg.types).filter(t => t.active).length;
+                    const rough = Math.ceil(failedAt * activeCount / N) + 1;
+                    if (rough > cfg.maxSim)
+                        tips.push(`"Max tegelijk bingo" ${cfg.maxSim} is te laag. Met ${failedAt} kaarten en ${activeCount} actieve types, probeer&nbsp;${rough}.`);
+                }
+            }
+            if (N < n * n * 2)
+                tips.push(`Meer woorden helpt: nu ${N}, ideaal ≥&nbsp;${n*n*2}.`);
+            if (!tips.length)
+                tips.push('Versoepel de min-nummers, verhoog max-tegelijk-bingo, of voeg meer woorden toe.');
+            return tips;
+        }
+
+        window.generateBingoCards = async function() {
+            const words = document.getElementById('gen-words').value
+                          .split('\n').map(w => w.trim()).filter(Boolean);
+            const cellCount = genGridSize * genGridSize;
+
+            if (words.length < cellCount) {
+                showGenErr(`Minimaal ${cellCount} woorden nodig voor ${genGridSize}×${genGridSize}. Nu: ${words.length}.`);
+                return;
+            }
+
+            const orderKnown = document.getElementById('gen-order-known').checked;
+            const showAntal  = genMode === 'print' || (genMode === 'online' && orderKnown);
+            const numCards   = showAntal
+                ? Math.max(1, Math.min(500, parseInt(document.getElementById('gen-num-cards').value) || 10))
+                : 1;
+
+            const callOrder = {};
+            words.forEach((w, i) => { callOrder[w] = i + 1; });
+
+            const cfg = { orderKnown, noSame: true, maxSim: 0, types: {} };
+            if (orderKnown) {
+                cfg.noSame = document.getElementById('gen-no-same').checked;
+                if (document.getElementById('gen-max-enabled').checked)
+                    cfg.maxSim = parseInt(document.getElementById('gen-max-bingo').value) || 2;
+                document.querySelectorAll('.gen-type-cb').forEach(cb => {
+                    const id  = cb.dataset.type;
+                    const inp = document.getElementById('min-' + id);
+                    cfg.types[id] = {
+                        active: cb.checked,
+                        minNum: cb.checked && inp?.value ? parseInt(inp.value) : 0,
+                    };
+                });
+            }
+
+            document.getElementById('gen-progress').style.display = 'block';
+            document.getElementById('gen-error').style.display    = 'none';
+            document.getElementById('gen-output').style.display   = 'none';
+            await new Promise(r => setTimeout(r, 15));
+
+            const MAX_TRIES    = 8000;
+            const cards        = [];
+            const existingSets = new Set();
+            const bingoCounts  = {};
+
+            try {
+                for (let c = 0; c < numCards; c++) {
+                    if (c % 20 === 0) {
+                        document.getElementById('gen-prog-txt').textContent = `${c}/${numCards}`;
+                        await new Promise(r => setTimeout(r, 0));
+                    }
+                    let card = null;
+                    for (let t = 0; t < MAX_TRIES; t++) {
+                        const cand = pickRandom(words, cellCount);
+                        if (isValidCard(cand, callOrder, cfg, existingSets, bingoCounts)) {
+                            card = cand; break;
+                        }
+                    }
+                    if (!card) {
+                        const tips = buildAdvice(words, cfg, c + 1);
+                        showGenErr(
+                            `Kon kaart #${c+1} niet genereren na ${MAX_TRIES} pogingen.<br><br>` +
+                            `<strong>Suggesties:</strong><br>` +
+                            tips.map(t => '• ' + t).join('<br>')
+                        );
+                        document.getElementById('gen-progress').style.display = 'none';
+                        return;
+                    }
+                    cards.push(card);
+                    if (cfg.noSame) existingSets.add([...card].sort().join('\x00'));
+                    if (orderKnown && cfg.maxSim > 0) {
+                        for (const m of triggerMoments(card, callOrder, cfg))
+                            bingoCounts[m] = (bingoCounts[m] || 0) + 1;
+                    }
+                }
+            } catch(e) {
+                showGenErr('Fout: ' + e.message);
+                document.getElementById('gen-progress').style.display = 'none';
+                return;
+            }
+
+            document.getElementById('gen-progress').style.display = 'none';
+            renderGenCards(cards);
+        };
+
+        function showGenErr(html) {
+            const el = document.getElementById('gen-error');
+            el.innerHTML = '⚠️ ' + html;
+            el.style.display = 'block';
+        }
+
+        function renderGenCards(cards) {
+            const container = document.getElementById('gen-cards-container');
+            container.innerHTML = '';
+            const n = genGridSize;
+            cards.forEach((card, i) => {
+                const el   = document.createElement('div');
+                el.className = 'gen-card';
+                const grid = document.createElement('div');
+                grid.className = 'gen-card-grid';
+                grid.style.gridTemplateColumns = `repeat(${n},1fr)`;
+                card.forEach(word => {
+                    const cell = document.createElement('div');
+                    cell.className = 'gen-card-cell';
+                    cell.textContent = word;
+                    grid.appendChild(cell);
+                });
+                el.innerHTML = `<div class="gen-card-title">Kaart ${i+1}</div>`;
+                el.appendChild(grid);
+                container.appendChild(el);
+            });
+            const count = cards.length;
+            document.getElementById('gen-output-title').textContent =
+                `${count} kaart${count !== 1 ? 'en' : ''} gegenereerd`;
+            document.getElementById('gen-print-btn').style.display = genMode === 'print' ? '' : 'none';
+            document.getElementById('gen-output').style.display = 'block';
+        }
+
+        window.printBingoCards = function() {
+            const cards = document.querySelectorAll('.gen-card');
+            if (!cards.length) return;
+            const n  = genGridSize;
+            const fs = n === 5 ? '6.5' : '7.5';
+            const mh = n === 5 ? '18'  : '22';
+            let rows = '';
+            cards.forEach(card => {
+                const t  = card.querySelector('.gen-card-title').textContent;
+                const cs = [...card.querySelectorAll('.gen-card-cell')]
+                    .map(c => `<div class="c">${c.textContent}</div>`).join('');
+                rows += `<div class="card"><div class="ct">${t}</div>` +
+                        `<div class="cg" style="grid-template-columns:repeat(${n},1fr)">${cs}</div></div>`;
+            });
+            const win = window.open('', '_blank');
+            win.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8">
+<style>
+body{font-family:Arial,sans-serif;margin:0;padding:8mm;background:#fff;color:#000;}
+h1{font-size:13pt;text-align:center;margin-bottom:6mm;}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:6mm;}
+.card{border:1px solid #bbb;border-radius:5px;padding:6px;page-break-inside:avoid;}
+.ct{font-size:8pt;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#555;margin-bottom:4px;}
+.cg{display:grid;gap:3px;}
+.c{border:1px solid #ddd;border-radius:3px;padding:3px;text-align:center;font-size:${fs}pt;
+   min-height:${mh}px;display:flex;align-items:center;justify-content:center;
+   word-break:break-word;hyphens:auto;line-height:1.2;}
+@media print{@page{size:A4;margin:10mm;}}
+</style></head><body>
+<h1>Bingo-kaarten</h1>
+<div class="grid">${rows}</div>
+<script>window.onload=()=>window.print();<\/script>
+</body></html>`);
+            win.document.close();
+        };
+
+        // Initialiseer tabel bij laden
+        rebuildTypesTable();
+
+        // ─── Seeded RNG ───────────────────────────────────────────────────────────
+        function mulberry32(seed) {
+            return function() {
+                seed |= 0; seed = seed + 0x6D2B79F5 | 0;
+                let t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+                t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+                return ((t ^ t >>> 14) >>> 0) / 4294967296;
+            };
+        }
+        function seededShuffle(arr, seed) {
+            const rng = mulberry32(seed >>> 0);
+            const a = [...arr];
+            for (let i = a.length - 1; i > 0; i--) {
+                const j = Math.floor(rng() * (i + 1));
+                [a[i], a[j]] = [a[j], a[i]];
+            }
+            return a;
+        }
+        function strHash(s) {
+            let h = 0x811c9dc5;
+            for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 0x01000193); }
+            return h >>> 0;
+        }
+
+        // ─── Hash routing ─────────────────────────────────────────────────────────
+        const _origSwitchScreen = switchScreen;
+        switchScreen = function(id) {
+            _origSwitchScreen(id);
+            const hash = id.replace('screen-', '');
+            history.replaceState(null, '', window.location.pathname + window.location.search + '#' + hash);
+        };
+        window.goHome = () => switchScreen('screen-home');
+        window.goTo   = (id) => switchScreen(id);
+
+        // ─── Mijn Kaarten (localStorage) ─────────────────────────────────────────
+        function loadMyCards() {
+            try { return JSON.parse(localStorage.getItem('myCards') || '[]'); } catch { return []; }
+        }
+        function saveMyCardsList(arr) { localStorage.setItem('myCards', JSON.stringify(arr)); }
+
+        function addCardSet(title, cards, size, source) {
+            const list = loadMyCards();
+            const cs = { id: 'cs-' + Date.now(), title, cards, size, count: cards.length, source, created: Date.now() };
+            list.unshift(cs);
+            saveMyCardsList(list);
+            return cs;
+        }
+
+        window.deleteCardSet = function(id) {
+            saveMyCardsList(loadMyCards().filter(cs => cs.id !== id));
+            renderMyCards();
+        };
+
+        function renderMyCards() {
+            const list = loadMyCards();
+            const container = document.getElementById('mycards-list');
+            const empty     = document.getElementById('mycards-empty');
+            container.innerHTML = '';
+            if (!list.length) { empty.style.display = 'block'; return; }
+            empty.style.display = 'none';
+            list.forEach(cs => {
+                const d = new Date(cs.created);
+                const dateStr = d.toLocaleDateString('nl-NL', { day:'numeric', month:'short', year:'numeric' });
+                const icon = cs.source === 'spotify' ? '🎵' : '🎲';
+                const div = document.createElement('div');
+                div.className = 'mycard-item';
+                div.innerHTML = `
+                    <div class="mycard-icon">${icon}</div>
+                    <div class="mycard-info">
+                        <div class="mycard-title-text">${cs.title}</div>
+                        <div class="mycard-meta-text">${cs.count} kaart${cs.count !== 1 ? 'en' : ''} · ${cs.size}×${cs.size} · ${dateStr}</div>
+                    </div>
+                    <div class="mycard-actions">
+                        <button class="mycard-btn-play" onclick="playCardSet('${cs.id}')">▶ Spelen</button>
+                        <button class="mycard-btn-del"  onclick="deleteCardSet('${cs.id}')">🗑</button>
+                    </div>`;
+                container.appendChild(div);
+            });
+        }
+
+        // Render mycards when that screen is opened
+        const _origGoTo = window.goTo;
+        window.goTo = function(id) {
+            if (id === 'screen-mycards') renderMyCards();
+            _origGoTo(id);
+        };
+        window.goHome = () => { window.goTo('screen-home'); };
+
+        // Save current generated cards to Mijn Kaarten
+        let _currentGenCards   = [];
+        let _currentGenTitle   = '';
+
+        window.saveCardsToMyCards = function(source) {
+            const cards = source === 'spotify' ? spotifyGeneratedCards : _currentGenCards;
+            if (!cards || !cards.length) { alert('Geen kaarten om op te slaan.'); return; }
+            const n     = source === 'spotify' ? spotifyGridSize_sp : genGridSize;
+            const defaultTitle = source === 'spotify'
+                ? (spotifyPlaylistData?.name || 'Spotify Bingo')
+                : 'Bingo ' + new Date().toLocaleDateString('nl-NL', { day:'numeric', month:'long' });
+            const title = prompt('Naam voor deze kaartset?', defaultTitle);
+            if (title === null) return;
+            addCardSet(title.trim() || defaultTitle, cards, n, source);
+            alert(`${cards.length} kaart${cards.length !== 1 ? 'en' : ''} opgeslagen in Mijn Kaarten!`);
+        };
+
+        // Patch renderGenCards to also store cards in _currentGenCards
+        const _origRenderGenCards = renderGenCards;
+        renderGenCards = function(cards) {
+            _currentGenCards = cards;
+            _origRenderGenCards(cards);
+        };
+
+        // ─── Card picker & Saved game ─────────────────────────────────────────────
+        let _activeCardSet = null;
+        let _activeCardNum = 0;
+        let savedWinningLines = new Set();
+
+        window.playCardSet = function(id) {
+            const list = loadMyCards();
+            _activeCardSet = list.find(cs => cs.id === id);
+            if (!_activeCardSet) return;
+            document.getElementById('cardpicker-title').textContent = _activeCardSet.title;
+            const grid = document.getElementById('cardpicker-grid');
+            grid.innerHTML = '';
+            for (let i = 0; i < _activeCardSet.count; i++) {
+                const btn = document.createElement('button');
+                btn.className = 'cardpicker-btn';
+                btn.textContent = `Kaart ${i + 1}`;
+                const idx = i;
+                btn.onclick = () => pickAndPlayCard(idx);
+                grid.appendChild(btn);
+            }
+            switchScreen('screen-card-picker');
+        };
+
+        window.pickAndPlayCard = function(cardIdx) {
+            _activeCardNum = cardIdx;
+            const cs = _activeCardSet;
+            const words = cs.cards[cardIdx];
+            const n = cs.size;
+
+            document.getElementById('saved-game-title').textContent =
+                `${cs.title} — Kaart ${cardIdx + 1}`;
+
+            const nextBtn = document.getElementById('saved-btn-shuffle');
+            nextBtn.textContent = cardIdx + 1 < cs.count ? '→' : '↩';
+            nextBtn.title = cardIdx + 1 < cs.count ? 'Volgende kaart' : 'Terug naar kaart 1';
+
+            savedWinningLines = new Set();
+            document.getElementById('saved-bingo-lines').innerHTML = '';
+
+            const grid = document.getElementById('saved-bingo-grid');
+            grid.style.gridTemplateColumns = `repeat(${n}, 1fr)`;
+            grid.innerHTML = '';
+            words.forEach(word => {
+                const cell = document.createElement('div');
+                cell.className = 'bingo-cell flash';
+                cell.style.whiteSpace = 'pre-line';
+                cell.innerText = word;
+                cell.onclick = () => toggleSavedCell(cell, n);
+                grid.appendChild(cell);
+            });
+            setTimeout(() => grid.querySelectorAll('.bingo-cell').forEach(c => c.classList.remove('flash')), 500);
+            switchScreen('screen-saved-game');
+        };
+
+        window.savedNextCard = function() {
+            if (!_activeCardSet) return;
+            const next = (_activeCardNum + 1) % _activeCardSet.count;
+            pickAndPlayCard(next);
+        };
+
+        function toggleSavedCell(cell, gridSize) {
+            if (navigator.vibrate) navigator.vibrate(20);
+            cell.classList.toggle('checked');
+            checkSavedBingo(gridSize);
+        }
+
+        function checkSavedBingo(n) {
+            const grid    = document.getElementById('saved-bingo-grid');
+            const cells   = grid.querySelectorAll('.bingo-cell');
+            const linesEl = document.getElementById('saved-bingo-lines');
+            let newBingo  = false;
+
+            const check = (indices, id, cls) => {
+                if (savedWinningLines.has(id)) return;
+                if (indices.every(i => cells[i]?.classList.contains('checked'))) {
+                    savedWinningLines.add(id);
+                    newBingo = true;
+                    const l = document.createElement('div');
+                    l.className = `strike-line ${cls}`;
+                    linesEl.appendChild(l);
+                }
+            };
+
+            for (let i = 0; i < n; i++) {
+                check(Array.from({length:n}, (_,j) => i*n+j), `row-${i}`, `strike-row-${i}`);
+                check(Array.from({length:n}, (_,j) => j*n+i), `col-${i}`, `strike-col-${i}`);
+            }
+            check(Array.from({length:n}, (_,i) => i*n+i),       'diag-1', 'strike-diag-1');
+            check(Array.from({length:n}, (_,i) => i*n+(n-1-i)), 'diag-2', 'strike-diag-2');
+
+            if (newBingo) {
+                if (navigator.vibrate) navigator.vibrate([100,50,100]);
+                document.getElementById('bingo-win-msg').innerText =
+                    winMessages[Math.floor(Math.random() * winMessages.length)];
+                document.getElementById('bingo-overlay').classList.add('show');
+            }
+        }
+
+        // ─── Spotify PKCE ─────────────────────────────────────────────────────────
+        let spotifyPlaylistData  = null;
+        let spotifyGridSize_sp   = 4;
+        let spotifyGeneratedCards = [];
+
+        function spotifyGetRedirectURI() {
+            return window.location.origin + window.location.pathname;
+        }
+
+        window.spotifySaveClientId = function() {
+            const v = document.getElementById('spotify-client-id').value.trim();
+            if (v) localStorage.setItem('spotifyClientId', v);
+        };
+
+        async function generateCodeVerifier() {
+            const a = new Uint8Array(32); crypto.getRandomValues(a);
+            return btoa(String.fromCharCode(...a)).replace(/\+/g,'-').replace(/\//g,'_').replace(/=/g,'');
+        }
+        async function generateCodeChallenge(v) {
+            const d = new TextEncoder().encode(v);
+            const h = await crypto.subtle.digest('SHA-256', d);
+            return btoa(String.fromCharCode(...new Uint8Array(h))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=/g,'');
+        }
+
+        function showSpotifyStatus(msg, type) {
+            const el = document.getElementById('spotify-status');
+            el.className = 'spotify-status-box ' + (type || 'loading');
+            el.textContent = msg;
+            el.style.display = 'block';
+        }
+
+        function spotifyExtractPlaylistId(url) {
+            const m = (url || '').match(/playlist\/([A-Za-z0-9]+)/);
+            return m ? m[1] : null;
+        }
+
+        window.spotifyConnect = async function() {
+            const clientId   = document.getElementById('spotify-client-id').value.trim();
+            const playlistUrl = document.getElementById('spotify-playlist-url').value.trim();
+            if (!clientId)   { showSpotifyStatus('Voer eerst je Spotify Client ID in.', 'error'); return; }
+            const playlistId = spotifyExtractPlaylistId(playlistUrl);
+            if (!playlistId) { showSpotifyStatus('Geen geldige Spotify afspeellijst URL.', 'error'); return; }
+
+            sessionStorage.setItem('spotifyClientId',   clientId);
+            sessionStorage.setItem('spotifyPlaylistId', playlistId);
+            localStorage.setItem('spotifyClientId', clientId);
+
+            const verifier  = await generateCodeVerifier();
+            const challenge = await generateCodeChallenge(verifier);
+            sessionStorage.setItem('spotifyVerifier', verifier);
+
+            const state = 'bgo-' + Math.random().toString(36).slice(2);
+            sessionStorage.setItem('spotifyState', state);
+
+            const params = new URLSearchParams({
+                client_id: clientId,
+                response_type: 'code',
+                redirect_uri: spotifyGetRedirectURI(),
+                code_challenge_method: 'S256',
+                code_challenge: challenge,
+                state,
+                scope: 'playlist-read-private playlist-read-collaborative',
+            });
+            window.location.href = 'https://accounts.spotify.com/authorize?' + params;
+        };
+
+        async function spotifyHandleCallback() {
+            const params = new URLSearchParams(window.location.search);
+            const code   = params.get('code');
+            const state  = params.get('state');
+            const error  = params.get('error');
+            if (!code && !error) return;
+
+            history.replaceState(null, '', window.location.pathname + '#spotify');
+
+            if (error) {
+                switchScreen('screen-spotify');
+                showSpotifyStatus('Spotify autorisatie geweigerd: ' + error, 'error');
+                return;
+            }
+            if (state !== sessionStorage.getItem('spotifyState')) {
+                switchScreen('screen-spotify');
+                showSpotifyStatus('Ongeldige state. Probeer opnieuw.', 'error');
+                return;
+            }
+
+            switchScreen('screen-spotify');
+            showSpotifyStatus('⏳ Verbinding maken met Spotify…', 'loading');
+
+            const verifier    = sessionStorage.getItem('spotifyVerifier');
+            const clientId    = sessionStorage.getItem('spotifyClientId');
+            const playlistId  = sessionStorage.getItem('spotifyPlaylistId');
+
+            const ciInput = document.getElementById('spotify-client-id');
+            if (ciInput && clientId) ciInput.value = clientId;
+
+            try {
+                const tr = await fetch('https://accounts.spotify.com/api/token', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: new URLSearchParams({
+                        grant_type: 'authorization_code', code,
+                        redirect_uri: spotifyGetRedirectURI(),
+                        client_id: clientId, code_verifier: verifier,
+                    }),
+                });
+                const td = await tr.json();
+                if (!tr.ok) throw new Error(td.error_description || td.error);
+                sessionStorage.setItem('spotifyToken', td.access_token);
+                await spotifyLoadPlaylistById(td.access_token, playlistId);
+            } catch(e) {
+                showSpotifyStatus('Fout bij verbinden: ' + e.message, 'error');
+            }
+        }
+
+        async function spotifyLoadPlaylistById(token, playlistId) {
+            showSpotifyStatus('⏳ Afspeellijst ophalen…', 'loading');
+            try {
+                const plRes = await fetch(
+                    `https://api.spotify.com/v1/playlists/${playlistId}?fields=name,images,tracks.total`,
+                    { headers: { Authorization: 'Bearer ' + token } }
+                );
+                if (!plRes.ok) throw new Error('Afspeellijst niet gevonden (status ' + plRes.status + ')');
+                const pl = await plRes.json();
+
+                let tracks = [], url =
+                    `https://api.spotify.com/v1/playlists/${playlistId}/tracks?limit=100` +
+                    `&fields=next,items(track(name,artists(name),is_local))`;
+                while (url) {
+                    const r = await fetch(url, { headers: { Authorization: 'Bearer ' + token } });
+                    if (!r.ok) throw new Error('Fout bij ophalen nummers');
+                    const d = await r.json();
+                    tracks = tracks.concat(d.items.filter(i => i.track && !i.track.is_local));
+                    url = d.next;
+                }
+
+                spotifyPlaylistData = {
+                    id: playlistId,
+                    name: pl.name,
+                    image: pl.images?.[0]?.url || '',
+                    tracks: tracks.map(i => ({ name: i.track.name, artist: i.track.artists?.[0]?.name || '' }))
+                };
+                document.getElementById('spotify-status').style.display = 'none';
+                renderSpotifyStep2();
+            } catch(e) {
+                showSpotifyStatus('Fout: ' + e.message, 'error');
+            }
+        }
+
+        function renderSpotifyStep2() {
+            const pl = spotifyPlaylistData;
+            document.getElementById('spotify-pl-name').textContent = pl.name;
+            document.getElementById('spotify-pl-meta').textContent = pl.tracks.length + ' nummers';
+            const img = document.getElementById('spotify-pl-img');
+            img.src = pl.image; img.style.display = pl.image ? '' : 'none';
+
+            const preview = document.getElementById('spotify-tracks-preview');
+            preview.innerHTML = '';
+            pl.tracks.slice(0, 50).forEach((t, i) => {
+                const row = document.createElement('div');
+                row.className = 'spotify-track-row';
+                row.innerHTML =
+                    `<span class="spotify-track-num">${i+1}</span>` +
+                    `<span class="spotify-track-name">${t.name}</span>` +
+                    `<span class="spotify-track-artist">${t.artist}</span>`;
+                preview.appendChild(row);
+            });
+            if (pl.tracks.length > 50) {
+                const more = document.createElement('div');
+                more.style.cssText = 'text-align:center;color:var(--text-muted);font-size:.72rem;padding:4px 0;';
+                more.textContent = `+ ${pl.tracks.length - 50} meer nummers`;
+                preview.appendChild(more);
+            }
+            document.getElementById('spotify-step1').style.display = 'none';
+            document.getElementById('spotify-step2').style.display = 'block';
+            document.getElementById('spotify-step3').style.display = 'none';
+        }
+
+        window.setSpotifyGrid = function(n) {
+            spotifyGridSize_sp = n;
+            document.querySelectorAll('[data-spval]').forEach(b =>
+                b.classList.toggle('active', b.dataset.spval === String(n)));
+        };
+
+        window.spotifyReset = function() {
+            spotifyPlaylistData = null;
+            document.getElementById('spotify-step1').style.display = 'block';
+            document.getElementById('spotify-step2').style.display = 'none';
+            document.getElementById('spotify-step3').style.display = 'none';
+            document.getElementById('spotify-status').style.display = 'none';
+        };
+
+        window.spotifyShowStep2 = function() {
+            document.getElementById('spotify-step2').style.display = 'block';
+            document.getElementById('spotify-step3').style.display = 'none';
+        };
+
+        window.generateSpotifyCards = async function() {
+            const pl = spotifyPlaylistData;
+            if (!pl) return;
+            const includeArtist = document.getElementById('spotify-include-artist').checked;
+            const words = pl.tracks.map(t => includeArtist && t.artist ? t.name + '\n' + t.artist : t.name);
+            const n = spotifyGridSize_sp, cellCount = n * n;
+            const numCards = Math.max(1, Math.min(200,
+                parseInt(document.getElementById('spotify-num-cards').value) || 10));
+
+            const errEl = document.getElementById('spotify-gen-error');
+            if (words.length < cellCount) {
+                errEl.textContent = `⚠️ Minimaal ${cellCount} nummers nodig voor ${n}×${n}. Lijst heeft er ${words.length}.`;
+                errEl.style.display = 'block'; return;
+            }
+            errEl.style.display = 'none';
+            document.getElementById('spotify-gen-progress').style.display = 'block';
+            await new Promise(r => setTimeout(r, 15));
+
+            const cards = [], seed0 = strHash(pl.id);
+            for (let c = 0; c < numCards; c++) {
+                if (c % 20 === 0) {
+                    document.getElementById('spotify-gen-prog-txt').textContent = `${c}/${numCards}`;
+                    await new Promise(r => setTimeout(r, 0));
+                }
+                cards.push(seededShuffle(words, seed0 + c * 1000003).slice(0, cellCount));
+            }
+            document.getElementById('spotify-gen-progress').style.display = 'none';
+            spotifyGeneratedCards = cards;
+
+            const container = document.getElementById('spotify-cards-container');
+            container.innerHTML = '';
+            cards.forEach((card, i) => {
+                const el = document.createElement('div'); el.className = 'gen-card';
+                const grid = document.createElement('div');
+                grid.className = 'gen-card-grid';
+                grid.style.gridTemplateColumns = `repeat(${n},1fr)`;
+                card.forEach(w => {
+                    const cell = document.createElement('div');
+                    cell.className = 'gen-card-cell'; cell.style.whiteSpace = 'pre-line';
+                    cell.textContent = w; grid.appendChild(cell);
+                });
+                el.innerHTML = `<div class="gen-card-title">Kaart ${i+1}</div>`;
+                el.appendChild(grid); container.appendChild(el);
+            });
+            document.getElementById('spotify-output-title').textContent =
+                `${numCards} kaart${numCards !== 1 ? 'en' : ''} gegenereerd`;
+            document.getElementById('spotify-step2').style.display = 'none';
+            document.getElementById('spotify-step3').style.display = 'block';
+        };
+
+        // ─── Init: restore client ID, show redirect URI, handle OAuth callback ────
+        (function initExtras() {
+            // Fill stored Client ID
+            const storedId = localStorage.getItem('spotifyClientId');
+            const ciEl = document.getElementById('spotify-client-id');
+            if (storedId && ciEl) ciEl.value = storedId;
+
+            // Show redirect URI in setup box
+            const uriEl = document.getElementById('spotify-redirect-uri-display');
+            if (uriEl) uriEl.textContent = spotifyGetRedirectURI();
+
+            // Handle Spotify OAuth callback
+            if (window.location.search.includes('code=') || window.location.search.includes('error=')) {
+                spotifyHandleCallback();
+            } else {
+                // Restore screen from hash
+                const hash = window.location.hash.replace('#', '');
+                const knownScreens = ['home','select','game','admin','generate','mycards',
+                                      'spotify','scenario','wk','card-picker','saved-game'];
+                if (hash && knownScreens.includes(hash)) {
+                    // will be overridden by initFirebase → switchScreen('screen-home') unless we delay
+                    sessionStorage.setItem('restoreScreen', 'screen-' + hash);
+                }
+            }
+        })();
+
+        // ─── Theme toggle ────────────────────────────────────────────────────────
+        window.toggleTheme = function() {
+            const isLight = document.body.classList.toggle('light');
+            document.getElementById('btn-theme-toggle').textContent = isLight ? '🌙' : '☀️';
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+        };
+        (function initTheme() {
+            if (localStorage.getItem('theme') === 'light') {
+                document.body.classList.add('light');
+                const btn = document.getElementById('btn-theme-toggle');
+                if (btn) btn.textContent = '🌙';
+            }
+        })();
+
+        // ─── Start ────────────────────────────────────────────────────────────────
+        initFirebase();
+    </script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__Claude_in_Chrome__tabs_context_mcp",
+      "mcp__Claude_in_Chrome__tabs_create_mcp",
+      "mcp__Claude_in_Chrome__navigate",
+      "mcp__Claude_in_Chrome__computer",
+      "mcp__Claude_in_Chrome__get_page_text",
+      "mcp__Claude_in_Chrome__javascript_tool",
+      "Bash(xargs grep *)",
+      "Bash(python3 -c ' *)",
+      "Bash(grep -E \"\\\\.\\(json|js|jsx|ts|tsx|css|scss|html\\)$\")",
+      "Bash(git -C \"C:/Users/joost.vandeven/Documents/21\\) ThuisBingo/dev\" status)"
+    ]
+  }
+}
