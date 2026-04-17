@@ -8,58 +8,73 @@ export async function onRequestGet(context) {
 
     const clientId     = context.env.SPOTIFY_CLIENT_ID;
     const clientSecret = context.env.SPOTIFY_CLIENT_SECRET;
+    const refreshToken = context.env.SPOTIFY_REFRESH_TOKEN;
 
     if (!clientId || !clientSecret) {
         return json({ error: 'Spotify credentials niet geconfigureerd' }, 500);
     }
 
-    // Client Credentials token ophalen
-    const tokenRes = await fetch('https://accounts.spotify.com/api/token', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'Authorization': 'Basic ' + btoa(clientId + ':' + clientSecret),
-        },
-        body: 'grant_type=client_credentials',
-    });
-
-    if (!tokenRes.ok) {
-        const errText = await tokenRes.text();
-        return json({ error: `Token mislukt (${tokenRes.status}): ${errText}` }, 500);
+    // Token ophalen: refresh token (gebruiker) heeft voorrang boven client credentials
+    let access_token;
+    if (refreshToken) {
+        const res = await fetch('https://accounts.spotify.com/api/token', {
+            method: 'POST',
+            headers: {
+                'Content-Type':  'application/x-www-form-urlencoded',
+                'Authorization': 'Basic ' + btoa(clientId + ':' + clientSecret),
+            },
+            body: new URLSearchParams({
+                grant_type:    'refresh_token',
+                refresh_token: refreshToken,
+            }),
+        });
+        if (!res.ok) {
+            const err = await res.text();
+            return json({ error: `Token refresh mislukt (${res.status}): ${err}` }, 500);
+        }
+        access_token = (await res.json()).access_token;
+    } else {
+        const res = await fetch('https://accounts.spotify.com/api/token', {
+            method: 'POST',
+            headers: {
+                'Content-Type':  'application/x-www-form-urlencoded',
+                'Authorization': 'Basic ' + btoa(clientId + ':' + clientSecret),
+            },
+            body: 'grant_type=client_credentials',
+        });
+        if (!res.ok) {
+            const err = await res.text();
+            return json({ error: `Client credentials mislukt (${res.status}): ${err}` }, 500);
+        }
+        access_token = (await res.json()).access_token;
     }
 
-    const tokenData = await tokenRes.json();
-    if (!tokenData.access_token) {
-        return json({ error: 'Geen access_token ontvangen', detail: tokenData }, 500);
+    if (!access_token) {
+        return json({ error: 'Geen access token ontvangen' }, 500);
     }
-    const token = tokenData.access_token;
 
-    // Stap 1: playlist-metadata + eerste 100 tracks via fields-parameter
-    // (vermijdt de /tracks sub-endpoint die 403 geeft)
-    const firstUrl = `https://api.spotify.com/v1/playlists/${playlistId}` +
-        `?fields=name%2Cimages%2Ctracks(items(track(name%2Cartists(name)%2Cis_local))%2Cnext%2Ctotal)`;
-
-    const plRes = await fetch(firstUrl, {
-        headers: { Authorization: 'Bearer ' + token },
-    });
+    // Playlist ophalen
+    const plRes = await fetch(
+        `https://api.spotify.com/v1/playlists/${playlistId}`,
+        { headers: { Authorization: 'Bearer ' + access_token } }
+    );
 
     if (!plRes.ok) {
-        const errText = await plRes.text();
-        const status = plRes.status === 404 ? 404 : 502;
-        return json({ error: `Playlist ophalen mislukt (${plRes.status}): ${errText}` }, status);
+        const err = await plRes.text();
+        return json({ error: `Playlist ophalen mislukt (${plRes.status}): ${err}` }, plRes.status === 404 ? 404 : 502);
     }
 
     const pl = await plRes.json();
 
-    let tracks = (pl.tracks?.items || []).filter(i => i.track?.name && !i.track.is_local);
-    let nextUrl = pl.tracks?.next || null;
+    // Tracks ophalen
+    let tracks = [];
+    let nextUrl = `https://api.spotify.com/v1/playlists/${playlistId}/tracks?limit=100`;
 
-    // Vervolgpagina's ophalen via de next-URL die Spotify zelf aanlevert
     while (nextUrl) {
-        const r = await fetch(nextUrl, { headers: { Authorization: 'Bearer ' + token } });
+        const r = await fetch(nextUrl, { headers: { Authorization: 'Bearer ' + access_token } });
         if (!r.ok) {
-            const errText = await r.text();
-            return json({ error: `Pagina ophalen mislukt (${r.status}): ${errText}` }, 502);
+            const err = await r.text();
+            return json({ error: `Tracks ophalen mislukt (${r.status}): ${err}` }, 502);
         }
         const d = await r.json();
         tracks = tracks.concat((d.items || []).filter(i => i.track?.name && !i.track.is_local));
