@@ -882,13 +882,16 @@
         body.light .wk-match-item:hover { background:white; border-color:rgba(22,163,74,.4); }
 
         .wk-match-teams {
-            display:flex; align-items:center; justify-content:space-between; gap:6px;
+            display:grid; grid-template-columns:1fr auto 1fr;
+            align-items:center; gap:8px;
             font-size:.92rem; font-weight:700; color:var(--text-main);
         }
+        .wk-team1 { text-align:right; }
+        .wk-team2 { text-align:left; }
         .wk-match-vs {
             font-size:.7rem; font-weight:600; color:var(--text-muted);
             padding:2px 7px; background:rgba(255,255,255,.07); border-radius:6px;
-            flex-shrink:0;
+            flex-shrink:0; text-align:center;
         }
         .wk-match-meta {
             font-size:.7rem; color:var(--text-muted); display:flex; gap:8px;
@@ -3663,81 +3666,139 @@ h1{font-size:13pt;text-align:center;margin-bottom:6mm;}
                 woorden:['Afif','Boudiaf','Al-Haydos','Al-Annabi','Muntari','Salmin','Hisham'] },
             'NZL': { naam:'Nieuw-Zeeland', vlag:'🇳🇿', nickname:'All Whites',
                 woorden:['Wood','Wynne','Woud','All Whites','McGlinchey','Just','Papalii'] },
-            'PAK': { naam:'Panama', vlag:'🇵🇦', nickname:'Los Canaleros',
-                woorden:['Fajardo','Davis','Murillo','Los Canaleros','Córdoba','Anderson','Turner'] }
+            'PAN': { naam:'Panama', vlag:'🇵🇦', nickname:'Los Canaleros',
+                woorden:['Fajardo','Davis','Murillo','Los Canaleros','Córdoba','Anderson','Turner'] },
+            'ZAF': { naam:'Zuid-Afrika', vlag:'🇿🇦', nickname:'Bafana Bafana',
+                woorden:['Zwane','Tau','Dolly','Bafana Bafana','Lakay','Williams','Mothwa'] },
+            'BIH': { naam:'Bosnië-Herzegovina', vlag:'🇧🇦', nickname:'Zmajevi',
+                woorden:['Džeko','Pjanić','Hadžiahmetović','Zmajevi','Kolasinac','Sunjic','Šunjić'] },
+            'HAI': { naam:'Haïti', vlag:'🇭🇹', nickname:'Les Grenadiers',
+                woorden:['Nazon','Saintfiet','Les Grenadiers','Placide','Chery','Jean-Baptiste','Remy'] },
+            'CUW': { naam:'Curaçao', vlag:'🇨🇼', nickname:'Matadors',
+                woorden:['Berghuis','Clasie','Martina','Matadors','Hasselbaink','Sulvaran','Cijntje'] },
+            'SWE': { naam:'Zweden', vlag:'🇸🇪', nickname:'Blågult',
+                woorden:['Isak','Kulusevski','Forsberg','Blågult','Ekdal','Olsen','Bergvall'] },
+            'TUN': { naam:'Tunesië', vlag:'🇹🇳', nickname:'Arenden van Carthago',
+                woorden:['Msakni','Sliti','Abdi','Arenden van Carthago','Kechrida','Ben Romdhane','Bronn'] },
+            'CPV': { naam:'Kaapverdië', vlag:'🇨🇻', nickname:'Tubarões Azuis',
+                woorden:['Andrade','Garry Rodrigues','Stopira','Tubarões Azuis','Júnior Alves','Semedo','Lopes'] },
+            'IRQ': { naam:'Irak', vlag:'🇮🇶', nickname:'Leeuwen van Mesopotamië',
+                woorden:['Karimi','Ali Adnan','Bashir','Leeuwen van Mesopotamië','Hamid','Mohanad','Awer Mabil'] },
+            'NOR': { naam:'Noorwegen', vlag:'🇳🇴', nickname:'Viking',
+                woorden:['Haaland','Ødegaard','Sörloth','Viking','Berge','Ajer','Nusa'] },
+            'JOR': { naam:'Jordanië', vlag:'🇯🇴', nickname:'Al-Nashama',
+                woorden:['Al-Nawateer','Baha Faisal','Al-Nashama','Noor','Awawdeh','Abdallah Nasib','Shehade'] },
+            'ALG': { naam:'Algerije', vlag:'🇩🇿', nickname:'Les Fennecs',
+                woorden:['Mahrez','Bennacer','Slimani','Les Fennecs','Belaili','Bensebaini','Atal'] },
+            'COD': { naam:'Congo', vlag:'🇨🇩', nickname:'Leoparden',
+                woorden:['Mbokani','Bolasie','Kayembe','Leoparden','Botaka','Luyindama','Meschak Elia'] },
+            'UZB': { naam:'Oezbekistan', vlag:'🇺🇿', nickname:'Oq Burgutlar',
+                woorden:['Shomurodov','Tursunov','Yakhshiboev','Oq Burgutlar','Alijonov','Khamdamov','Jaloliddinov'] }
         };
 
-        // Correctie: Panama correcte sleutel
-        WK_TEAMS['PAN'] = WK_TEAMS['PAK'];
-        delete WK_TEAMS['PAK'];
-
-        // Definitieve groepsindeling WK 2026 – alle 48 teams uniek
-        // Indicatieve indeling; exacte loting van december 2025 kan afwijken
+        // Definitieve groepsindeling WK 2026 (bron: KPN/FIFA speelschema)
         const WK_GROEPEN = {
-            'A': { teams: ['USA', 'ARG', 'ECU', 'SVN'] },
-            'B': { teams: ['MEX', 'URU', 'BEL', 'CZE'] },
-            'C': { teams: ['CAN', 'MAR', 'POR', 'SVK'] },
-            'D': { teams: ['BRA', 'JPN', 'ENG', 'ROU'] },
-            'E': { teams: ['COL', 'NGA', 'GER', 'ALB'] },
-            'F': { teams: ['FRA', 'ESP', 'NZL', 'QAT'] },
-            'G': { teams: ['NED', 'SEN', 'CHI', 'AUT'] },
-            'H': { teams: ['KOR', 'SUI', 'CMR', 'POL'] },
-            'I': { teams: ['ITA', 'CRO', 'GHA', 'PAR'] },
-            'J': { teams: ['PAN', 'BOL', 'DEN', 'HUN'] },
-            'K': { teams: ['IRN', 'SAU', 'TUR', 'SCO'] },
-            'L': { teams: ['EGY', 'PER', 'CIV', 'AUS'] }
+            'A': { teams: ['MEX', 'ZAF', 'KOR', 'CZE'] },
+            'B': { teams: ['CAN', 'BIH', 'QAT', 'SUI'] },
+            'C': { teams: ['BRA', 'MAR', 'HAI', 'SCO'] },
+            'D': { teams: ['USA', 'PAR', 'AUS', 'TUR'] },
+            'E': { teams: ['GER', 'CUW', 'CIV', 'ECU'] },
+            'F': { teams: ['NED', 'JPN', 'SWE', 'TUN'] },
+            'G': { teams: ['BEL', 'EGY', 'IRN', 'NZL'] },
+            'H': { teams: ['ESP', 'CPV', 'SAU', 'URU'] },
+            'I': { teams: ['FRA', 'SEN', 'IRQ', 'NOR'] },
+            'J': { teams: ['AUT', 'JOR', 'ARG', 'ALG'] },
+            'K': { teams: ['POR', 'COD', 'UZB', 'COL'] },
+            'L': { teams: ['ENG', 'CRO', 'GHA', 'PAN'] }
         };
 
-        // Genereer alle groepsfase-wedstrijden (elke combinatie van 2 teams per groep = 3 wedstrijden)
-        // Datums/steden zijn indicatief – exacte schema nog niet volledig gepubliceerd
-        const WK_STEDEN = {
-            'A': ['New York/New Jersey','Los Angeles','Dallas'],
-            'B': ['Guadalajara','Mexico-Stad','Monterrey'],
-            'C': ['Toronto','Vancouver','Guadalajara'],
-            'D': ['Dallas','Houston','Atlanta'],
-            'E': ['Chicago','Cincinnati','Kansas City'],
-            'F': ['Miami','Seattle','Los Angeles'],
-            'G': ['Philadelphia','New York/New Jersey','Boston'],
-            'H': ['San Francisco','Los Angeles','Seattle'],
-            'I': ['Houston','Dallas','Kansas City'],
-            'J': ['Guadalajara','Monterrey','Mexico-Stad'],
-            'K': ['Atlanta','Miami','Philadelphia'],
-            'L': ['Los Angeles','San Francisco','Seattle'],
-        };
-
-        function buildGroepswedstrijden() {
-            const wedstrijden = [];
-            const datumOffset = { A:0, B:0, C:0, D:1, E:1, F:1, G:2, H:2, I:2, J:3, K:3, L:3 };
-            const baseDate = new Date(2026, 5, 11); // 11 juni 2026
-
-            Object.entries(WK_GROEPEN).forEach(([poule, data]) => {
-                const teams = data.teams;
-                const steden = WK_STEDEN[poule];
-                const offset = datumOffset[poule];
-                const combos = [[0,1],[0,2],[0,3],[1,2],[1,3],[2,3]];
-                combos.forEach(([i, j], matchIdx) => {
-                    const t1 = teams[i], t2 = teams[j];
-                    const d = new Date(baseDate);
-                    d.setDate(d.getDate() + offset * 1 + Math.floor(matchIdx / 2));
-                    const stad = steden[matchIdx % steden.length];
-                    const datumStr = d.getDate() + ' jun 2026';
-                    const extra = [stad];
-                    if (matchIdx === 0) extra.push('Openingswedstrijd poule ' + poule);
-                    wedstrijden.push({
-                        id: `${poule}${matchIdx+1}`,
-                        fase: 'Groepsfase',
-                        poule,
-                        team1: t1, team2: t2,
-                        datum: datumStr,
-                        stad,
-                        extra
-                    });
-                });
-            });
-            return wedstrijden;
-        }
-
-        const WK_GROEPSWEDSTRIJDEN = buildGroepswedstrijden();
+        // Echte groepsfase-wedstrijden (bron: KPN/FIFA speelschema juni 2026)
+        const WK_GROEPSWEDSTRIJDEN = [
+            // Groep A
+            {id:'A1',fase:'Groepsfase',poule:'A',team1:'MEX',team2:'ZAF',datum:'11 jun',extra:['Opening Groep A']},
+            {id:'A2',fase:'Groepsfase',poule:'A',team1:'KOR',team2:'CZE',datum:'12 jun',extra:[]},
+            {id:'A3',fase:'Groepsfase',poule:'A',team1:'CZE',team2:'ZAF',datum:'18 jun',extra:[]},
+            {id:'A4',fase:'Groepsfase',poule:'A',team1:'MEX',team2:'KOR',datum:'19 jun',extra:[]},
+            {id:'A5',fase:'Groepsfase',poule:'A',team1:'CZE',team2:'MEX',datum:'25 jun',extra:['Simultaan']},
+            {id:'A6',fase:'Groepsfase',poule:'A',team1:'ZAF',team2:'KOR',datum:'25 jun',extra:['Simultaan']},
+            // Groep B
+            {id:'B1',fase:'Groepsfase',poule:'B',team1:'CAN',team2:'BIH',datum:'12 jun',extra:['Opening Groep B','Gastheerland Canada']},
+            {id:'B2',fase:'Groepsfase',poule:'B',team1:'QAT',team2:'SUI',datum:'13 jun',extra:[]},
+            {id:'B3',fase:'Groepsfase',poule:'B',team1:'SUI',team2:'BIH',datum:'18 jun',extra:[]},
+            {id:'B4',fase:'Groepsfase',poule:'B',team1:'CAN',team2:'QAT',datum:'19 jun',extra:[]},
+            {id:'B5',fase:'Groepsfase',poule:'B',team1:'SUI',team2:'CAN',datum:'24 jun',extra:['Simultaan']},
+            {id:'B6',fase:'Groepsfase',poule:'B',team1:'BIH',team2:'QAT',datum:'24 jun',extra:['Simultaan']},
+            // Groep C
+            {id:'C1',fase:'Groepsfase',poule:'C',team1:'BRA',team2:'MAR',datum:'14 jun',extra:['Opening Groep C']},
+            {id:'C2',fase:'Groepsfase',poule:'C',team1:'HAI',team2:'SCO',datum:'14 jun',extra:[]},
+            {id:'C3',fase:'Groepsfase',poule:'C',team1:'SCO',team2:'MAR',datum:'20 jun',extra:[]},
+            {id:'C4',fase:'Groepsfase',poule:'C',team1:'BRA',team2:'HAI',datum:'20 jun',extra:[]},
+            {id:'C5',fase:'Groepsfase',poule:'C',team1:'SCO',team2:'BRA',datum:'25 jun',extra:['Simultaan']},
+            {id:'C6',fase:'Groepsfase',poule:'C',team1:'MAR',team2:'HAI',datum:'25 jun',extra:['Simultaan']},
+            // Groep D
+            {id:'D1',fase:'Groepsfase',poule:'D',team1:'USA',team2:'PAR',datum:'13 jun',extra:['Opening Groep D','Gastheerland VS']},
+            {id:'D2',fase:'Groepsfase',poule:'D',team1:'AUS',team2:'TUR',datum:'14 jun',extra:[]},
+            {id:'D3',fase:'Groepsfase',poule:'D',team1:'USA',team2:'AUS',datum:'19 jun',extra:[]},
+            {id:'D4',fase:'Groepsfase',poule:'D',team1:'TUR',team2:'PAR',datum:'20 jun',extra:[]},
+            {id:'D5',fase:'Groepsfase',poule:'D',team1:'TUR',team2:'USA',datum:'26 jun',extra:['Simultaan']},
+            {id:'D6',fase:'Groepsfase',poule:'D',team1:'PAR',team2:'AUS',datum:'26 jun',extra:['Simultaan']},
+            // Groep E
+            {id:'E1',fase:'Groepsfase',poule:'E',team1:'GER',team2:'CUW',datum:'14 jun',extra:['Opening Groep E']},
+            {id:'E2',fase:'Groepsfase',poule:'E',team1:'CIV',team2:'ECU',datum:'15 jun',extra:[]},
+            {id:'E3',fase:'Groepsfase',poule:'E',team1:'GER',team2:'CIV',datum:'20 jun',extra:[]},
+            {id:'E4',fase:'Groepsfase',poule:'E',team1:'ECU',team2:'CUW',datum:'21 jun',extra:[]},
+            {id:'E5',fase:'Groepsfase',poule:'E',team1:'ECU',team2:'GER',datum:'25 jun',extra:['Simultaan']},
+            {id:'E6',fase:'Groepsfase',poule:'E',team1:'CUW',team2:'CIV',datum:'25 jun',extra:['Simultaan']},
+            // Groep F
+            {id:'F1',fase:'Groepsfase',poule:'F',team1:'NED',team2:'JPN',datum:'14 jun',extra:['Opening Groep F','Oranje op het WK']},
+            {id:'F2',fase:'Groepsfase',poule:'F',team1:'SWE',team2:'TUN',datum:'15 jun',extra:[]},
+            {id:'F3',fase:'Groepsfase',poule:'F',team1:'NED',team2:'SWE',datum:'20 jun',extra:[]},
+            {id:'F4',fase:'Groepsfase',poule:'F',team1:'TUN',team2:'JPN',datum:'20 jun',extra:[]},
+            {id:'F5',fase:'Groepsfase',poule:'F',team1:'JPN',team2:'SWE',datum:'26 jun',extra:['Simultaan']},
+            {id:'F6',fase:'Groepsfase',poule:'F',team1:'TUN',team2:'NED',datum:'26 jun',extra:['Simultaan','Oranje moet winnen']},
+            // Groep G
+            {id:'G1',fase:'Groepsfase',poule:'G',team1:'BEL',team2:'EGY',datum:'15 jun',extra:['Opening Groep G']},
+            {id:'G2',fase:'Groepsfase',poule:'G',team1:'IRN',team2:'NZL',datum:'16 jun',extra:[]},
+            {id:'G3',fase:'Groepsfase',poule:'G',team1:'BEL',team2:'IRN',datum:'21 jun',extra:[]},
+            {id:'G4',fase:'Groepsfase',poule:'G',team1:'NZL',team2:'EGY',datum:'22 jun',extra:[]},
+            {id:'G5',fase:'Groepsfase',poule:'G',team1:'EGY',team2:'IRN',datum:'27 jun',extra:['Simultaan']},
+            {id:'G6',fase:'Groepsfase',poule:'G',team1:'NZL',team2:'BEL',datum:'27 jun',extra:['Simultaan']},
+            // Groep H
+            {id:'H1',fase:'Groepsfase',poule:'H',team1:'ESP',team2:'CPV',datum:'15 jun',extra:['Opening Groep H']},
+            {id:'H2',fase:'Groepsfase',poule:'H',team1:'SAU',team2:'URU',datum:'16 jun',extra:[]},
+            {id:'H3',fase:'Groepsfase',poule:'H',team1:'ESP',team2:'SAU',datum:'21 jun',extra:[]},
+            {id:'H4',fase:'Groepsfase',poule:'H',team1:'URU',team2:'CPV',datum:'22 jun',extra:[]},
+            {id:'H5',fase:'Groepsfase',poule:'H',team1:'CPV',team2:'SAU',datum:'27 jun',extra:['Simultaan']},
+            {id:'H6',fase:'Groepsfase',poule:'H',team1:'URU',team2:'ESP',datum:'27 jun',extra:['Simultaan']},
+            // Groep I
+            {id:'I1',fase:'Groepsfase',poule:'I',team1:'FRA',team2:'SEN',datum:'16 jun',extra:['Opening Groep I']},
+            {id:'I2',fase:'Groepsfase',poule:'I',team1:'IRQ',team2:'NOR',datum:'17 jun',extra:[]},
+            {id:'I3',fase:'Groepsfase',poule:'I',team1:'FRA',team2:'IRQ',datum:'22 jun',extra:[]},
+            {id:'I4',fase:'Groepsfase',poule:'I',team1:'NOR',team2:'SEN',datum:'23 jun',extra:[]},
+            {id:'I5',fase:'Groepsfase',poule:'I',team1:'NOR',team2:'FRA',datum:'26 jun',extra:['Simultaan']},
+            {id:'I6',fase:'Groepsfase',poule:'I',team1:'SEN',team2:'IRQ',datum:'26 jun',extra:['Simultaan']},
+            // Groep J
+            {id:'J1',fase:'Groepsfase',poule:'J',team1:'AUT',team2:'JOR',datum:'16 jun',extra:['Opening Groep J']},
+            {id:'J2',fase:'Groepsfase',poule:'J',team1:'ARG',team2:'ALG',datum:'17 jun',extra:['Wereldkampioen Argentinië']},
+            {id:'J3',fase:'Groepsfase',poule:'J',team1:'ARG',team2:'AUT',datum:'22 jun',extra:[]},
+            {id:'J4',fase:'Groepsfase',poule:'J',team1:'JOR',team2:'ALG',datum:'23 jun',extra:[]},
+            {id:'J5',fase:'Groepsfase',poule:'J',team1:'ALG',team2:'AUT',datum:'28 jun',extra:['Simultaan']},
+            {id:'J6',fase:'Groepsfase',poule:'J',team1:'JOR',team2:'ARG',datum:'28 jun',extra:['Simultaan']},
+            // Groep K
+            {id:'K1',fase:'Groepsfase',poule:'K',team1:'POR',team2:'COD',datum:'17 jun',extra:['Opening Groep K']},
+            {id:'K2',fase:'Groepsfase',poule:'K',team1:'UZB',team2:'COL',datum:'18 jun',extra:[]},
+            {id:'K3',fase:'Groepsfase',poule:'K',team1:'POR',team2:'UZB',datum:'23 jun',extra:[]},
+            {id:'K4',fase:'Groepsfase',poule:'K',team1:'COL',team2:'COD',datum:'24 jun',extra:[]},
+            {id:'K5',fase:'Groepsfase',poule:'K',team1:'COL',team2:'POR',datum:'28 jun',extra:['Simultaan']},
+            {id:'K6',fase:'Groepsfase',poule:'K',team1:'COD',team2:'UZB',datum:'28 jun',extra:['Simultaan']},
+            // Groep L
+            {id:'L1',fase:'Groepsfase',poule:'L',team1:'ENG',team2:'CRO',datum:'17 jun',extra:['Opening Groep L']},
+            {id:'L2',fase:'Groepsfase',poule:'L',team1:'GHA',team2:'PAN',datum:'18 jun',extra:[]},
+            {id:'L3',fase:'Groepsfase',poule:'L',team1:'ENG',team2:'GHA',datum:'23 jun',extra:[]},
+            {id:'L4',fase:'Groepsfase',poule:'L',team1:'PAN',team2:'CRO',datum:'24 jun',extra:[]},
+            {id:'L5',fase:'Groepsfase',poule:'L',team1:'PAN',team2:'ENG',datum:'27 jun',extra:['Simultaan']},
+            {id:'L6',fase:'Groepsfase',poule:'L',team1:'CRO',team2:'GHA',datum:'27 jun',extra:['Simultaan']},
+        ];
 
         const WK_KNOCKOUT_WEDSTRIJDEN = [
             { id:'R32-1',  fase:'Ronde van 32', team1:'TBD', team2:'TBD', datum:'', stad:'', extra:['Ronde van 32'] },
@@ -3774,8 +3835,6 @@ h1{font-size:13pt;text-align:center;margin-bottom:6mm;}
             { id:'FIN',    fase:'Finale', team1:'TBD', team2:'TBD', datum:'19 jul 2026', stad:'New York/New Jersey', extra:['Finale','WK-eindstrijd','MetLife Stadium','Winnaar WK 2026'] },
         ];
 
-        // Corrigeer finaledata (finale is 19 juli 2026 in MetLife)
-        WK_KNOCKOUT_WEDSTRIJDEN[WK_KNOCKOUT_WEDSTRIJDEN.length-1].datum = '19 jul 2026';
 
         // ─── WK State ────────────────────────────────────────────────────────────
         let wkCurrentWords    = [];
@@ -3790,7 +3849,7 @@ h1{font-size:13pt;text-align:center;margin-bottom:6mm;}
         function getTeamLabel(code) {
             const t = WK_TEAMS[code];
             if (!t) return code;
-            return (t.vlag || '⚽') + ' ' + t.naam;
+            return t.naam;
         }
 
         function getWordPool(matchId) {
@@ -3890,9 +3949,9 @@ h1{font-size:13pt;text-align:center;margin-bottom:6mm;}
             item.onclick = () => startWkGame(match.id);
             item.innerHTML =
                 `<div class="wk-match-teams">
-                    <span>${t1Label}</span>
+                    <span class="wk-team1">${t1Label}</span>
                     <span class="wk-match-vs">vs</span>
-                    <span>${t2Label}</span>
+                    <span class="wk-team2">${t2Label}</span>
                 </div>
                 <div class="wk-match-meta">
                     ${match.datum ? `<span>📅 ${match.datum}</span>` : ''}
