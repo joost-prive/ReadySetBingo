@@ -960,8 +960,15 @@
             align-items:center; gap:8px;
             font-size:.92rem; font-weight:700; color:var(--text-main);
         }
-        .wk-team1 { text-align:right; }
-        .wk-team2 { text-align:left; }
+        .wk-team1 { text-align:right; display:flex; align-items:center; justify-content:flex-end; gap:6px; }
+        .wk-team2 { text-align:left;  display:flex; align-items:center; justify-content:flex-start; gap:6px; }
+        .wk-code {
+            font-size:.58rem; font-weight:800; letter-spacing:.5px;
+            background:var(--wk-green-bg); color:var(--wk-green-light);
+            border:1px solid var(--wk-green-border);
+            padding:1px 5px; border-radius:4px; flex-shrink:0;
+        }
+        body.light .wk-code { background:rgba(22,163,74,.08); color:var(--wk-green); }
         .wk-match-vs {
             font-size:.7rem; font-weight:600; color:var(--text-muted);
             padding:2px 7px; background:rgba(255,255,255,.07); border-radius:6px;
@@ -1605,8 +1612,8 @@
                 <button class="btn-back" onclick="goHome()" style="position:absolute;top:14px;left:14px;background:rgba(255,255,255,.15);border-color:rgba(255,255,255,.3);color:white;">← Terug</button>
                 <div class="wk-banner-badge">FIFA World Cup 2026</div>
                 <h2 class="wk-banner-title">WK <span>Bingo</span> 2026</h2>
-                <p class="wk-banner-sub">🇺🇸 Verenigde Staten &nbsp;·&nbsp; 🇨🇦 Canada &nbsp;·&nbsp; 🇲🇽 Mexico &nbsp;·&nbsp; Juni – Juli 2026</p>
-                <div class="wk-banner-flags">🇳🇱 🇧🇷 🇫🇷 🇩🇪 🇦🇷 🇪🇸 🏴󠁧󠁢󠁥󠁮󠁧󠁿 🇧🇪 🇵🇹</div>
+                <p class="wk-banner-sub">Verenigde Staten &nbsp;·&nbsp; Canada &nbsp;·&nbsp; Mexico &nbsp;·&nbsp; Juni – Juli 2026</p>
+                <div class="wk-banner-flags">⚽ NED &nbsp;·&nbsp; BRA &nbsp;·&nbsp; FRA &nbsp;·&nbsp; GER &nbsp;·&nbsp; ARG &nbsp;·&nbsp; ESP &nbsp;·&nbsp; ENG &nbsp;·&nbsp; BEL &nbsp;·&nbsp; POR ⚽</div>
             </div>
 
             <!-- Intro -->
@@ -3938,7 +3945,7 @@ h1{font-size:13pt;text-align:center;margin-bottom:6mm;}
         function getTeamLabel(code) {
             const t = WK_TEAMS[code];
             if (!t) return code;
-            return (t.vlag ? t.vlag + ' ' : '') + t.naam;
+            return `<span class="wk-code">${code}</span>${t.naam}`;
         }
 
         function getWordPool(matchId) {
@@ -4028,9 +4035,15 @@ h1{font-size:13pt;text-align:center;margin-bottom:6mm;}
             });
         }
 
+        function getTeamLabelRight(code) {
+            const t = WK_TEAMS[code];
+            if (!t) return code;
+            return `${t.naam}<span class="wk-code">${code}</span>`;
+        }
+
         function buildMatchItem(match) {
             const isTBD = match.team1 === 'TBD';
-            const t1Label = isTBD ? '?' : getTeamLabel(match.team1);
+            const t1Label = isTBD ? '?' : getTeamLabelRight(match.team1);
             const t2Label = isTBD ? '?' : getTeamLabel(match.team2);
 
             const item = document.createElement('div');
