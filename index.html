@@ -353,6 +353,7 @@
             box-shadow:0 0 10px rgba(255,51,51,.6);
             border-radius:99px; opacity:0;
             animation:drawLine .3s forwards ease-out;
+            z-index:5;
         }
         @keyframes drawLine     { from{opacity:0;transform:scaleX(0)} to{opacity:.9;transform:scaleX(1)} }
         @keyframes drawLineVert { from{opacity:0;transform:scaleY(0)} to{opacity:.9;transform:scaleY(1)} }
@@ -982,6 +983,106 @@
         /* Speelscherm header */
         .wk-game-header {
             display:flex; align-items:center; gap:10px; margin-bottom:14px;
+            background: linear-gradient(135deg, rgba(6,40,16,.4) 0%, rgba(21,128,61,.2) 100%);
+            border-radius: 12px; padding: 10px 12px;
+            border: 1px solid var(--wk-green-border);
+        }
+
+        /* WK Game: stadium background */
+        #wk-game {
+            position: relative;
+        }
+        #wk-game .grid-wrapper {
+            border-radius: 16px;
+            overflow: hidden;
+            position: relative;
+        }
+        #wk-game .grid-wrapper::before {
+            content: '';
+            position: absolute; inset: 0; z-index: 0;
+            background-image: url('https://images.unsplash.com/photo-1574629810335-1c4e5d1d3ef3?auto=format&fit=crop&w=1200&q=70');
+            background-size: cover; background-position: center;
+            opacity: 0.35;
+            border-radius: 16px;
+        }
+        #wk-game .bingo-grid {
+            position: relative; z-index: 1;
+        }
+        #wk-bingo-lines {
+            z-index: 6;
+        }
+        #wk-game .bingo-cell {
+            background: rgba(6, 40, 16, 0.72) !important;
+            border-color: rgba(34, 197, 94, 0.25) !important;
+            color: #dcfce7 !important;
+            backdrop-filter: blur(2px);
+            font-weight: 700;
+        }
+        #wk-game .bingo-cell.checked {
+            background: linear-gradient(135deg, #15803d 0%, #16a34a 50%, #22c55e 100%) !important;
+            border-color: #22c55e !important;
+            color: white !important;
+            box-shadow: 0 0 12px rgba(34,197,94,.5) !important;
+        }
+        #wk-game .bingo-cell.checked::after {
+            content: '⚽';
+            position: absolute;
+            font-size: .7em;
+            top: 2px; right: 3px;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+        #wk-game .bingo-cell {
+            position: relative;
+        }
+        body.light #wk-game .bingo-cell {
+            background: rgba(240, 253, 244, 0.88) !important;
+            color: #14532d !important;
+            border-color: rgba(22,163,74,.3) !important;
+        }
+        body.light #wk-game .bingo-cell.checked {
+            background: linear-gradient(135deg, #16a34a 0%, #22c55e 100%) !important;
+            color: white !important;
+        }
+
+        /* WK Goal overlay */
+        #wk-goal-overlay {
+            position: fixed; inset: 0; z-index: 1000;
+            background: rgba(6, 40, 16, 0.92);
+            display: flex; align-items: center; justify-content: center;
+            flex-direction: column;
+            backdrop-filter: blur(8px);
+        }
+        #wk-goal-overlay.show { display: flex !important; }
+        .wk-goal-content {
+            text-align: center; position: relative;
+            display: flex; flex-direction: column; align-items: center; gap: 8px;
+            padding: 20px;
+        }
+        .wk-goal-ball {
+            font-size: 4rem;
+            animation: wkBallBounce 0.6s ease-out;
+        }
+        @keyframes wkBallBounce {
+            0%   { transform: translateY(-60px) scale(0.5); opacity:0; }
+            60%  { transform: translateY(10px)  scale(1.1); opacity:1; }
+            80%  { transform: translateY(-8px)  scale(0.95); }
+            100% { transform: translateY(0)     scale(1); }
+        }
+        .wk-goal-text {
+            font-size: 3rem; font-weight: 800; color: #22c55e;
+            letter-spacing: -1px; line-height: 1;
+            text-shadow: 0 0 30px rgba(34,197,94,.6);
+            animation: wkGoalPop 0.4s 0.3s both ease-out;
+        }
+        @keyframes wkGoalPop {
+            0%   { transform: scale(0.3); opacity: 0; }
+            70%  { transform: scale(1.15); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .wk-goal-sub {
+            font-size: 1rem; color: rgba(255,255,255,.8); font-weight: 600;
+            animation: wkGoalPop 0.4s 0.5s both ease-out;
         }
         .wk-match-title {
             font-size:.9rem; font-weight:700; color:var(--text-main);
@@ -1198,9 +1299,6 @@
 
             <div style="margin-top:20px;"></div>
             <button onclick="startGame()" id="start-btn" class="btn-primary" disabled>Start Bingo</button>
-            <div style="text-align:center; margin-top:10px;">
-                <button class="btn-link" onclick="openAdminLogin()">Admin Login</button>
-            </div>
         </div>
 
         <div id="screen-game" class="screen">
@@ -1681,6 +1779,17 @@
         </div>
 
     </div><!-- /container -->
+
+    <!-- WK Goal overlay -->
+    <div id="wk-goal-overlay" class="overlay" style="display:none;">
+        <div class="wk-goal-content">
+            <div class="wk-goal-ball">⚽</div>
+            <div class="wk-goal-text">GOAAAAL!</div>
+            <div class="wk-goal-sub" id="wk-goal-sub">Lijn vol!</div>
+            <div class="wk-goal-confetti" id="wk-goal-confetti"></div>
+            <button class="btn-primary" onclick="closeWkGoal()" style="max-width:200px;margin-top:16px;background:linear-gradient(135deg,#15803d,#22c55e);">Doorgaan ⚽</button>
+        </div>
+    </div>
 
     <!-- ══════════════════════════════ OVERLAYS ═══════════════════════════════ -->
     <div id="bingo-overlay" class="overlay">
@@ -4157,11 +4266,26 @@ h1{font-size:13pt;text-align:center;margin-bottom:6mm;}
 
             if (newBingo) {
                 if (navigator.vibrate) navigator.vibrate([100,50,100]);
-                document.getElementById('bingo-win-msg').textContent =
-                    winMessages[Math.floor(Math.random() * winMessages.length)];
-                document.getElementById('bingo-overlay').classList.add('show');
+                // Show WK goal overlay instead of generic bingo overlay
+                const goalMessages = [
+                    'De lijn zit erop! 🏆',
+                    'Geweldig gespeeld!',
+                    'Wat een timing!',
+                    'De commentator flipt uit!',
+                    'Het stadion ontploft!'
+                ];
+                document.getElementById('wk-goal-sub').textContent = goalMessages[Math.floor(Math.random() * goalMessages.length)];
+                const overlay = document.getElementById('wk-goal-overlay');
+                overlay.style.display = 'flex';
+                overlay.classList.add('show');
             }
         }
+
+        window.closeWkGoal = function() {
+            const overlay = document.getElementById('wk-goal-overlay');
+            overlay.classList.remove('show');
+            overlay.style.display = 'none';
+        };
 
         // ─── Hook initWkScreen in goTo ───────────────────────────────────────────
         const _prevGoTo = window.goTo;
