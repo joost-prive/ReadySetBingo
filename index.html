@@ -1126,6 +1126,21 @@
         .wk-shuffle-count { font-weight:800; color:var(--wk-green-light); }
         body.light .wk-shuffle-count { color:var(--wk-green); }
 
+        .theme-mini-card {
+            border-radius: 8px; overflow: hidden; cursor: pointer;
+            border: 2px solid transparent; transition: border-color .15s, transform .1s;
+            position: relative;
+        }
+        .theme-mini-card:hover { transform: scale(1.03); }
+        .theme-mini-card.selected { border-color: var(--brand-primary); }
+        .theme-mini-card-header { padding: 5px 6px 3px; }
+        .theme-mini-card-title  { font-size: .55rem; font-weight: 800; line-height: 1.2; }
+        .theme-mini-card-sub    { font-size: .42rem; opacity: .8; }
+        .theme-mini-card-grid   { display: grid; grid-template-columns: repeat(4,1fr); gap: 2px; padding: 0 4px; }
+        .theme-mini-card-cell   { border-radius: 2px; aspect-ratio: 1/1; }
+        .theme-mini-card-footer { padding: 3px 6px; font-size: .45rem; font-weight: 700; }
+        .theme-mini-card-name   { font-size: .68rem; font-weight: 700; padding: 4px 6px 5px; text-align: center; }
+
         /* ── DESKTOP SCALING (≥ 768px) ── */
         @media (min-width: 768px) {
             body {
@@ -1468,17 +1483,37 @@
                 </div>
             </div>
 
-            <!-- Kaartontwerp -->
-            <div class="gen-config-box" style="margin-top:6px;">
-                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
-                    <p class="gen-sec-title" style="margin:0;">Kaartontwerp</p>
-                    <button onclick="goTo('screen-themes')" style="width:auto;padding:4px 10px;font-size:.72rem;margin:0;background:rgba(255,255,255,.08);color:var(--text-muted);border-radius:8px;">⚙ Thema's</button>
+            <!-- Thema kiezen -->
+            <div class="gen-config-box" style="margin-top:6px;" id="gen-theme-picker-box">
+                <p class="gen-sec-title" style="margin:0 0 10px;">Thema</p>
+
+                <!-- Tabs -->
+                <div class="gen-toggle-group" style="margin-bottom:12px;">
+                    <button class="gen-tog-btn active" id="theme-tab-btn-standaard" onclick="setThemeTab('standaard')">Standaard</button>
+                    <button class="gen-tog-btn" id="theme-tab-btn-eigen" onclick="setThemeTab('eigen')">Eigen</button>
+                    <button class="gen-tog-btn" id="theme-tab-btn-ingezonden" onclick="setThemeTab('ingezonden')">Ingezonden</button>
                 </div>
-                <div id="gen-theme-pills" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;"></div>
-                <input type="text" id="gen-design-title" placeholder="Koptekst (bijv. Hitsig Bingo)" style="margin-bottom:8px;">
-                <input type="text" id="gen-design-subtitle" placeholder="Subtitel (optioneel)" style="margin-bottom:8px;">
-                <input type="text" id="gen-design-footer" placeholder="Voettekst (optioneel)" style="margin-bottom:0;">
+
+                <!-- Themakaarten grid -->
+                <div id="gen-theme-grid" style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:12px;"></div>
+
+                <!-- Lege toestand -->
+                <div id="gen-theme-empty" style="display:none;text-align:center;padding:20px 0;font-size:.8rem;color:var(--text-muted);">
+                    Geen thema's gevonden
+                </div>
+
+                <!-- Actief thema preview + beheer -->
+                <div id="gen-active-theme-panel" style="display:none;">
+                    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+                        <span style="font-size:.75rem;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;">Geselecteerd thema</span>
+                        <div style="display:flex;gap:6px;" id="gen-active-theme-actions"></div>
+                    </div>
+                    <div id="gen-active-theme-preview" style="border-radius:10px;overflow:hidden;border:2px solid var(--brand-primary);"></div>
+                </div>
             </div>
+
+            <!-- Inline thema-formulier (eigen/nieuw) -->
+            <div id="gen-theme-form-wrap" style="display:none;margin-top:10px;"></div>
 
             <div>
                 <label>Zichtbaarheid</label>
@@ -1551,6 +1586,11 @@
                 <div class="theme-form-row"><label>Celachtergrond</label><input type="color" id="tf-cellBg" value="#FFFFFF"></div>
                 <div class="theme-form-row"><label>Celtekst</label><input type="color" id="tf-cellColor" value="#351C75"></div>
                 <div class="theme-form-row"><label>Kop- &amp; labeltekst</label><input type="color" id="tf-headColor" value="#FFFFFF"></div>
+
+                <p class="gen-sec-title" style="margin:14px 0 6px;">Koptekst &amp; voettekst</p>
+                <input type="text" id="tf-title" placeholder="Koptekst (bijv. Paars Bingo)" style="margin-bottom:6px;" oninput="updateThemePreviewTexts()">
+                <input type="text" id="tf-subtitle" placeholder="Subtitel (optioneel)" style="margin-bottom:6px;" oninput="updateThemePreviewTexts()">
+                <input type="text" id="tf-footer" placeholder="Voettekst (optioneel)" style="margin-bottom:0;" oninput="updateThemePreviewTexts()">
 
                 <p class="gen-sec-title" style="margin:14px 0 6px;">Kaartachtergrond <span class="gen-hint">(optioneel – volledig ontwerp)</span></p>
                 <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
@@ -2587,7 +2627,7 @@
 
         const BUILTIN_THEMES = [
             { id:'default', name:'Standaard',    bg:null,      cellBg:null,      cellColor:null,      headColor:null,     builtIn:true },
-            { id:'hitsig',  name:'Hitsig Bingo', bg:'#9F1F96', cellBg:'#FFFFFF', cellColor:'#351C75', headColor:'#FFFFFF', builtIn:true },
+            { id:'hitsig',  name:'Paars', bg:'#9F1F96', cellBg:'#FFFFFF', cellColor:'#351C75', headColor:'#FFFFFF', builtIn:true },
             { id:'nacht',   name:'Nacht',        bg:'#1a1a2e', cellBg:'#FFFFFF', cellColor:'#1a1a2e', headColor:'#FFFFFF', builtIn:true },
         ];
 
@@ -2605,23 +2645,184 @@
         function setActiveTheme(id) {
             _activeThemeId = id;
             localStorage.setItem('genTheme', id);
-            renderThemePills();
+            renderThemePicker();
         }
 
-        function renderThemePills() {
-            const container = document.getElementById('gen-theme-pills');
-            if (!container) return;
-            container.innerHTML = '';
-            getThemes().forEach(theme => {
-                const isActive = theme.id === _activeThemeId;
-                const pill = document.createElement('button');
-                pill.className = 'theme-pill' + (isActive ? ' active' : '');
-                pill.style.cssText = `background:${theme.bg || 'rgba(255,255,255,.07)'};color:${theme.headColor || 'var(--text-main)'};border-color:${isActive ? 'var(--brand-primary)' : 'transparent'};`;
-                const swatch = theme.cellBg ? `<span class="theme-pill-swatch" style="background:${theme.cellBg};"></span>` : '';
-                pill.innerHTML = swatch + theme.name;
-                pill.onclick = () => setActiveTheme(theme.id);
-                container.appendChild(pill);
+        let _currentThemeTab = 'standaard';
+
+        window.setThemeTab = function(tab) {
+            _currentThemeTab = tab;
+            ['standaard','eigen','ingezonden'].forEach(t => {
+                const btn = document.getElementById('theme-tab-btn-' + t);
+                if (btn) btn.classList.toggle('active', t === tab);
             });
+            renderThemePicker();
+        };
+
+        function buildMiniCard(theme) {
+            const bg        = theme.bg        || '#f3f0ff';
+            const cellBg    = theme.cellBg    || '#ffffff';
+            const cellColor = theme.cellColor || '#333';
+            const headColor = theme.headColor || '#fff';
+            const title     = theme.title     || theme.name;
+            const subtitle  = theme.subtitle  || '';
+            const footer    = theme.footer    || '';
+            const isActive  = theme.id === _activeThemeId;
+
+            const cells = Array(8).fill(0).map(() =>
+                `<div class="theme-mini-card-cell" style="background:${cellBg};"></div>`
+            ).join('');
+
+            return `<div class="theme-mini-card${isActive ? ' selected' : ''}"
+                         style="background:${bg};"
+                         onclick="selectThemeFromPicker('${theme.id}')">
+                        <div class="theme-mini-card-header" style="background:${bg};color:${headColor};">
+                            <div class="theme-mini-card-title">${title}</div>
+                            ${subtitle ? `<div class="theme-mini-card-sub">${subtitle}</div>` : ''}
+                        </div>
+                        <div class="theme-mini-card-grid">${cells}</div>
+                        ${footer ? `<div class="theme-mini-card-footer" style="background:${bg};color:${headColor};">${footer}</div>` : ''}
+                        <div class="theme-mini-card-name" style="background:rgba(0,0,0,.07);color:${bg === '#f3f0ff' ? '#333' : headColor};">${theme.name}</div>
+                    </div>`;
+        }
+
+        function renderThemePicker() {
+            const grid    = document.getElementById('gen-theme-grid');
+            const empty   = document.getElementById('gen-theme-empty');
+            const panel   = document.getElementById('gen-active-theme-panel');
+            if (!grid) return;
+
+            const custom = JSON.parse(localStorage.getItem('bingoThemes') || '[]');
+
+            let themes = [];
+            if (_currentThemeTab === 'standaard') {
+                themes = BUILTIN_THEMES;
+            } else if (_currentThemeTab === 'eigen') {
+                themes = custom;
+            } else {
+                themes = []; // ingezonden: later
+            }
+
+            grid.innerHTML = themes.map(t => buildMiniCard(t)).join('');
+            if (empty)  empty.style.display  = themes.length ? 'none' : '';
+            if (panel)  panel.style.display  = 'none';
+
+            // Voeg "+ Nieuw" knop toe onderaan bij Eigen-tab
+            if (_currentThemeTab === 'eigen') {
+                const addBtn = document.createElement('button');
+                addBtn.style.cssText = 'width:100%;margin-top:4px;padding:8px;font-size:.78rem;background:rgba(255,255,255,.08);color:var(--text-muted);border-radius:8px;';
+                addBtn.textContent = '+ Nieuw eigen thema';
+                addBtn.onclick = () => openInlineThemeForm(null);
+                grid.parentElement.insertBefore(addBtn, grid.nextSibling);
+            }
+
+            // Toon actief thema panel als het actief is in deze tab
+            updateActiveThemePanel();
+        }
+
+        window.selectThemeFromPicker = function(id) {
+            setActiveTheme(id);
+            renderThemePicker();
+        };
+
+        function updateActiveThemePanel() {
+            const panel   = document.getElementById('gen-active-theme-panel');
+            const preview = document.getElementById('gen-active-theme-preview');
+            const actions = document.getElementById('gen-active-theme-actions');
+            if (!panel) return;
+
+            const theme = getThemes().find(t => t.id === _activeThemeId);
+            if (!theme) { panel.style.display = 'none'; return; }
+
+            // Check of actief thema in huidige tab zit
+            const custom = JSON.parse(localStorage.getItem('bingoThemes') || '[]');
+            const inTab = (_currentThemeTab === 'standaard' && theme.builtIn) ||
+                          (_currentThemeTab === 'eigen' && !theme.builtIn);
+            if (!inTab) { panel.style.display = 'none'; return; }
+
+            panel.style.display = '';
+            if (preview) preview.innerHTML = buildFullPreviewCard(theme);
+
+            if (actions) {
+                actions.innerHTML = '';
+                if (theme.builtIn) {
+                    const aanpasBtn = document.createElement('button');
+                    aanpasBtn.textContent = '✏️ Aanpassen';
+                    aanpasBtn.style.cssText = 'width:auto;padding:5px 10px;font-size:.72rem;margin:0;border-radius:6px;';
+                    aanpasBtn.onclick = () => openInlineThemeForm(theme.id, true);
+                    actions.appendChild(aanpasBtn);
+                } else {
+                    const editBtn = document.createElement('button');
+                    editBtn.textContent = '✏️ Bewerken';
+                    editBtn.style.cssText = 'width:auto;padding:5px 10px;font-size:.72rem;margin:0;border-radius:6px;';
+                    editBtn.onclick = () => openInlineThemeForm(theme.id, false);
+                    actions.appendChild(editBtn);
+
+                    const delBtn = document.createElement('button');
+                    delBtn.textContent = '🗑';
+                    delBtn.style.cssText = 'width:auto;padding:5px 8px;font-size:.72rem;margin:0;background:rgba(255,51,51,.15);color:#fca5a5;border-radius:6px;';
+                    delBtn.onclick = () => deleteTheme(theme.id);
+                    actions.appendChild(delBtn);
+                }
+            }
+        }
+
+        function buildFullPreviewCard(theme) {
+            const bg        = theme.bg        || '#f3f0ff';
+            const cellBg    = theme.cellBg    || '#ffffff';
+            const cellColor = theme.cellColor || '#333';
+            const headColor = theme.headColor || '#ffffff';
+            const title     = theme.title     || '';
+            const subtitle  = theme.subtitle  || '';
+            const footer    = theme.footer    || '';
+
+            const cells = Array(16).fill(0).map((_, i) => {
+                const words = ['Woord', 'Bingo', 'Spel', 'Kaart', 'Ready', 'Set', 'Fun', 'Leuk', 'Win', 'Ja', 'Nee', 'Hm', 'Oei', 'Top', 'Yes', '🎉'];
+                return `<div style="background:${cellBg};color:${cellColor};border-radius:3px;aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;font-size:.5rem;font-weight:600;">${words[i]}</div>`;
+            }).join('');
+
+            return `<div style="background:${bg};border-radius:8px;overflow:hidden;${theme.cardBgImage ? `background-image:url(${theme.cardBgImage});background-size:cover;` : ''}">
+                ${(title || subtitle) ? `<div style="background:${bg};color:${headColor};padding:8px 10px 5px;text-align:center;">
+                    ${title ? `<div style="font-size:.75rem;font-weight:800;">${title}</div>` : ''}
+                    ${subtitle ? `<div style="font-size:.58rem;opacity:.85;">${subtitle}</div>` : ''}
+                </div>` : ''}
+                <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:3px;padding:4px 6px;background:${bg};">${cells}</div>
+                <div style="background:${bg};color:${headColor};padding:4px 10px;display:flex;justify-content:space-between;font-size:.6rem;font-weight:700;">
+                    <span>Kaart 1</span>${footer ? `<span>${footer}</span>` : ''}
+                </div>
+            </div>`;
+        }
+
+        // Inline thema-formulier openen vanuit de picker
+        window.openInlineThemeForm = function(id, copyFromBuiltin = false) {
+            // Scroll naar thema-form-wrap en vul in
+            const wrap = document.getElementById('gen-theme-form-wrap');
+            if (!wrap) return;
+
+            // Verplaats het theme-form (dat normaal in screen-themes staat) naar de wrap
+            const form = document.getElementById('theme-form');
+            if (form) {
+                wrap.innerHTML = '';
+                wrap.appendChild(form);
+                wrap.style.display = '';
+                form.style.display = 'block';
+            }
+
+            if (copyFromBuiltin) {
+                // Kopiëren van builtIn: bewaar als nieuw Eigen thema (id = null)
+                openThemeForm(id);
+                _editingThemeId = null;  // forceer nieuw
+                const formTitle = document.getElementById('theme-form-title');
+                if (formTitle) formTitle.textContent = 'Aanpassen als Eigen thema';
+            } else {
+                openThemeForm(id);
+            }
+
+            wrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        };
+
+        function renderThemePills() {
+            renderThemePicker();
         }
 
         function renderThemeList() {
@@ -2742,6 +2943,27 @@
         window.updateThemePreviewBg = function(val) {
             const p = document.getElementById('theme-img-preview');
             if (p) p.style.background = val;
+        };
+
+        window.updateThemePreviewTexts = function() {
+            const hdr = document.querySelector('#theme-img-preview .theme-img-grid-header');
+            const ftr = document.querySelector('#theme-img-preview .theme-img-grid-footer');
+            const title    = document.getElementById('tf-title')?.value || '';
+            const subtitle = document.getElementById('tf-subtitle')?.value || '';
+            const footer   = document.getElementById('tf-footer')?.value || '';
+            const headColor = document.getElementById('tf-headColor')?.value || '#ffffff';
+            if (hdr) {
+                hdr.style.color = headColor;
+                hdr.innerHTML = title
+                    ? `<div style="font-size:.55rem;font-weight:800;line-height:1.2;">${title}</div>${subtitle ? `<div style="font-size:.42rem;opacity:.8;">${subtitle}</div>` : ''}`
+                    : '';
+            }
+            if (ftr) {
+                ftr.style.color = headColor;
+                ftr.innerHTML = footer
+                    ? `<div style="font-size:.45rem;font-weight:700;">${footer}</div>`
+                    : '';
+            }
         };
 
         window.uploadCardBgImage = function() {
@@ -2877,6 +3099,9 @@
             document.getElementById('tf-cellBg').value = theme?.cellBg || '#FFFFFF';
             document.getElementById('tf-cellColor').value = theme?.cellColor || '#351C75';
             document.getElementById('tf-headColor').value = theme?.headColor || '#FFFFFF';
+            document.getElementById('tf-title').value    = theme?.title    || '';
+            document.getElementById('tf-subtitle').value = theme?.subtitle || '';
+            document.getElementById('tf-footer').value   = theme?.footer   || '';
             document.getElementById('theme-form-title').textContent = id ? 'Thema bewerken' : 'Nieuw thema';
             _themeImages = theme?.images ? JSON.parse(JSON.stringify(theme.images)) : [];
             _cardBgImage = theme?.cardBgImage || null;
@@ -2887,7 +3112,7 @@
             const form = document.getElementById('theme-form');
             form.style.display = 'block';
             form.scrollIntoView({ behavior:'smooth', block:'start' });
-            setTimeout(() => { initThemeImgPreview(); renderThemeImgList(); }, 50);
+            setTimeout(() => { initThemeImgPreview(); renderThemeImgList(); updateThemePreviewTexts(); }, 50);
         };
 
         window.saveThemeForm = function() {
@@ -2901,6 +3126,9 @@
                 cellBg:    document.getElementById('tf-cellBg').value,
                 cellColor: document.getElementById('tf-cellColor').value,
                 headColor: document.getElementById('tf-headColor').value,
+                title:     document.getElementById('tf-title').value.trim(),
+                subtitle:  document.getElementById('tf-subtitle').value.trim(),
+                footer:    document.getElementById('tf-footer').value.trim(),
                 images:       _themeImages,
                 cardBgImage:  _cardBgImage || null,
                 cellBgOpacity: _cardBgImage ? parseInt(document.getElementById('tf-cell-opacity')?.value || '100') : 100,
@@ -2912,7 +3140,21 @@
                 custom.push(newTheme);
             }
             localStorage.setItem('bingoThemes', JSON.stringify(custom));
+            // Sluit inline form als die in de picker staat
+            const wrap = document.getElementById('gen-theme-form-wrap');
+            if (wrap && wrap.contains(document.getElementById('theme-form'))) {
+                wrap.style.display = 'none';
+                // Zet het theme-form terug naar screen-themes
+                const screenThemes = document.getElementById('screen-themes');
+                if (screenThemes) screenThemes.appendChild(document.getElementById('theme-form'));
+            }
             document.getElementById('theme-form').style.display = 'none';
+            // Activeer het nieuw opgeslagen thema als het een nieuw eigen thema is
+            if (!_editingThemeId) {
+                const allCustom = JSON.parse(localStorage.getItem('bingoThemes') || '[]');
+                const newest = allCustom[allCustom.length - 1];
+                if (newest) { setActiveTheme(newest.id); _currentThemeTab = 'eigen'; }
+            }
             renderThemeList();
             renderThemePills();
         };
@@ -2931,9 +3173,9 @@
             container.innerHTML = '';
             const n        = genGridSize;
             const theme    = getActiveTheme();
-            const title    = document.getElementById('gen-design-title').value.trim();
-            const subtitle = document.getElementById('gen-design-subtitle').value.trim();
-            const footer   = document.getElementById('gen-design-footer').value.trim();
+            const title    = theme.title    || '';
+            const subtitle = theme.subtitle || '';
+            const footer   = theme.footer   || '';
             const themed   = !!theme.bg;
 
             cards.forEach((card, i) => {
@@ -3023,9 +3265,9 @@
             const n        = genGridSize;
             const fs       = n === 5 ? '6.5' : '7.5';
             const theme    = getActiveTheme();
-            const title    = document.getElementById('gen-design-title').value.trim();
-            const subtitle = document.getElementById('gen-design-subtitle').value.trim();
-            const footer   = document.getElementById('gen-design-footer').value.trim();
+            const title    = theme.title    || '';
+            const subtitle = theme.subtitle || '';
+            const footer   = theme.footer   || '';
             const themed   = !!theme.bg;
 
             let rows = '';
