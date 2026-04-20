@@ -1009,7 +1009,9 @@
             position: relative; z-index: 1;
         }
         #wk-bingo-lines {
-            z-index: 6;
+            position: absolute; inset: 0;
+            pointer-events: none; z-index: 6;
+            overflow: hidden; border-radius: 8px;
         }
         #wk-game .bingo-cell {
             background: rgba(6, 40, 16, 0.72) !important;
@@ -4182,7 +4184,7 @@ h1{font-size:13pt;text-align:center;margin-bottom:6mm;}
                 ? match.fase
                 : getTeamLabel(match.team1) + ' vs ' + getTeamLabel(match.team2);
 
-            document.getElementById('wk-match-title').textContent = title;
+            document.getElementById('wk-match-title').innerHTML = title;
 
             wkRefreshesLeft = 3;
             wkUpdateRefreshUI();
