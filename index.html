@@ -1173,7 +1173,7 @@
         }
     </style>
 </head>
-<body>
+<body class="light">
 
     <div class="background-shapes">
         <div class="blob blob-1"></div>
@@ -1182,9 +1182,6 @@
     </div>
 
     <header>
-        <!-- Theme toggle: dark ↔ light -->
-        <button class="btn-theme-toggle" id="btn-theme-toggle" onclick="toggleTheme()" aria-label="Wissel thema">🌙</button>
-
         <!-- Info-knop: alleen zichtbaar bij TV Bingo -->
         <button class="btn-info" id="btn-info-header" onclick="openInfo()" aria-label="Speluitleg">
             <svg viewBox="0 0 24 24">
@@ -1216,7 +1213,6 @@
     </header>
 
     <div class="container">
-        <div id="loader">Verbinden...</div>
 
         <!-- ════════════════════════════════ HOME ════════════════════════════════ -->
         <div id="screen-home" class="screen">
@@ -1893,11 +1889,30 @@
         window.goHome = () => switchScreen('screen-home');
         window.goTo   = (id) => switchScreen(id);
 
-        // ─── Firebase init ────────────────────────────────────────────────────────
-        async function initFirebase() {
-            if (!window.location.protocol.startsWith('http')) {
-                startLocalMode(); return;
+        // ─── Directe start vanuit localStorage ───────────────────────────────────
+        function initFromLocal() {
+            isLocalMode = true;
+            const saved = localStorage.getItem('bingoData');
+            if (saved) {
+                try {
+                    const p = JSON.parse(saved);
+                    appData  = p.programs || defaultData;
+                    appOrder = p.order    || Object.keys(appData).sort();
+                } catch {
+                    appData  = JSON.parse(JSON.stringify(defaultData));
+                    appOrder = Object.keys(appData).sort();
+                }
+            } else {
+                appData  = JSON.parse(JSON.stringify(defaultData));
+                appOrder = Object.keys(appData).sort();
             }
+            populateSelects();
+            switchScreen('screen-home');
+        }
+
+        // ─── Firebase init (achtergrond, blokkeert UI niet) ───────────────────────
+        async function initFirebase() {
+            if (!window.location.protocol.startsWith('http')) return; // lokaal bestand
             try {
                 const config = typeof window.__firebase_config !== 'undefined'
                     ? JSON.parse(window.__firebase_config) : manualConfig;
@@ -1910,35 +1925,27 @@
                         await signInWithCustomToken(auth, window.__initial_auth_token);
                     else
                         await signInAnonymously(auth);
-                } catch { startLocalMode(); }
+                } catch {
+                    // auth mislukt → offline-badge tonen, localStorage blijft actief
+                    document.getElementById('offline-badge').style.display = 'inline-block';
+                    return;
+                }
                 onAuthStateChanged(auth, user => { if (user) setupRealtimeListener(); });
-            } catch { startLocalMode(); }
+            } catch {
+                document.getElementById('offline-badge').style.display = 'inline-block';
+            }
         }
 
-        function startLocalMode() {
-            isLocalMode = true;
-            document.getElementById('loader').style.display = 'none';
-            document.getElementById('offline-badge').style.display = 'inline-block';
-            const saved = localStorage.getItem('bingoData');
-            if (saved) {
-                const p = JSON.parse(saved);
-                appData  = p.programs || defaultData;
-                appOrder = p.order    || Object.keys(appData).sort();
-            } else {
-                appData  = JSON.parse(JSON.stringify(defaultData));
-                appOrder = Object.keys(appData).sort();
-            }
-            populateSelects();
-            switchScreen('screen-home');
-        }
+        function startLocalMode() { /* legacy */ initFromLocal(); }
 
         function saveToLocal() {
             if (isLocalMode) localStorage.setItem('bingoData', JSON.stringify({ programs: appData, order: appOrder }));
         }
 
         function setupRealtimeListener() {
+            isLocalMode = false; // Firebase is beschikbaar
+            document.getElementById('offline-badge').style.display = 'none';
             onSnapshot(docRef, async snap => {
-                document.getElementById('loader').style.display = 'none';
                 if (snap.exists()) {
                     const d = snap.data();
                     if (d.programs && d.order) { appData = d.programs; appOrder = d.order; }
@@ -1952,9 +1959,12 @@
                     appOrder = Object.keys(appData).sort();
                     try { await setDoc(docRef, { programs: appData, order: appOrder }); } catch {}
                 }
-                populateSelects();
-                switchScreen('screen-home');
-            }, err => console.error(err));
+                populateSelects(); // stil de dropdowns bijwerken, geen schermwissel
+            }, err => {
+                console.error(err);
+                isLocalMode = true;
+                document.getElementById('offline-badge').style.display = 'inline-block';
+            });
         }
 
         // ─── Selects vullen ───────────────────────────────────────────────────────
@@ -3392,20 +3402,7 @@ h1{font-size:13pt;text-align:center;margin-bottom:6mm;}
             }
         })();
 
-        // ─── Theme toggle ────────────────────────────────────────────────────────
-        window.toggleTheme = function() {
-            const isLight = document.body.classList.toggle('light');
-            document.getElementById('btn-theme-toggle').textContent = isLight ? '🌙' : '☀️';
-            localStorage.setItem('theme', isLight ? 'light' : 'dark');
-        };
-        (function initTheme() {
-            const stored = localStorage.getItem('theme');
-            if (stored !== 'dark') {
-                document.body.classList.add('light');
-                const btn = document.getElementById('btn-theme-toggle');
-                if (btn) btn.textContent = '🌙';
-            }
-        })();
+        // (dark mode verwijderd — altijd light)
 
         // ─── Scenario Bingo ──────────────────────────────────────────────────────
         const SCENARIO_THEMES = {
@@ -4308,7 +4305,8 @@ h1{font-size:13pt;text-align:center;margin-bottom:6mm;}
         window.goHome = () => { window.goTo('screen-home'); };
 
         // ─── Start ────────────────────────────────────────────────────────────────
-        initFirebase();
+        initFromLocal();   // direct home tonen vanuit localStorage
+        initFirebase();    // Firebase op achtergrond (stille sync)
     </script>
 </body>
 </html>
