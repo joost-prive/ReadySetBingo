@@ -826,10 +826,84 @@
 
         /* ── WK BINGO ──────────────────────────────────────────────────── */
         :root {
-            --wk-green:      #16a34a;
-            --wk-green-light:#22c55e;
-            --wk-green-bg:   rgba(22, 163, 74, 0.12);
+            --wk-green:       #16a34a;
+            --wk-green-light: #22c55e;
+            --wk-green-bg:    rgba(22, 163, 74, 0.12);
             --wk-green-border:rgba(34, 197, 94, 0.3);
+        }
+
+        /* Banner */
+        .wk-banner {
+            margin: -20px -20px 18px;
+            padding: 24px 20px 20px;
+            background: linear-gradient(135deg, #064e1a 0%, #15803d 60%, #16a34a 100%);
+            border-radius: 0 0 20px 20px;
+            position: relative; overflow: hidden;
+            text-align: center;
+        }
+        .wk-banner::before {
+            content: '⚽';
+            position: absolute; top: -10px; right: -10px;
+            font-size: 7rem; opacity: .08; line-height: 1;
+            pointer-events: none;
+        }
+        .wk-banner::after {
+            content: '🏆';
+            position: absolute; bottom: -14px; left: -6px;
+            font-size: 5rem; opacity: .1; line-height: 1;
+            pointer-events: none;
+        }
+        .wk-banner-badge {
+            display: inline-block; background: rgba(255,255,255,.15);
+            border: 1px solid rgba(255,255,255,.25);
+            padding: 3px 12px; border-radius: 20px;
+            font-size: .68rem; font-weight: 700; letter-spacing: 1.5px;
+            text-transform: uppercase; color: rgba(255,255,255,.85);
+            margin-bottom: 10px;
+        }
+        .wk-banner-title {
+            font-size: 1.9rem; font-weight: 800; color: white;
+            letter-spacing: -1px; line-height: 1.1; margin: 0 0 6px;
+            text-shadow: 0 2px 8px rgba(0,0,0,.3);
+        }
+        .wk-banner-title span { color: #86efac; }
+        .wk-banner-sub {
+            font-size: .78rem; color: rgba(255,255,255,.7);
+            margin: 0 0 14px;
+        }
+        .wk-banner-flags {
+            font-size: 1.4rem; letter-spacing: 3px; opacity: .85;
+        }
+
+        /* Intro card */
+        .wk-intro {
+            background: var(--wk-green-bg);
+            border: 1px solid var(--wk-green-border);
+            border-radius: 14px; padding: 14px 16px;
+            margin-bottom: 16px;
+        }
+        .wk-intro-title {
+            font-size: .72rem; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 1px; color: var(--wk-green-light);
+            margin-bottom: 10px;
+        }
+        body.light .wk-intro-title { color: var(--wk-green); }
+        .wk-intro-list {
+            list-style: none; margin: 0; padding: 0;
+            display: flex; flex-direction: column; gap: 7px;
+        }
+        .wk-intro-list li {
+            font-size: .82rem; color: var(--text-main);
+            display: flex; gap: 8px; align-items: flex-start; line-height: 1.4;
+        }
+        .wk-intro-list li::before {
+            content: '⚽'; font-size: .75rem; flex-shrink: 0; margin-top: 1px;
+        }
+        body.light .wk-intro { background: rgba(22,163,74,.06); border-color: rgba(22,163,74,.2); }
+
+        @media (min-width: 768px) {
+            .wk-banner { margin: -32px -32px 22px; padding: 30px 32px 24px; }
+            .wk-banner-title { font-size: 2.4rem; }
         }
 
         /* Tabs groepsfase / knock-out */
@@ -1525,9 +1599,24 @@
 
         <!-- ══════════════════════════════ WK BINGO ══════════════════════════════ -->
         <div id="screen-wk" class="screen">
-            <div class="screen-header">
-                <button class="btn-back" onclick="goHome()">← Terug</button>
-                <h2>⚽ WK Bingo 2026</h2>
+
+            <!-- Banner -->
+            <div class="wk-banner">
+                <button class="btn-back" onclick="goHome()" style="position:absolute;top:14px;left:14px;background:rgba(255,255,255,.15);border-color:rgba(255,255,255,.3);color:white;">← Terug</button>
+                <div class="wk-banner-badge">FIFA World Cup 2026</div>
+                <h2 class="wk-banner-title">WK <span>Bingo</span> 2026</h2>
+                <p class="wk-banner-sub">🇺🇸 Verenigde Staten &nbsp;·&nbsp; 🇨🇦 Canada &nbsp;·&nbsp; 🇲🇽 Mexico &nbsp;·&nbsp; Juni – Juli 2026</p>
+                <div class="wk-banner-flags">🇳🇱 🇧🇷 🇫🇷 🇩🇪 🇦🇷 🇪🇸 🏴󠁧󠁢󠁥󠁮󠁧󠁿 🇧🇪 🇵🇹</div>
+            </div>
+
+            <!-- Intro -->
+            <div class="wk-intro">
+                <div class="wk-intro-title">🎯 Zo speel je WK Bingo</div>
+                <ul class="wk-intro-list">
+                    <li>Extra spanningselement om nóg verder op het puntje van je stoel te zitten</li>
+                    <li>Maak de wedstrijden nóg leuker om met een groep te volgen</li>
+                    <li>Geef je niks om voetbal, maar staat het toch het héle WK aan? Dan maak je er op deze manier wél iets leuks van</li>
+                </ul>
             </div>
 
             <!-- Match selector view -->
@@ -3849,7 +3938,7 @@ h1{font-size:13pt;text-align:center;margin-bottom:6mm;}
         function getTeamLabel(code) {
             const t = WK_TEAMS[code];
             if (!t) return code;
-            return t.naam;
+            return (t.vlag ? t.vlag + ' ' : '') + t.naam;
         }
 
         function getWordPool(matchId) {
