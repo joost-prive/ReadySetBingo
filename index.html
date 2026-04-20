@@ -1515,6 +1515,14 @@
             <!-- Inline thema-formulier (eigen/nieuw) -->
             <div id="gen-theme-form-wrap" style="display:none;margin-top:10px;"></div>
 
+            <!-- Koptekst & voettekst (per gebruik, overschrijft thema-standaard) -->
+            <div class="gen-config-box" style="margin-top:6px;">
+                <p class="gen-sec-title" style="margin:0 0 8px;">Koptekst &amp; voettekst</p>
+                <input type="text" id="gen-design-title" placeholder="Koptekst (bijv. Expeditie Robinson Bingo)" style="margin-bottom:6px;" oninput="updateActiveThemePreview()">
+                <input type="text" id="gen-design-subtitle" placeholder="Subtitel (optioneel)" style="margin-bottom:6px;" oninput="updateActiveThemePreview()">
+                <input type="text" id="gen-design-footer" placeholder="Voettekst (optioneel)" style="margin-bottom:0;" oninput="updateActiveThemePreview()">
+            </div>
+
             <div>
                 <label>Zichtbaarheid</label>
                 <div class="publiek-toggle-group">
@@ -1587,7 +1595,7 @@
                 <div class="theme-form-row"><label>Celtekst</label><input type="color" id="tf-cellColor" value="#351C75"></div>
                 <div class="theme-form-row"><label>Kop- &amp; labeltekst</label><input type="color" id="tf-headColor" value="#FFFFFF"></div>
 
-                <p class="gen-sec-title" style="margin:14px 0 6px;">Koptekst &amp; voettekst</p>
+                <p class="gen-sec-title" style="margin:14px 0 2px;">Standaard teksten <span class="gen-hint">(worden vooraf ingevuld bij dit thema)</span></p>
                 <input type="text" id="tf-title" placeholder="Koptekst (bijv. Paars Bingo)" style="margin-bottom:6px;" oninput="updateThemePreviewTexts()">
                 <input type="text" id="tf-subtitle" placeholder="Subtitel (optioneel)" style="margin-bottom:6px;" oninput="updateThemePreviewTexts()">
                 <input type="text" id="tf-footer" placeholder="Voettekst (optioneel)" style="margin-bottom:0;" oninput="updateThemePreviewTexts()">
@@ -2722,7 +2730,24 @@
 
         window.selectThemeFromPicker = function(id) {
             setActiveTheme(id);
+            // Pre-vul generator-tekstvelden met thema-standaardteksten (alleen als veld nog leeg is)
+            const theme = getThemes().find(t => t.id === id);
+            if (theme) {
+                const titleEl    = document.getElementById('gen-design-title');
+                const subtitleEl = document.getElementById('gen-design-subtitle');
+                const footerEl   = document.getElementById('gen-design-footer');
+                if (titleEl    && !titleEl.value    && theme.title)    titleEl.value    = theme.title;
+                if (subtitleEl && !subtitleEl.value && theme.subtitle) subtitleEl.value = theme.subtitle;
+                if (footerEl   && !footerEl.value   && theme.footer)   footerEl.value   = theme.footer;
+            }
             renderThemePicker();
+        };
+
+        window.updateActiveThemePreview = function() {
+            const preview = document.getElementById('gen-active-theme-preview');
+            if (!preview || preview.closest('#gen-active-theme-panel')?.style.display === 'none') return;
+            const theme = getActiveTheme();
+            if (theme) preview.innerHTML = buildFullPreviewCard(theme);
         };
 
         function updateActiveThemePanel() {
@@ -2772,8 +2797,9 @@
             const cellBg    = theme.cellBg    || '#ffffff';
             const cellColor = theme.cellColor || '#333';
             const headColor = theme.headColor || '#ffffff';
-            const title     = theme.title     || '';
-            const subtitle  = theme.subtitle  || '';
+            // Generator-velden hebben prioriteit; thema-standaard als fallback
+            const title     = document.getElementById('gen-design-title')?.value.trim()    || theme.title    || '';
+            const subtitle  = document.getElementById('gen-design-subtitle')?.value.trim() || theme.subtitle || '';
             const footer    = theme.footer    || '';
 
             const cells = Array(16).fill(0).map((_, i) => {
@@ -3173,9 +3199,9 @@
             container.innerHTML = '';
             const n        = genGridSize;
             const theme    = getActiveTheme();
-            const title    = theme.title    || '';
-            const subtitle = theme.subtitle || '';
-            const footer   = theme.footer   || '';
+            const title    = document.getElementById('gen-design-title')?.value.trim()  || theme.title    || '';
+            const subtitle = document.getElementById('gen-design-subtitle')?.value.trim() || theme.subtitle || '';
+            const footer   = document.getElementById('gen-design-footer')?.value.trim()  || theme.footer   || '';
             const themed   = !!theme.bg;
 
             cards.forEach((card, i) => {
@@ -3265,9 +3291,9 @@
             const n        = genGridSize;
             const fs       = n === 5 ? '6.5' : '7.5';
             const theme    = getActiveTheme();
-            const title    = theme.title    || '';
-            const subtitle = theme.subtitle || '';
-            const footer   = theme.footer   || '';
+            const title    = document.getElementById('gen-design-title')?.value.trim()    || theme.title    || '';
+            const subtitle = document.getElementById('gen-design-subtitle')?.value.trim() || theme.subtitle || '';
+            const footer   = document.getElementById('gen-design-footer')?.value.trim()   || theme.footer   || '';
             const themed   = !!theme.bg;
 
             let rows = '';
