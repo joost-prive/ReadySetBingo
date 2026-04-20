@@ -824,6 +824,114 @@
         .publiek-tog-btn.active { background:var(--brand-gradient); color:white; box-shadow:0 2px 8px rgba(255,94,98,.3); }
         .publiek-tog-btn:active { transform:none; }
 
+        /* ── WK BINGO ──────────────────────────────────────────────────── */
+        :root {
+            --wk-green:      #16a34a;
+            --wk-green-light:#22c55e;
+            --wk-green-bg:   rgba(22, 163, 74, 0.12);
+            --wk-green-border:rgba(34, 197, 94, 0.3);
+        }
+
+        /* Tabs groepsfase / knock-out */
+        .wk-tabs {
+            display:flex; gap:6px; margin-bottom:14px;
+        }
+        .wk-tab {
+            flex:1; padding:10px 8px; border-radius:10px; border:1px solid var(--glass-border);
+            background:rgba(255,255,255,.06); color:var(--text-muted);
+            font-family:'Poppins',sans-serif; font-size:.85rem; font-weight:600;
+            cursor:pointer; transition:all .15s; margin:0;
+        }
+        .wk-tab.active {
+            background:var(--wk-green-bg); color:var(--wk-green-light);
+            border-color:var(--wk-green-border);
+        }
+        .wk-tab:active { transform:scale(.97); }
+        body.light .wk-tab { background:rgba(255,255,255,.7); border-color:rgba(0,0,0,.1); }
+        body.light .wk-tab.active { background:rgba(22,163,74,.1); color:var(--wk-green); border-color:rgba(22,163,74,.35); }
+
+        /* Poule-tabs A t/m L */
+        .wk-poule-tabs {
+            display:flex; flex-wrap:wrap; gap:5px; margin-bottom:12px;
+        }
+        .wk-poule-tab {
+            width:36px; height:36px; border-radius:8px; border:1px solid var(--glass-border);
+            background:rgba(255,255,255,.06); color:var(--text-muted);
+            font-family:'Poppins',sans-serif; font-size:.85rem; font-weight:700;
+            cursor:pointer; transition:all .15s; margin:0;
+            display:flex; align-items:center; justify-content:center;
+        }
+        .wk-poule-tab.active {
+            background:var(--wk-green-bg); color:var(--wk-green-light);
+            border-color:var(--wk-green-border);
+        }
+        .wk-poule-tab:active { transform:scale(.93); }
+        body.light .wk-poule-tab { background:rgba(255,255,255,.7); border-color:rgba(0,0,0,.1); }
+        body.light .wk-poule-tab.active { background:rgba(22,163,74,.1); color:var(--wk-green); border-color:rgba(22,163,74,.35); }
+
+        /* Matchrij */
+        .wk-match-item {
+            background:rgba(255,255,255,.06); border:1px solid var(--glass-border);
+            border-radius:12px; padding:10px 12px; margin-bottom:8px;
+            cursor:pointer; transition:all .15s; user-select:none;
+            display:flex; flex-direction:column; gap:4px;
+        }
+        .wk-match-item:hover  { background:rgba(255,255,255,.12); border-color:var(--wk-green-border); }
+        .wk-match-item:active { transform:scale(.98); }
+        body.light .wk-match-item { background:rgba(255,255,255,.7); border-color:rgba(0,0,0,.1); }
+        body.light .wk-match-item:hover { background:white; border-color:rgba(22,163,74,.4); }
+
+        .wk-match-teams {
+            display:flex; align-items:center; justify-content:space-between; gap:6px;
+            font-size:.92rem; font-weight:700; color:var(--text-main);
+        }
+        .wk-match-vs {
+            font-size:.7rem; font-weight:600; color:var(--text-muted);
+            padding:2px 7px; background:rgba(255,255,255,.07); border-radius:6px;
+            flex-shrink:0;
+        }
+        .wk-match-meta {
+            font-size:.7rem; color:var(--text-muted); display:flex; gap:8px;
+        }
+        .wk-match-meta span { display:inline-flex; align-items:center; gap:3px; }
+
+        /* Speelscherm header */
+        .wk-game-header {
+            display:flex; align-items:center; gap:10px; margin-bottom:14px;
+        }
+        .wk-match-title {
+            font-size:.9rem; font-weight:700; color:var(--text-main);
+            flex:1; line-height:1.3;
+        }
+
+        /* Knockout groep-heading */
+        .wk-round-heading {
+            font-size:.75rem; font-weight:700; text-transform:uppercase; letter-spacing:1px;
+            color:var(--wk-green-light); margin:12px 0 6px;
+        }
+        body.light .wk-round-heading { color:var(--wk-green); }
+
+        /* Poule-titel boven matchlijst */
+        .wk-poule-title {
+            font-size:.72rem; font-weight:700; text-transform:uppercase; letter-spacing:1px;
+            color:var(--text-muted); margin-bottom:8px;
+        }
+
+        /* Shuffle-knop WK */
+        .wk-btn-shuffle {
+            width:auto; margin:0 0 0 auto; padding:6px 12px;
+            font-size:.8rem; border-radius:20px;
+            background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.2);
+            display:flex; align-items:center; gap:6px; color:var(--text-muted);
+            flex-shrink:0;
+        }
+        .wk-btn-shuffle svg { width:14px; height:14px; fill:currentColor; transition:transform .4s ease; }
+        .wk-btn-shuffle:hover:not(:disabled) { background:rgba(255,255,255,.2); color:white; }
+        .wk-btn-shuffle:hover:not(:disabled) svg { transform:rotate(180deg); }
+        .wk-btn-shuffle:disabled { opacity:.4; cursor:default; border-color:transparent; }
+        .wk-shuffle-count { font-weight:800; color:var(--wk-green-light); }
+        body.light .wk-shuffle-count { color:var(--wk-green); }
+
         /* ── DESKTOP SCALING (≥ 768px) ── */
         @media (min-width: 768px) {
             body {
@@ -1418,10 +1526,44 @@
                 <button class="btn-back" onclick="goHome()">← Terug</button>
                 <h2>⚽ WK Bingo 2026</h2>
             </div>
-            <div class="coming-soon">
-                <div class="cs-icon">🏆</div>
-                <h3>In ontwikkeling</h3>
-                <p>Bingo-kaarten per WK-wedstrijd: spelersnamen, landen, voetbaltermen en meer. Beschikbaar voor WK 2026!</p>
+
+            <!-- Match selector view -->
+            <div id="wk-selector">
+                <div class="wk-tabs">
+                    <button class="wk-tab active" onclick="setWkTab('groep')">Groepsfase</button>
+                    <button class="wk-tab" onclick="setWkTab('knockout')">Knock-out</button>
+                </div>
+
+                <!-- Group stage view -->
+                <div id="wk-groep-view">
+                    <div class="wk-poule-tabs" id="wk-poule-tabs"></div>
+                    <div class="wk-poule-title" id="wk-poule-title"></div>
+                    <div id="wk-poule-matches"></div>
+                </div>
+
+                <!-- Knockout view -->
+                <div id="wk-knockout-view" style="display:none;">
+                    <div id="wk-knockout-matches"></div>
+                </div>
+            </div>
+
+            <!-- Game view -->
+            <div id="wk-game" style="display:none;">
+                <div class="wk-game-header">
+                    <button class="btn-back" onclick="wkBackToSelector()">← Terug</button>
+                    <div id="wk-match-title" class="wk-match-title"></div>
+                    <button class="wk-btn-shuffle" id="wk-btn-shuffle" onclick="wkRefreshCard()">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M17.65 6.35A7.96 7.96 0 0 0 12 4c-4.42 0-8 3.58-8 8s3.58 8 8 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0 1 12 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>
+                        </svg>
+                        <span class="wk-shuffle-count" id="wk-shuffle-count">3</span>
+                    </button>
+                </div>
+                <div class="grid-wrapper">
+                    <div class="bingo-grid" id="wk-bingo-grid"></div>
+                    <div id="wk-bingo-lines"></div>
+                </div>
+                <button class="btn-secondary" style="margin-top:16px;" onclick="wkBackToSelector()">Andere wedstrijd</button>
             </div>
         </div>
 
@@ -3412,6 +3554,461 @@ h1{font-size:13pt;text-align:center;margin-bottom:6mm;}
                 }
             } catch(e) { console.warn('Invalid share link', e); }
         })();
+
+        // ─── WK BINGO 2026 ────────────────────────────────────────────────────────
+
+        const WK_VOETBAL_TERMEN = [
+            'Corner', 'Gele kaart', 'Rode kaart', 'Buitenspel', 'Strafschop',
+            'VAR-check', 'Hoofdbal', 'Vrije trap', 'Voorzet', 'Schitterend schot',
+            'Keeper redt', 'Countraanval', 'Het spel golft op en neer', 'Penalty gemist',
+            'Buitenkans', 'Wissel', 'Verlenging', 'Doelpunt afgekeurd', 'Uittrap',
+            'Inworp', 'Tackle', 'Fluitconcert', 'Videobord', 'Warming-up doelman',
+            'Spandoek in de tribune', 'Fanfare op de tribune', 'Trainer langs de lijn',
+            'Doelpunt!', 'Kaart in het shirt', 'Keepersingreep', 'Penalty reeks',
+            'Eigen doelpunt', 'Doelpunt in extra tijd', 'Schot op de paal'
+        ];
+
+        const WK_TEAMS = {
+            'USA': { naam:'Verenigde Staten', vlag:'🇺🇸', nickname:'Stars & Stripes',
+                woorden:['Pulisic','Reyna','McKennie','Turner','Stars & Stripes','Gastheerland','MLS'] },
+            'MEX': { naam:'Mexico', vlag:'🇲🇽', nickname:'El Tri',
+                woorden:['Álvarez','Lozano','Ochoa','El Tri','Azteca','Ramos','Sánchez'] },
+            'CAN': { naam:'Canada', vlag:'🇨🇦', nickname:'Les Rouges',
+                woorden:['Davies','David','Buchanan','Les Rouges','Aaronson','Johnston','Gastheerland'] },
+            'ARG': { naam:'Argentinië', vlag:'🇦🇷', nickname:'La Albiceleste',
+                woorden:['Messi','De Paul','Álvarez','Molina','La Albiceleste','Wereldkampioen','Di María'] },
+            'BRA': { naam:'Brazilië', vlag:'🇧🇷', nickname:'Seleção',
+                woorden:['Vinicius Jr','Rodrygo','Endrick','Seleção','Raphinha','Militão','Canarinho'] },
+            'URU': { naam:'Uruguay', vlag:'🇺🇾', nickname:'La Celeste',
+                woorden:['Núñez','Bentancur','Valverde','La Celeste','Araújo','De Arrascaeta','Suárez'] },
+            'COL': { naam:'Colombia', vlag:'🇨🇴', nickname:'Los Cafeteros',
+                woorden:['Luis Díaz','James Rodríguez','Borré','Los Cafeteros','Cuadrado','Ospina','Córdoba'] },
+            'ECU': { naam:'Ecuador', vlag:'🇪🇨', nickname:'La Tri',
+                woorden:['Valencia','Caicedo','Plata','La Tri','Ibarra','Estupiñán','Cifuentes'] },
+            'CHI': { naam:'Chili', vlag:'🇨🇱', nickname:'La Roja',
+                woorden:['Alexis Sánchez','Vidal','Brereton','La Roja','Medel','Pulgar','Aranguiz'] },
+            'PAR': { naam:'Paraguay', vlag:'🇵🇾', nickname:'La Albirroja',
+                woorden:['Almirón','Sanabria','Enciso','La Albirroja','Cardozo','Romero','Villarreal'] },
+            'BOL': { naam:'Bolivia', vlag:'🇧🇴', nickname:'La Verde',
+                woorden:['Marcelo Moreno','Arce','La Verde','Algarañaz','Justiniano','Fernández'] },
+            'PER': { naam:'Peru', vlag:'🇵🇪', nickname:'La Blanquirroja',
+                woorden:['Guerrero','Cueva','Carrillo','La Blanquirroja','Tapia','Peña','Flores'] },
+            'NED': { naam:'Nederland', vlag:'🇳🇱', nickname:'Oranje',
+                woorden:['Van Dijk','Gakpo','De Jong','Oranje','Dumfries','Depay','Oranjegekte'] },
+            'BEL': { naam:'België', vlag:'🇧🇪', nickname:'Rode Duivels',
+                woorden:['De Bruyne','Lukaku','Hazard','Rode Duivels','Thibaut Courtois','Doku','Witsel'] },
+            'FRA': { naam:'Frankrijk', vlag:'🇫🇷', nickname:'Les Bleus',
+                woorden:['Mbappé','Griezmann','Camavinga','Les Bleus','Tchouaméni','Giroud','Maignan'] },
+            'GER': { naam:'Duitsland', vlag:'🇩🇪', nickname:'Die Mannschaft',
+                woorden:['Musiala','Wirtz','Neuer','Die Mannschaft','Havertz','Kimmich','Gnabry'] },
+            'ESP': { naam:'Spanje', vlag:'🇪🇸', nickname:'La Roja',
+                woorden:['Pedri','Yamal','Morata','La Roja','Gavi','Rodri','Olmo'] },
+            'POR': { naam:'Portugal', vlag:'🇵🇹', nickname:'A Seleção das Quinas',
+                woorden:['Ronaldo','B. Fernandes','Leão','Figo','Rúben Neves','Rúben Dias','Vitinha'] },
+            'ENG': { naam:'Engeland', vlag:'🏴󠁧󠁢󠁥󠁮󠁧󠁿', nickname:'The Three Lions',
+                woorden:['Bellingham','Kane','Saka','Three Lions','Alexander-Arnold','Foden','Pickford'] },
+            'ITA': { naam:'Italië', vlag:'🇮🇹', nickname:'Gli Azzurri',
+                woorden:['Barella','Donnarumma','Scamacca','Gli Azzurri','Chiesa','Tonali','Pellegrini'] },
+            'CRO': { naam:'Kroatië', vlag:'🇭🇷', nickname:'Vatreni',
+                woorden:['Modrić','Kovačič','Kramarić','Vatreni','Gvardiol','Perisić','Brozović'] },
+            'DEN': { naam:'Denemarken', vlag:'🇩🇰', nickname:'Danish Dynamite',
+                woorden:['Eriksen','Höjbjerg','Dolberg','Danish Dynamite','Schmeichel','Maehle','Wind'] },
+            'SUI': { naam:'Zwitserland', vlag:'🇨🇭', nickname:'Nati',
+                woorden:['Xhaka','Embolo','Freuler','Nati','Zakaria','Widmer','Sommer'] },
+            'AUT': { naam:'Oostenrijk', vlag:'🇦🇹', nickname:'Das Team',
+                woorden:['Alaba','Arnautovic','Sabitzer','Das Team','Baumgartner','Schlager','Grillitsch'] },
+            'POL': { naam:'Polen', vlag:'🇵🇱', nickname:'Biało-Czerwoni',
+                woorden:['Lewandowski','Zieliński','Szymański','Biało-Czerwoni','Szczęsny','Zalewski','Milik'] },
+            'SCO': { naam:'Schotland', vlag:'🏴󠁧󠁢󠁳󠁣󠁴󠁿', nickname:'The Tartan Army',
+                woorden:['McTominay','Robertson','Tierney','Tartan Army','McGinn','Adams','Gordon'] },
+            'TUR': { naam:'Turkije', vlag:'🇹🇷', nickname:'Ay-Yıldızlılar',
+                woorden:['Çalhanoğlu','Güler','Yildiz','Ay-Yıldızlılar','Demiral','Akaydin','Soyuncu'] },
+            'CZE': { naam:'Tsjechië', vlag:'🇨🇿', nickname:'Lvi',
+                woorden:['Schick','Souček','Coufal','Lvi','Hlozek','Kuchta','Vlcek'] },
+            'ROU': { naam:'Roemenië', vlag:'🇷🇴', nickname:'Tricolorii',
+                woorden:['Ianis Hagi','Stanciu','Drăguș','Tricolorii','Alibec','Florinel Coman','Rațiu'] },
+            'SVK': { naam:'Slowakije', vlag:'🇸🇰', nickname:'Sokolíci',
+                woorden:['Lobotka','Haraslin','Duda','Sokolíci','Skriniar','Weiss','Strelec'] },
+            'ALB': { naam:'Albanië', vlag:'🇦🇱', nickname:'Shqiponjat',
+                woorden:['Broja','Asllani','Bajrami','Shqiponjat','Gjasula','Ramadani','Hysaj'] },
+            'SVN': { naam:'Slovenië', vlag:'🇸🇮', nickname:'Zmaji',
+                woorden:['Šeško','Mlakar','Oblak','Zmaji','Stojanović','Elšnik','Verbič'] },
+            'HUN': { naam:'Hongarije', vlag:'🇭🇺', nickname:'Aranycsapat',
+                woorden:['Szoboszlai','Sallai','Nikola Milosevic','Aranycsapat','Gulácsi','Kerkez','Varga'] },
+            'MAR': { naam:'Marokko', vlag:'🇲🇦', nickname:'Atlas Leeuwen',
+                woorden:['Hakimi','Ziyech','En-Nesyri','Atlas Leeuwen','Ounahi','Sabiri','Bounou'] },
+            'SEN': { naam:'Senegal', vlag:'🇸🇳', nickname:'Les Lions de la Téranga',
+                woorden:['Mané','Gueye','Diatta','Lions de la Téranga','Koulibaly','Sarr','Diallo'] },
+            'CMR': { naam:'Kameroen', vlag:'🇨🇲', nickname:'Ontembare Leeuwen',
+                woorden:['Anguissa','Choupo-Moting','Toko Ekambi','Ontembare Leeuwen','Mbeumo','Ondoa','Aboubakar'] },
+            'CIV': { naam:'Ivoorkust', vlag:'🇨🇮', nickname:'Olifanten',
+                woorden:['Haller','Zaha','Péan','Olifanten','Sangaré','Kessié','Bamba'] },
+            'EGY': { naam:'Egypte', vlag:'🇪🇬', nickname:'Farao\'s',
+                woorden:['Salah','Trezeguet','Elmohamady',"Farao's",'Mostafa Mohamed','Zizo','El Shenawy'] },
+            'NGA': { naam:'Nigeria', vlag:'🇳🇬', nickname:'Super Eagles',
+                woorden:['Osimhen','Lookman','Iheanacho','Super Eagles','Aina','Chukwueze','Ndidi'] },
+            'GHA': { naam:'Ghana', vlag:'🇬🇭', nickname:'Black Stars',
+                woorden:['Kudus','Ayew','Partey','Black Stars','Salisu','Schlupp','Djiku'] },
+            'AUS': { naam:'Australië', vlag:'🇦🇺', nickname:'Socceroos',
+                woorden:['Hrustic','Leckie','Goodwin','Socceroos','Irankunda','Duke','Rowing'] },
+            'JPN': { naam:'Japan', vlag:'🇯🇵', nickname:'Samurai Blue',
+                woorden:['Doan','Minamino','Kubo','Samurai Blue','Endo','Maeda','Itakura'] },
+            'KOR': { naam:'Zuid-Korea', vlag:'🇰🇷', nickname:'Taeguk Warriors',
+                woorden:['Son Heung-min','Lee Kang-in','Kim Min-jae','Taeguk Warriors','Hwang Hee-chan','Jeong Woo-yeong','Cho Gue-sung'] },
+            'IRN': { naam:'Iran', vlag:'🇮🇷', nickname:'Team Melli',
+                woorden:['Taremi','Jahanbakhsh','Rezaian','Team Melli','Ansarifard','Cheshmi','Hosseini'] },
+            'SAU': { naam:'Saoedi-Arabië', vlag:'🇸🇦', nickname:'Green Falcons',
+                woorden:['Al-Dawsari','Al-Shahrani','Al-Malki','Green Falcons','Al-Qasim','Boushal','Al-Najei'] },
+            'QAT': { naam:'Qatar', vlag:'🇶🇦', nickname:'Al-Annabi',
+                woorden:['Afif','Boudiaf','Al-Haydos','Al-Annabi','Muntari','Salmin','Hisham'] },
+            'NZL': { naam:'Nieuw-Zeeland', vlag:'🇳🇿', nickname:'All Whites',
+                woorden:['Wood','Wynne','Woud','All Whites','McGlinchey','Just','Papalii'] },
+            'PAK': { naam:'Panama', vlag:'🇵🇦', nickname:'Los Canaleros',
+                woorden:['Fajardo','Davis','Murillo','Los Canaleros','Córdoba','Anderson','Turner'] }
+        };
+
+        // Correctie: Panama correcte sleutel
+        WK_TEAMS['PAN'] = WK_TEAMS['PAK'];
+        delete WK_TEAMS['PAK'];
+
+        // Definitieve groepsindeling WK 2026 – alle 48 teams uniek
+        // Indicatieve indeling; exacte loting van december 2025 kan afwijken
+        const WK_GROEPEN = {
+            'A': { teams: ['USA', 'ARG', 'ECU', 'SVN'] },
+            'B': { teams: ['MEX', 'URU', 'BEL', 'CZE'] },
+            'C': { teams: ['CAN', 'MAR', 'POR', 'SVK'] },
+            'D': { teams: ['BRA', 'JPN', 'ENG', 'ROU'] },
+            'E': { teams: ['COL', 'NGA', 'GER', 'ALB'] },
+            'F': { teams: ['FRA', 'ESP', 'NZL', 'QAT'] },
+            'G': { teams: ['NED', 'SEN', 'CHI', 'AUT'] },
+            'H': { teams: ['KOR', 'SUI', 'CMR', 'POL'] },
+            'I': { teams: ['ITA', 'CRO', 'GHA', 'PAR'] },
+            'J': { teams: ['PAN', 'BOL', 'DEN', 'HUN'] },
+            'K': { teams: ['IRN', 'SAU', 'TUR', 'SCO'] },
+            'L': { teams: ['EGY', 'PER', 'CIV', 'AUS'] }
+        };
+
+        // Genereer alle groepsfase-wedstrijden (elke combinatie van 2 teams per groep = 3 wedstrijden)
+        // Datums/steden zijn indicatief – exacte schema nog niet volledig gepubliceerd
+        const WK_STEDEN = {
+            'A': ['New York/New Jersey','Los Angeles','Dallas'],
+            'B': ['Guadalajara','Mexico-Stad','Monterrey'],
+            'C': ['Toronto','Vancouver','Guadalajara'],
+            'D': ['Dallas','Houston','Atlanta'],
+            'E': ['Chicago','Cincinnati','Kansas City'],
+            'F': ['Miami','Seattle','Los Angeles'],
+            'G': ['Philadelphia','New York/New Jersey','Boston'],
+            'H': ['San Francisco','Los Angeles','Seattle'],
+            'I': ['Houston','Dallas','Kansas City'],
+            'J': ['Guadalajara','Monterrey','Mexico-Stad'],
+            'K': ['Atlanta','Miami','Philadelphia'],
+            'L': ['Los Angeles','San Francisco','Seattle'],
+        };
+
+        function buildGroepswedstrijden() {
+            const wedstrijden = [];
+            const datumOffset = { A:0, B:0, C:0, D:1, E:1, F:1, G:2, H:2, I:2, J:3, K:3, L:3 };
+            const baseDate = new Date(2026, 5, 11); // 11 juni 2026
+
+            Object.entries(WK_GROEPEN).forEach(([poule, data]) => {
+                const teams = data.teams;
+                const steden = WK_STEDEN[poule];
+                const offset = datumOffset[poule];
+                const combos = [[0,1],[0,2],[0,3],[1,2],[1,3],[2,3]];
+                combos.forEach(([i, j], matchIdx) => {
+                    const t1 = teams[i], t2 = teams[j];
+                    const d = new Date(baseDate);
+                    d.setDate(d.getDate() + offset * 1 + Math.floor(matchIdx / 2));
+                    const stad = steden[matchIdx % steden.length];
+                    const datumStr = d.getDate() + ' jun 2026';
+                    const extra = [stad];
+                    if (matchIdx === 0) extra.push('Openingswedstrijd poule ' + poule);
+                    wedstrijden.push({
+                        id: `${poule}${matchIdx+1}`,
+                        fase: 'Groepsfase',
+                        poule,
+                        team1: t1, team2: t2,
+                        datum: datumStr,
+                        stad,
+                        extra
+                    });
+                });
+            });
+            return wedstrijden;
+        }
+
+        const WK_GROEPSWEDSTRIJDEN = buildGroepswedstrijden();
+
+        const WK_KNOCKOUT_WEDSTRIJDEN = [
+            { id:'R32-1',  fase:'Ronde van 32', team1:'TBD', team2:'TBD', datum:'', stad:'', extra:['Ronde van 32'] },
+            { id:'R32-2',  fase:'Ronde van 32', team1:'TBD', team2:'TBD', datum:'', stad:'', extra:['Ronde van 32'] },
+            { id:'R32-3',  fase:'Ronde van 32', team1:'TBD', team2:'TBD', datum:'', stad:'', extra:['Ronde van 32'] },
+            { id:'R32-4',  fase:'Ronde van 32', team1:'TBD', team2:'TBD', datum:'', stad:'', extra:['Ronde van 32'] },
+            { id:'R32-5',  fase:'Ronde van 32', team1:'TBD', team2:'TBD', datum:'', stad:'', extra:['Ronde van 32'] },
+            { id:'R32-6',  fase:'Ronde van 32', team1:'TBD', team2:'TBD', datum:'', stad:'', extra:['Ronde van 32'] },
+            { id:'R32-7',  fase:'Ronde van 32', team1:'TBD', team2:'TBD', datum:'', stad:'', extra:['Ronde van 32'] },
+            { id:'R32-8',  fase:'Ronde van 32', team1:'TBD', team2:'TBD', datum:'', stad:'', extra:['Ronde van 32'] },
+            { id:'R32-9',  fase:'Ronde van 32', team1:'TBD', team2:'TBD', datum:'', stad:'', extra:['Ronde van 32'] },
+            { id:'R32-10', fase:'Ronde van 32', team1:'TBD', team2:'TBD', datum:'', stad:'', extra:['Ronde van 32'] },
+            { id:'R32-11', fase:'Ronde van 32', team1:'TBD', team2:'TBD', datum:'', stad:'', extra:['Ronde van 32'] },
+            { id:'R32-12', fase:'Ronde van 32', team1:'TBD', team2:'TBD', datum:'', stad:'', extra:['Ronde van 32'] },
+            { id:'R32-13', fase:'Ronde van 32', team1:'TBD', team2:'TBD', datum:'', stad:'', extra:['Ronde van 32'] },
+            { id:'R32-14', fase:'Ronde van 32', team1:'TBD', team2:'TBD', datum:'', stad:'', extra:['Ronde van 32'] },
+            { id:'R32-15', fase:'Ronde van 32', team1:'TBD', team2:'TBD', datum:'', stad:'', extra:['Ronde van 32'] },
+            { id:'R32-16', fase:'Ronde van 32', team1:'TBD', team2:'TBD', datum:'', stad:'', extra:['Ronde van 32'] },
+            { id:'R16-1',  fase:'Achtste finale', team1:'TBD', team2:'TBD', datum:'', stad:'', extra:['Achtste finale','Knock-out'] },
+            { id:'R16-2',  fase:'Achtste finale', team1:'TBD', team2:'TBD', datum:'', stad:'', extra:['Achtste finale','Knock-out'] },
+            { id:'R16-3',  fase:'Achtste finale', team1:'TBD', team2:'TBD', datum:'', stad:'', extra:['Achtste finale','Knock-out'] },
+            { id:'R16-4',  fase:'Achtste finale', team1:'TBD', team2:'TBD', datum:'', stad:'', extra:['Achtste finale','Knock-out'] },
+            { id:'R16-5',  fase:'Achtste finale', team1:'TBD', team2:'TBD', datum:'', stad:'', extra:['Achtste finale','Knock-out'] },
+            { id:'R16-6',  fase:'Achtste finale', team1:'TBD', team2:'TBD', datum:'', stad:'', extra:['Achtste finale','Knock-out'] },
+            { id:'R16-7',  fase:'Achtste finale', team1:'TBD', team2:'TBD', datum:'', stad:'', extra:['Achtste finale','Knock-out'] },
+            { id:'R16-8',  fase:'Achtste finale', team1:'TBD', team2:'TBD', datum:'', stad:'', extra:['Achtste finale','Knock-out'] },
+            { id:'QF-1',   fase:'Kwartfinale', team1:'TBD', team2:'TBD', datum:'', stad:'', extra:['Kwartfinale','Knock-out'] },
+            { id:'QF-2',   fase:'Kwartfinale', team1:'TBD', team2:'TBD', datum:'', stad:'', extra:['Kwartfinale','Knock-out'] },
+            { id:'QF-3',   fase:'Kwartfinale', team1:'TBD', team2:'TBD', datum:'', stad:'', extra:['Kwartfinale','Knock-out'] },
+            { id:'QF-4',   fase:'Kwartfinale', team1:'TBD', team2:'TBD', datum:'', stad:'', extra:['Kwartfinale','Knock-out'] },
+            { id:'SF-1',   fase:'Halve finale', team1:'TBD', team2:'TBD', datum:'19 jul 2026', stad:'New York/New Jersey', extra:['Halve finale','Knock-out','MetLife Stadium'] },
+            { id:'SF-2',   fase:'Halve finale', team1:'TBD', team2:'TBD', datum:'22 jul 2026', stad:'Dallas', extra:['Halve finale','Knock-out','AT&T Stadium'] },
+            { id:'3P',     fase:'3e/4e plaats', team1:'TBD', team2:'TBD', datum:'25 jul 2026', stad:'Miami', extra:['Troostfinale','Knock-out','Hard Rock Stadium'] },
+            { id:'FIN',    fase:'Finale', team1:'TBD', team2:'TBD', datum:'19 jul 2026', stad:'New York/New Jersey', extra:['Finale','WK-eindstrijd','MetLife Stadium','Winnaar WK 2026'] },
+        ];
+
+        // Corrigeer finaledata (finale is 19 juli 2026 in MetLife)
+        WK_KNOCKOUT_WEDSTRIJDEN[WK_KNOCKOUT_WEDSTRIJDEN.length-1].datum = '19 jul 2026';
+
+        // ─── WK State ────────────────────────────────────────────────────────────
+        let wkCurrentWords    = [];
+        let wkRefreshesLeft   = 3;
+        let wkWinningLines    = new Set();
+        let wkCurrentMatchId  = null;
+        let wkCurrentPoule    = 'A';
+        let wkCurrentTab      = 'groep';
+
+        // ─── WK functies ─────────────────────────────────────────────────────────
+
+        function getTeamLabel(code) {
+            const t = WK_TEAMS[code];
+            if (!t) return code;
+            return (t.vlag || '⚽') + ' ' + t.naam;
+        }
+
+        function getWordPool(matchId) {
+            // Zoek in groepswedstrijden en knockout
+            let match = WK_GROEPSWEDSTRIJDEN.find(m => m.id === matchId)
+                     || WK_KNOCKOUT_WEDSTRIJDEN.find(m => m.id === matchId);
+            if (!match) return [...WK_VOETBAL_TERMEN];
+
+            const t1words = (WK_TEAMS[match.team1]?.woorden || []);
+            const t2words = (WK_TEAMS[match.team2]?.woorden || []);
+            const extra   = match.extra || [];
+
+            // Dedupliceer
+            const pool = [...new Set([...WK_VOETBAL_TERMEN, ...t1words, ...t2words, ...extra])];
+            return pool;
+        }
+
+        window.initWkScreen = function() {
+            // Render poule-tabs
+            const tabsEl = document.getElementById('wk-poule-tabs');
+            tabsEl.innerHTML = '';
+            'ABCDEFGHIJKL'.split('').forEach(letter => {
+                const btn = document.createElement('button');
+                btn.className = 'wk-poule-tab' + (letter === wkCurrentPoule ? ' active' : '');
+                btn.textContent = letter;
+                btn.onclick = () => setWkPoule(letter);
+                tabsEl.appendChild(btn);
+            });
+            renderWkPouleMatches(wkCurrentPoule);
+            renderWkKnockoutMatches();
+        };
+
+        window.setWkTab = function(tab) {
+            wkCurrentTab = tab;
+            document.querySelectorAll('.wk-tab').forEach((b, i) => {
+                b.classList.toggle('active', (i === 0 && tab === 'groep') || (i === 1 && tab === 'knockout'));
+            });
+            document.getElementById('wk-groep-view').style.display   = tab === 'groep'   ? 'block' : 'none';
+            document.getElementById('wk-knockout-view').style.display = tab === 'knockout'? 'block' : 'none';
+        };
+
+        window.setWkPoule = function(poule) {
+            wkCurrentPoule = poule;
+            document.querySelectorAll('.wk-poule-tab').forEach(b => {
+                b.classList.toggle('active', b.textContent === poule);
+            });
+            renderWkPouleMatches(poule);
+        };
+
+        function renderWkPouleMatches(poule) {
+            const container = document.getElementById('wk-poule-matches');
+            const titleEl   = document.getElementById('wk-poule-title');
+            const groep = WK_GROEPEN[poule];
+            if (!groep) return;
+
+            const teamNames = groep.teams.map(t => WK_TEAMS[t]?.naam || t).join(' · ');
+            titleEl.textContent = 'Poule ' + poule + ' — ' + teamNames;
+
+            container.innerHTML = '';
+            const matches = WK_GROEPSWEDSTRIJDEN.filter(m => m.poule === poule);
+            matches.forEach(match => {
+                container.appendChild(buildMatchItem(match));
+            });
+        }
+
+        function renderWkKnockoutMatches() {
+            const container = document.getElementById('wk-knockout-matches');
+            container.innerHTML = '';
+
+            const rounds = [
+                { label: 'Ronde van 32',  fase: 'Ronde van 32' },
+                { label: 'Achtste finale', fase: 'Achtste finale' },
+                { label: 'Kwartfinale',   fase: 'Kwartfinale' },
+                { label: 'Halve finale',  fase: 'Halve finale' },
+                { label: '3e / 4e plaats',fase: '3e/4e plaats' },
+                { label: 'Finale',        fase: 'Finale' },
+            ];
+
+            rounds.forEach(round => {
+                const matches = WK_KNOCKOUT_WEDSTRIJDEN.filter(m => m.fase === round.fase);
+                if (!matches.length) return;
+                const heading = document.createElement('div');
+                heading.className = 'wk-round-heading';
+                heading.textContent = round.label;
+                container.appendChild(heading);
+                matches.forEach(match => container.appendChild(buildMatchItem(match)));
+            });
+        }
+
+        function buildMatchItem(match) {
+            const isTBD = match.team1 === 'TBD';
+            const t1Label = isTBD ? '?' : getTeamLabel(match.team1);
+            const t2Label = isTBD ? '?' : getTeamLabel(match.team2);
+
+            const item = document.createElement('div');
+            item.className = 'wk-match-item';
+            item.onclick = () => startWkGame(match.id);
+            item.innerHTML =
+                `<div class="wk-match-teams">
+                    <span>${t1Label}</span>
+                    <span class="wk-match-vs">vs</span>
+                    <span>${t2Label}</span>
+                </div>
+                <div class="wk-match-meta">
+                    ${match.datum ? `<span>📅 ${match.datum}</span>` : ''}
+                    ${match.stad  ? `<span>📍 ${match.stad}</span>`  : ''}
+                </div>`;
+            return item;
+        }
+
+        window.startWkGame = function(matchId) {
+            wkCurrentMatchId = matchId;
+            const match = WK_GROEPSWEDSTRIJDEN.find(m => m.id === matchId)
+                       || WK_KNOCKOUT_WEDSTRIJDEN.find(m => m.id === matchId);
+            if (!match) return;
+
+            const isTBD = match.team1 === 'TBD';
+            const title = isTBD
+                ? match.fase
+                : getTeamLabel(match.team1) + ' vs ' + getTeamLabel(match.team2);
+
+            document.getElementById('wk-match-title').textContent = title;
+
+            wkRefreshesLeft = 3;
+            wkUpdateRefreshUI();
+
+            const pool = getWordPool(matchId);
+            wkCurrentWords = pickRandom(pool, 16);
+            wkWinningLines.clear();
+            document.getElementById('wk-bingo-lines').innerHTML = '';
+
+            wkRenderGrid();
+
+            document.getElementById('wk-selector').style.display = 'none';
+            document.getElementById('wk-game').style.display     = 'block';
+        };
+
+        window.wkBackToSelector = function() {
+            document.getElementById('wk-game').style.display     = 'none';
+            document.getElementById('wk-selector').style.display = 'block';
+            wkCurrentMatchId = null;
+        };
+
+        window.wkRefreshCard = function() {
+            if (wkRefreshesLeft <= 0) return;
+            wkRefreshesLeft--;
+            wkUpdateRefreshUI();
+            if (wkCurrentMatchId) {
+                const pool = getWordPool(wkCurrentMatchId);
+                wkCurrentWords = pickRandom(pool, 16);
+            }
+            wkWinningLines.clear();
+            document.getElementById('wk-bingo-lines').innerHTML = '';
+            wkRenderGrid();
+        };
+
+        function wkUpdateRefreshUI() {
+            document.getElementById('wk-shuffle-count').textContent = wkRefreshesLeft;
+            document.getElementById('wk-btn-shuffle').disabled      = wkRefreshesLeft <= 0;
+        }
+
+        function wkRenderGrid() {
+            const grid = document.getElementById('wk-bingo-grid');
+            grid.innerHTML = '';
+            wkCurrentWords.forEach(word => {
+                const cell = document.createElement('div');
+                cell.className = 'bingo-cell flash';
+                cell.textContent = word;
+                cell.onclick = () => toggleWkCell(cell);
+                grid.appendChild(cell);
+            });
+            setTimeout(() => grid.querySelectorAll('.bingo-cell').forEach(c => c.classList.remove('flash')), 500);
+        }
+
+        window.toggleWkCell = function(cell) {
+            if (navigator.vibrate) navigator.vibrate(20);
+            cell.classList.toggle('checked');
+            checkWkBingo();
+        };
+
+        function checkWkBingo() {
+            const cells    = document.querySelectorAll('#wk-bingo-grid .bingo-cell');
+            const linesEl  = document.getElementById('wk-bingo-lines');
+            const size     = 4;
+            let newBingo   = false;
+
+            const check = (indices, id, cls) => {
+                if (indices.every(i => cells[i]?.classList.contains('checked')) && !wkWinningLines.has(id)) {
+                    wkWinningLines.add(id);
+                    newBingo = true;
+                    const l = document.createElement('div');
+                    l.className = `strike-line ${cls}`;
+                    linesEl.appendChild(l);
+                }
+            };
+
+            for (let i = 0; i < size; i++) {
+                check([0,1,2,3].map(j => i*size+j), `row-${i}`, `strike-row-${i}`);
+                check([0,1,2,3].map(j => j*size+i), `col-${i}`, `strike-col-${i}`);
+            }
+            check([0,5,10,15], 'diag-1', 'strike-diag-1');
+            check([3,6,9,12],  'diag-2', 'strike-diag-2');
+
+            if (newBingo) {
+                if (navigator.vibrate) navigator.vibrate([100,50,100]);
+                document.getElementById('bingo-win-msg').textContent =
+                    winMessages[Math.floor(Math.random() * winMessages.length)];
+                document.getElementById('bingo-overlay').classList.add('show');
+            }
+        }
+
+        // ─── Hook initWkScreen in goTo ───────────────────────────────────────────
+        const _prevGoTo = window.goTo;
+        window.goTo = function(id) {
+            if (id === 'screen-wk') initWkScreen();
+            _prevGoTo(id);
+        };
+        window.goHome = () => { window.goTo('screen-home'); };
 
         // ─── Start ────────────────────────────────────────────────────────────────
         initFirebase();
