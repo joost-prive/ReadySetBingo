@@ -791,6 +791,84 @@
         body.light .cardpicker-btn:hover { background:white; }
 
         body.light ::-webkit-scrollbar-thumb { background:rgba(0,0,0,.15); }
+
+        /* ── SHARE KNOP ── */
+        .mycard-btn-share {
+            background:rgba(45,212,191,.18); color:#2dd4bf;
+            border:1px solid rgba(45,212,191,.3); border-radius:8px;
+            padding:7px 10px; font-size:.78rem; cursor:pointer; font-family:inherit;
+        }
+        .mycard-btn-share:hover { background:rgba(45,212,191,.32); }
+        body.light .mycard-btn-share { background:rgba(13,148,136,.12); color:#0d9488; border-color:rgba(13,148,136,.3); }
+
+        /* ── SOORT / PUBLIEK BADGE ── */
+        .mycard-badge {
+            display:inline-block; font-size:.6rem; font-weight:700;
+            padding:2px 6px; border-radius:6px; margin-right:4px;
+            background:rgba(255,255,255,.12); color:var(--text-muted);
+            vertical-align:middle;
+        }
+
+        /* ── PUBLIEK TOGGLE ── */
+        .publiek-toggle-group {
+            display:flex; border-radius:10px; overflow:hidden;
+            border:1px solid rgba(255,255,255,.15); margin-bottom:20px;
+        }
+        .publiek-tog-btn {
+            flex:1; padding:10px 12px; border:none; border-radius:0; margin:0;
+            background:rgba(255,255,255,.06); color:var(--text-muted);
+            font-family:'Poppins',sans-serif; font-size:.88rem; font-weight:600;
+            cursor:pointer; transition:all .15s; width:auto;
+        }
+        .publiek-tog-btn:not(:last-child) { border-right:1px solid rgba(255,255,255,.1); }
+        .publiek-tog-btn.active { background:var(--brand-gradient); color:white; box-shadow:0 2px 8px rgba(255,94,98,.3); }
+        .publiek-tog-btn:active { transform:none; }
+
+        /* ── DESKTOP SCALING (≥ 768px) ── */
+        @media (min-width: 768px) {
+            body {
+                padding: 40px 20px;
+            }
+            header {
+                max-width: 680px;
+                margin-bottom: 28px;
+            }
+            .tagline { font-size: 1rem; }
+            .logo-icon { width: 52px; height: 52px; border-radius: 15px; }
+            .logo-icon svg { width: 30px; height: 30px; }
+            .logo-sq { width: 17px; height: 17px; border-radius: 4px; }
+            .container {
+                max-width: 680px;
+                padding: 32px;
+                border-radius: 36px;
+                max-height: 88vh;
+            }
+            h2 { font-size: 1.5rem; margin-bottom: 20px; }
+            .screen-header { margin-bottom: 24px; }
+            .screen-header h2 { font-size: 1.35rem; }
+            label { font-size: .95rem; margin-bottom: 10px; }
+            select, input, textarea {
+                padding: 16px 18px;
+                font-size: 1.05rem;
+                border-radius: 16px;
+                margin-bottom: 24px;
+            }
+            button { padding: 18px; font-size: 1.05rem; border-radius: 16px; }
+            .btn-back { padding: 9px 18px; font-size: .88rem; }
+            .menu-grid { gap: 14px; }
+            .menu-tile { padding: 26px 14px 20px; border-radius: 22px; gap: 8px; }
+            .tile-icon  { font-size: 2.5rem; }
+            .tile-title { font-size: 1rem; }
+            .tile-desc  { font-size: .75rem; }
+            .bingo-cell { font-size: 1rem; padding: 8px; }
+            .bingo-grid { gap: 10px; }
+            .game-header { margin-bottom: 20px; }
+            .gen-options-row { gap: 18px; margin-bottom: 18px; }
+            .gen-label-sm { font-size: .78rem; }
+            .gen-tog-btn { padding: 9px 16px; font-size: .9rem; }
+            .gen-card-cell { font-size: .82rem; padding: 5px 3px; }
+            .mycard-item { padding: 16px 18px; }
+        }
     </style>
 </head>
 <body>
@@ -879,6 +957,12 @@
                     <div class="tile-badge">2026</div>
                 </div>
 
+                <div class="menu-tile" onclick="goTo('screen-ingezonden')">
+                    <div class="tile-icon">📬</div>
+                    <div class="tile-title">Ingezonden Kaarten</div>
+                    <div class="tile-desc">Kaarten van andere spelers</div>
+                </div>
+
             </div>
         </div>
 
@@ -889,12 +973,42 @@
                 <h2>📺 TV Bingo</h2>
             </div>
 
-            <label>1. Kies Programma</label>
-            <select id="program-select"><option value="">Laden...</option></select>
+            <label>Type</label>
+            <select id="tv-type-select" onchange="onTvTypeChange()">
+                <option value="standaard">⭐ Standaard</option>
+            </select>
 
-            <div id="category-wrapper">
-                <label>2. Kies Scenario</label>
-                <select id="category-select" disabled><option value="">-- Eerst programma kiezen --</option></select>
+            <div id="tv-standaard-wrap">
+                <label>1. Kies Programma</label>
+                <select id="program-select"><option value="">Laden...</option></select>
+            </div>
+
+                <div id="category-wrapper">
+                    <label>2. Kies Scenario</label>
+                    <select id="category-select" disabled><option value="">-- Eerst programma kiezen --</option></select>
+                </div>
+            </div>
+
+            <div id="tv-eigen-wrap" style="display:none;">
+                <label>Programma</label>
+                <select id="tv-eigen-prog-select" onchange="onTvEigenProgChange()">
+                    <option value="">-- Kies programma --</option>
+                </select>
+                <label>Scenario / Categorie</label>
+                <select id="tv-eigen-cat-select">
+                    <option value="">-- Kies scenario --</option>
+                </select>
+            </div>
+
+            <div id="tv-ingezonden-wrap" style="display:none;">
+                <label>Programma</label>
+                <select id="tv-ingezonden-prog-select" onchange="onTvIngezondenProgChange()">
+                    <option value="">-- Kies programma --</option>
+                </select>
+                <label>Scenario / Categorie</label>
+                <select id="tv-ingezonden-cat-select">
+                    <option value="">-- Kies scenario --</option>
+                </select>
             </div>
 
             <div style="margin-top:20px;"></div>
@@ -967,6 +1081,25 @@
             <div class="screen-header">
                 <button class="btn-back" onclick="goHome()">← Terug</button>
                 <h2>🎲 Genereer Bingo-kaarten</h2>
+            </div>
+
+            <label>Soort <span class="gen-hint">(optioneel)</span></label>
+            <select id="gen-soort" onchange="onGenSoortChange()">
+                <option value="">-- Geen --</option>
+                <option value="tv">📺 TV Bingo</option>
+                <option value="scenario">🎪 Scenario Bingo</option>
+            </select>
+
+            <div id="gen-context-tv" style="display:none;">
+                <label>Programma</label>
+                <input type="text" id="gen-tv-programma" placeholder="Bijv. Expeditie Robinson">
+                <label>Categorie/Scenario</label>
+                <input type="text" id="gen-tv-categorie" placeholder="Bijv. De Uitzending">
+            </div>
+
+            <div id="gen-context-scenario" style="display:none;">
+                <label>Thema</label>
+                <input type="text" id="gen-scenario-thema" placeholder="Bijv. Kermis">
             </div>
 
             <label>Woorden / termen <span id="gen-words-hint" class="gen-hint">(min. 16 woorden)</span></label>
@@ -1057,6 +1190,14 @@
                 <input type="text" id="gen-design-title" placeholder="Koptekst (bijv. Hitsig Bingo)" style="margin-bottom:8px;">
                 <input type="text" id="gen-design-subtitle" placeholder="Subtitel (optioneel)" style="margin-bottom:8px;">
                 <input type="text" id="gen-design-footer" placeholder="Voettekst (optioneel)" style="margin-bottom:0;">
+            </div>
+
+            <div>
+                <label>Zichtbaarheid</label>
+                <div class="publiek-toggle-group">
+                    <button class="publiek-tog-btn active" id="gen-prive-btn" onclick="setGenPubliek(false)">🔒 Privé</button>
+                    <button class="publiek-tog-btn" id="gen-publiek-btn" onclick="setGenPubliek(true)">🌐 Publiek</button>
+                </div>
             </div>
 
             <button class="btn-primary" onclick="generateBingoCards()" style="margin-top:4px;">🎲 Genereer kaarten</button>
@@ -1164,56 +1305,37 @@
                 <h2>🎪 Scenario Bingo</h2>
             </div>
 
-            <label>Kies een thema</label>
-            <select id="scen-theme" onchange="scenarioThemeChange()"
-                    style="width:100%;padding:10px 12px;border-radius:10px;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.07);color:var(--text-main);font-family:inherit;font-size:.9rem;margin-bottom:4px;">
-                <option value="">-- Kies een thema --</option>
-                <option value="kermis">🎡 Kermis</option>
-                <option value="festival">🎵 Festival</option>
-                <option value="trouwerij">💍 Trouwerij</option>
-                <option value="verjaardag">🎂 Verjaardag</option>
+            <label>Type</label>
+            <select id="scen-type-select" onchange="onScenTypeChange()">
+                <option value="standaard">⭐ Standaard</option>
             </select>
 
-            <div id="scen-words-wrap" style="display:none;">
-                <label style="margin-top:14px;display:block;">
-                    Woorden <span class="gen-hint" id="scen-words-hint"></span>
-                </label>
-                <p style="font-size:.78rem;color:var(--text-muted);margin:2px 0 8px;">
-                    Je kunt de woorden aanpassen voordat je genereert.
-                </p>
-                <textarea id="scen-words" rows="9" oninput="updateScenHint()"
-                    style="width:100%;background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:12px;padding:12px;color:var(--text-main);font-family:inherit;font-size:.85rem;resize:vertical;line-height:1.6;"></textarea>
-
-                <div class="gen-options-row" style="margin-top:12px;">
-                    <div>
-                        <div class="gen-label-sm">Rastergrootte</div>
-                        <div class="gen-toggle-group">
-                            <button class="gen-tog-btn active" data-scval="4" onclick="setScenarioGrid(4)">4×4</button>
-                            <button class="gen-tog-btn"        data-scval="5" onclick="setScenarioGrid(5)">5×5</button>
-                        </div>
-                    </div>
-                    <div>
-                        <div class="gen-label-sm">Aantal kaarten</div>
-                        <input type="number" id="scen-num-cards" class="gen-small-num" value="10" min="1" max="200">
-                    </div>
-                </div>
-
-                <button class="btn-primary" onclick="generateScenarioCards()" style="margin-top:4px;">🎲 Genereer kaarten</button>
-
-                <div id="scen-progress" class="gen-progress" style="display:none;">
-                    Bezig met genereren… <span id="scen-prog-txt"></span>
-                </div>
-                <div id="scen-error" class="gen-error" style="display:none;"></div>
-
-                <div id="scen-output" style="display:none;">
-                    <div class="gen-output-header">
-                        <h3 id="scen-output-title"></h3>
-                        <button class="btn-primary" onclick="saveScenarioCards()"
-                                style="width:auto;margin:0;padding:8px 12px;font-size:.82rem;">💾 Opslaan</button>
-                    </div>
-                    <div id="scen-cards-container" class="gen-cards-grid"></div>
-                </div>
+            <div id="scen-standaard-wrap">
+                <label style="margin-top:14px;display:block;">Kies thema</label>
+                <select id="scen-theme-play" onchange="onScenThemeChange()">
+                    <option value="">-- Kies een thema --</option>
+                    <option value="kermis">🎡 Kermis</option>
+                    <option value="festival">🎵 Festival</option>
+                    <option value="trouwerij">💍 Trouwerij</option>
+                    <option value="verjaardag">🎂 Verjaardag</option>
+                </select>
             </div>
+
+            <div id="scen-eigen-wrap" style="display:none;">
+                <label style="margin-top:14px;display:block;">Kies thema</label>
+                <select id="scen-eigen-theme-select" onchange="onScenThemeChange()">
+                    <option value="">-- Kies een thema --</option>
+                </select>
+            </div>
+
+            <div id="scen-ingezonden-wrap" style="display:none;">
+                <label style="margin-top:14px;display:block;">Kies thema</label>
+                <select id="scen-ingezonden-theme-select" onchange="onScenThemeChange()">
+                    <option value="">-- Kies een thema --</option>
+                </select>
+            </div>
+
+            <button class="btn-primary" id="scen-start-btn" onclick="startScenarioGame()" style="margin-top:16px;" disabled>🎪 Start Bingo</button>
         </div>
 
         <!-- ════════════════════════════ SPOTIFY BINGO ═══════════════════════════ -->
@@ -1310,6 +1432,20 @@
             </div>
         </div>
 
+        <!-- ══════════════════════════ INGEZONDEN KAARTEN ════════════════════════ -->
+        <div id="screen-ingezonden" class="screen">
+            <div class="screen-header">
+                <button class="btn-back" onclick="goHome()">← Terug</button>
+                <h2>📬 Ingezonden Kaarten</h2>
+            </div>
+            <div id="ingezonden-list"></div>
+            <div id="ingezonden-empty" style="display:none; text-align:center; padding:40px 20px; color:var(--text-muted);">
+                <div style="font-size:2.5rem; margin-bottom:12px;">📭</div>
+                <p>Nog geen ingezonden kaarten.</p>
+                <p style="font-size:.78rem;">Sla kaarten op als Publiek via Genereer Bingo-kaarten.</p>
+            </div>
+        </div>
+
     </div><!-- /container -->
 
     <!-- ══════════════════════════════ OVERLAYS ═══════════════════════════════ -->
@@ -1384,6 +1520,7 @@
         let db, auth, docRef;
         let isLocalMode = false;
         let refreshesLeft = 3;
+        let _currentGameWords = null; // word pool for current game (null = use TV appData)
         const myAppId = typeof window.__app_id !== 'undefined' ? window.__app_id : 'thuisbingo-global';
 
         // Schermen waarbij de info-knop zichtbaar is
@@ -1521,10 +1658,28 @@
 
         // ─── Game logic ───────────────────────────────────────────────────────────
         window.startGame = function() {
+            const tvType = document.getElementById('tv-type-select').value;
+            if (tvType === 'eigen' || tvType === 'ingezonden') {
+                // Get word pool from the matching card set
+                const progSel = document.getElementById(tvType === 'eigen' ? 'tv-eigen-prog-select' : 'tv-ingezonden-prog-select');
+                const catSel  = document.getElementById(tvType === 'eigen' ? 'tv-eigen-cat-select'  : 'tv-ingezonden-cat-select');
+                const progVal = progSel.value;
+                const catVal  = catSel.value;
+                if (!progVal || !catVal) { alert('Kies eerst een programma en scenario.'); return; }
+                // Find the matching card set
+                const allCards = loadMyCards().filter(cs => cs.soort === 'tv');
+                const match = allCards.find(cs => cs.programma === progVal && cs.categorie === catVal);
+                if (!match || !match.words || !match.words.length) { alert('Geen woordenlijst gevonden voor dit scenario.'); return; }
+                startGameWithWords(progVal + ' – ' + catVal, match.words);
+                return;
+            }
             const prog = programSelect.value, cat = categorySelect.value;
+            _currentGameWords = null; // TV standaard: use appData
             refreshesLeft = 3; updateRefreshUI();
             generateNewWords(prog, cat);
             document.getElementById('game-title').innerText = prog;
+            winningLines.clear();
+            document.getElementById('bingo-lines').innerHTML = '';
             switchScreen('screen-game');
         };
 
@@ -1559,7 +1714,17 @@
         window.refreshCard = function() {
             if (refreshesLeft <= 0) return;
             refreshesLeft--; updateRefreshUI();
-            generateNewWords(programSelect.value, categorySelect.value);
+            if (_currentGameWords) {
+                // Scenario or custom word pool
+                let pool = [..._currentGameWords];
+                while (pool.length < 16) pool = pool.concat(pool);
+                currentWords = pickRandom(pool, 16);
+                winningLines.clear();
+                document.getElementById('bingo-lines').innerHTML = '';
+                renderGrid();
+            } else {
+                generateNewWords(programSelect.value, categorySelect.value);
+            }
         };
 
         function updateRefreshUI() {
@@ -2502,9 +2667,17 @@ h1{font-size:13pt;text-align:center;margin-bottom:6mm;}
         }
         function saveMyCardsList(arr) { localStorage.setItem('myCards', JSON.stringify(arr)); }
 
-        function addCardSet(title, cards, size, source) {
+        function addCardSet(title, cards, size, source, extra = {}) {
             const list = loadMyCards();
-            const cs = { id: 'cs-' + Date.now(), title, cards, size, count: cards.length, source, created: Date.now() };
+            const cs = {
+                id: 'cs-' + Date.now(), title, cards, size, count: cards.length, source, created: Date.now(),
+                words:     extra.words     || [],
+                soort:     extra.soort     || null,
+                thema:     extra.thema     || null,
+                programma: extra.programma || null,
+                categorie: extra.categorie || null,
+                publiek:   extra.publiek   || false,
+            };
             list.unshift(cs);
             saveMyCardsList(list);
             return cs;
@@ -2526,16 +2699,24 @@ h1{font-size:13pt;text-align:center;margin-bottom:6mm;}
                 const d = new Date(cs.created);
                 const dateStr = d.toLocaleDateString('nl-NL', { day:'numeric', month:'short', year:'numeric' });
                 const icon = cs.source === 'spotify' ? '🎵' : cs.source === 'scenario' ? '🎪' : '🎲';
+                const soortBadge = cs.soort === 'tv' ? '<span class="mycard-badge">📺 TV</span>'
+                                 : cs.soort === 'scenario' ? '<span class="mycard-badge">🎪 Scenario</span>'
+                                 : '';
+                const publiekBadge = cs.publiek ? '<span class="mycard-badge" style="background:rgba(45,212,191,.2);color:#2dd4bf;">🌐</span>' : '';
+                const shareBtn = (cs.words && cs.words.length)
+                    ? `<button class="mycard-btn-share" onclick="shareCardSet('${cs.id}')">🔗</button>`
+                    : '';
                 const div = document.createElement('div');
                 div.className = 'mycard-item';
                 div.innerHTML = `
                     <div class="mycard-icon">${icon}</div>
                     <div class="mycard-info">
-                        <div class="mycard-title-text">${cs.title}</div>
+                        <div class="mycard-title-text">${soortBadge}${publiekBadge}${cs.title}</div>
                         <div class="mycard-meta-text">${cs.count} kaart${cs.count !== 1 ? 'en' : ''} · ${cs.size}×${cs.size} · ${dateStr}</div>
                     </div>
                     <div class="mycard-actions">
                         <button class="mycard-btn-play" onclick="playCardSet('${cs.id}')">▶ Spelen</button>
+                        ${shareBtn}
                         <button class="mycard-btn-del"  onclick="deleteCardSet('${cs.id}')">🗑</button>
                     </div>`;
                 container.appendChild(div);
@@ -2545,9 +2726,12 @@ h1{font-size:13pt;text-align:center;margin-bottom:6mm;}
         // Render mycards when that screen is opened
         const _origGoTo = window.goTo;
         window.goTo = function(id) {
-            if (id === 'screen-mycards')  renderMyCards();
-            if (id === 'screen-generate') renderThemePills();
-            if (id === 'screen-themes')   renderThemeList();
+            if (id === 'screen-mycards')    renderMyCards();
+            if (id === 'screen-generate')   renderThemePills();
+            if (id === 'screen-themes')     renderThemeList();
+            if (id === 'screen-ingezonden') renderIngezonden();
+            if (id === 'screen-scenario')   initScenTypeSelect();
+            if (id === 'screen-select')     initTvTypeSelect();
             _origGoTo(id);
         };
         window.goHome = () => { window.goTo('screen-home'); };
@@ -2565,7 +2749,16 @@ h1{font-size:13pt;text-align:center;margin-bottom:6mm;}
                 : 'Bingo ' + new Date().toLocaleDateString('nl-NL', { day:'numeric', month:'long' });
             const title = prompt('Naam voor deze kaartset?', defaultTitle);
             if (title === null) return;
-            addCardSet(title.trim() || defaultTitle, cards, n, source);
+            let extra = {};
+            if (source === 'manual') {
+                const soort     = document.getElementById('gen-soort').value || null;
+                const programma = document.getElementById('gen-tv-programma')?.value.trim() || null;
+                const categorie = document.getElementById('gen-tv-categorie')?.value.trim() || null;
+                const thema     = document.getElementById('gen-scenario-thema')?.value.trim() || null;
+                const words     = document.getElementById('gen-words').value.split('\n').map(w => w.trim()).filter(Boolean);
+                extra = { soort, programma, categorie, thema, publiek: genPubliek, words };
+            }
+            addCardSet(title.trim() || defaultTitle, cards, n, source, extra);
             alert(`${cards.length} kaart${cards.length !== 1 ? 'en' : ''} opgeslagen in Mijn Kaarten!`);
         };
 
@@ -2838,7 +3031,7 @@ h1{font-size:13pt;text-align:center;margin-bottom:6mm;}
         (function initExtras() {
             const hash = window.location.hash.replace('#', '');
             const knownScreens = ['home','select','game','admin','generate','mycards',
-                                  'spotify','scenario','wk','card-picker','saved-game','themes'];
+                                  'spotify','scenario','wk','card-picker','saved-game','themes','ingezonden'];
             if (hash && knownScreens.includes(hash)) {
                 sessionStorage.setItem('restoreScreen', 'screen-' + hash);
             }
@@ -2927,105 +3120,305 @@ h1{font-size:13pt;text-align:center;margin-bottom:6mm;}
         let scenarioGridSize = 4;
         let _scenarioCards   = [];
 
-        window.scenarioThemeChange = function() {
-            const key  = document.getElementById('scen-theme').value;
-            const wrap = document.getElementById('scen-words-wrap');
-            if (!key) { wrap.style.display = 'none'; return; }
-            document.getElementById('scen-words').value = SCENARIO_THEMES[key].words.join('\n');
-            wrap.style.display = 'block';
-            document.getElementById('scen-output').style.display = 'none';
-            document.getElementById('scen-error').style.display  = 'none';
-            updateScenHint();
-        };
+        // Legacy stubs — het scenario-scherm gebruikt nu directe start-knoppen
+        window.scenarioThemeChange = function() {};
+        window.updateScenHint = function() {};
 
-        window.updateScenHint = function() {
-            const words     = document.getElementById('scen-words').value
-                              .split('\n').map(w => w.trim()).filter(Boolean);
-            const cellCount = scenarioGridSize * scenarioGridSize;
-            document.getElementById('scen-words-hint').textContent =
-                `(${words.length} woorden · min. ${cellCount})`;
-        };
-
+        // setScenarioGrid is nog bruikbaar vanuit generator-context maar scen-words is verwijderd;
+        // de functie blijft beschikbaar voor de grid-size state.
         window.setScenarioGrid = function(size) {
             scenarioGridSize = size;
             document.querySelectorAll('[data-scval]').forEach(b =>
                 b.classList.toggle('active', parseInt(b.dataset.scval) === size));
-            updateScenHint();
         };
 
+        // generateScenarioCards is verplaatst naar het generator-scherm (saveCardsToMyCards met soort=scenario).
+        // Deze legacy stub doet niets meer maar voorkomt fouten als hij toch wordt aangeroepen.
         window.generateScenarioCards = async function() {
-            const words     = document.getElementById('scen-words').value
-                              .split('\n').map(w => w.trim()).filter(Boolean);
-            const cellCount = scenarioGridSize * scenarioGridSize;
-            const errEl     = document.getElementById('scen-error');
-            errEl.style.display = 'none';
-
-            if (words.length < cellCount) {
-                errEl.innerHTML     = `⚠️ Minimaal ${cellCount} woorden nodig voor ${scenarioGridSize}×${scenarioGridSize}. Nu: ${words.length}.`;
-                errEl.style.display = 'block';
-                return;
-            }
-
-            const numCards = Math.max(1, Math.min(200, parseInt(document.getElementById('scen-num-cards').value) || 10));
-            document.getElementById('scen-progress').style.display = 'block';
-            document.getElementById('scen-output').style.display   = 'none';
-            await new Promise(r => setTimeout(r, 15));
-
-            const cards       = [];
-            const existingSets = new Set();
-            for (let c = 0; c < numCards; c++) {
-                if (c % 20 === 0) {
-                    document.getElementById('scen-prog-txt').textContent = `${c}/${numCards}`;
-                    await new Promise(r => setTimeout(r, 0));
-                }
-                let card = null;
-                for (let t = 0; t < 500; t++) {
-                    const cand = pickRandom(words, cellCount);
-                    const key  = [...cand].sort().join('\x00');
-                    if (!existingSets.has(key)) { card = cand; break; }
-                }
-                if (!card) card = pickRandom(words, cellCount);
-                cards.push(card);
-                existingSets.add([...card].sort().join('\x00'));
-            }
-
-            document.getElementById('scen-progress').style.display = 'none';
-            _scenarioCards = cards;
-            const n = scenarioGridSize;
-            const container = document.getElementById('scen-cards-container');
-            container.innerHTML = '';
-            cards.forEach((card, i) => {
-                const el   = document.createElement('div');
-                el.className = 'gen-card';
-                const grid = document.createElement('div');
-                grid.className = 'gen-card-grid';
-                grid.style.gridTemplateColumns = `repeat(${n},1fr)`;
-                card.forEach(word => {
-                    const cell = document.createElement('div');
-                    cell.className = 'gen-card-cell';
-                    cell.textContent = word;
-                    grid.appendChild(cell);
-                });
-                el.innerHTML = `<div class="gen-card-title">Kaart ${i+1}</div>`;
-                el.appendChild(grid);
-                container.appendChild(el);
-            });
-            const count = cards.length;
-            document.getElementById('scen-output-title').textContent =
-                `${count} kaart${count !== 1 ? 'en' : ''} gegenereerd`;
-            document.getElementById('scen-output').style.display = 'block';
+            alert('Gebruik het scherm "Genereer Bingo-kaarten" om Scenario-kaarten te maken.');
+            return;
+            /* legacy code below is unreachable but preserved for reference
+            const count = 0;
+            const container = null;
+            const n = scenarioGridSize; */
         };
 
         window.saveScenarioCards = function() {
             if (!_scenarioCards.length) { alert('Geen kaarten om op te slaan.'); return; }
-            const themeKey     = document.getElementById('scen-theme').value;
-            const themeName    = themeKey ? SCENARIO_THEMES[themeKey].label : 'Scenario';
-            const defaultTitle = themeName + ' Bingo';
+            // This legacy function is kept for backward compatibility (old scenario screen had textarea generator).
+            // It is not used by the new play screen.
+            const defaultTitle = 'Scenario Bingo';
             const title        = prompt('Naam voor deze kaartset?', defaultTitle);
             if (title === null) return;
-            addCardSet(title.trim() || defaultTitle, _scenarioCards, scenarioGridSize, 'scenario');
+            addCardSet(title.trim() || defaultTitle, _scenarioCards, scenarioGridSize, 'scenario', { soort: 'scenario', publiek: false });
             alert(`${_scenarioCards.length} kaart${_scenarioCards.length !== 1 ? 'en' : ''} opgeslagen in Mijn Kaarten!`);
         };
+
+        // ─── Generator: Soort & Publiek ───────────────────────────────────────────
+        let genPubliek = false;
+
+        window.onGenSoortChange = function() {
+            const val = document.getElementById('gen-soort').value;
+            document.getElementById('gen-context-tv').style.display       = val === 'tv'       ? 'block' : 'none';
+            document.getElementById('gen-context-scenario').style.display = val === 'scenario' ? 'block' : 'none';
+        };
+
+        window.setGenPubliek = function(val) {
+            genPubliek = val;
+            document.getElementById('gen-prive-btn').classList.toggle('active', !val);
+            document.getElementById('gen-publiek-btn').classList.toggle('active', val);
+        };
+
+        // ─── TV Bingo: type select ────────────────────────────────────────────────
+        function initTvTypeSelect() {
+            const sel = document.getElementById('tv-type-select');
+            // Remove dynamic options, keep standaard
+            while (sel.options.length > 1) sel.remove(1);
+            const myCards = loadMyCards();
+            const hasTvEigen      = myCards.some(cs => cs.soort === 'tv');
+            const hasTvIngezonden = myCards.some(cs => cs.soort === 'tv' && cs.publiek === true);
+            if (hasTvEigen) {
+                const o = document.createElement('option');
+                o.value = 'eigen'; o.textContent = '🃏 Eigen kaarten';
+                sel.appendChild(o);
+            }
+            if (hasTvIngezonden) {
+                const o = document.createElement('option');
+                o.value = 'ingezonden'; o.textContent = '📬 Ingezonden';
+                sel.appendChild(o);
+            }
+            sel.value = 'standaard';
+            onTvTypeChange();
+        }
+
+        window.onTvTypeChange = function() {
+            const val = document.getElementById('tv-type-select').value;
+            document.getElementById('tv-standaard-wrap').style.display   = val === 'standaard' ? 'block' : 'none';
+            document.getElementById('tv-eigen-wrap').style.display       = val === 'eigen'     ? 'block' : 'none';
+            document.getElementById('tv-ingezonden-wrap').style.display  = val === 'ingezonden'? 'block' : 'none';
+            document.getElementById('start-btn').disabled = true;
+            if (val === 'eigen')      populateTvEigenSelects(false);
+            if (val === 'ingezonden') populateTvEigenSelects(true);
+        };
+
+        function populateTvEigenSelects(ingezondenOnly) {
+            const myCards = loadMyCards().filter(cs => cs.soort === 'tv' && cs.programma && cs.categorie
+                                                    && (!ingezondenOnly || cs.publiek === true));
+            const progSuffix = ingezondenOnly ? 'ingezonden' : 'eigen';
+            const progSel = document.getElementById('tv-' + progSuffix + '-prog-select');
+            const catSel  = document.getElementById('tv-' + progSuffix + '-cat-select');
+
+            const progNames = [...new Set(myCards.map(cs => cs.programma))];
+            progSel.innerHTML = '<option value="">-- Kies programma --</option>';
+            progNames.forEach(p => {
+                const o = document.createElement('option');
+                o.value = o.textContent = p;
+                progSel.appendChild(o);
+            });
+            catSel.innerHTML = '<option value="">-- Kies scenario --</option>';
+            catSel.disabled = true;
+            document.getElementById('start-btn').disabled = true;
+        }
+
+        window.onTvEigenProgChange = function() {
+            _fillTvCatSelect('eigen');
+        };
+
+        window.onTvIngezondenProgChange = function() {
+            _fillTvCatSelect('ingezonden');
+        };
+
+        function _fillTvCatSelect(suffix) {
+            const progSel = document.getElementById('tv-' + suffix + '-prog-select');
+            const catSel  = document.getElementById('tv-' + suffix + '-cat-select');
+            const prog = progSel.value;
+            catSel.innerHTML = '<option value="">-- Kies scenario --</option>';
+            catSel.disabled = true;
+            document.getElementById('start-btn').disabled = true;
+            if (!prog) return;
+            const ingezondenOnly = suffix === 'ingezonden';
+            const myCards = loadMyCards().filter(cs => cs.soort === 'tv' && cs.programma === prog
+                                                    && (!ingezondenOnly || cs.publiek === true));
+            const cats = [...new Set(myCards.map(cs => cs.categorie).filter(Boolean))];
+            if (cats.length === 1) {
+                const o = document.createElement('option');
+                o.value = o.textContent = cats[0];
+                catSel.appendChild(o);
+                catSel.value = cats[0];
+                document.getElementById('start-btn').disabled = false;
+            } else {
+                cats.forEach(cat => {
+                    const o = document.createElement('option');
+                    o.value = o.textContent = cat;
+                    catSel.appendChild(o);
+                });
+                catSel.disabled = false;
+                catSel.addEventListener('change', () => {
+                    document.getElementById('start-btn').disabled = !catSel.value;
+                }, { once: true });
+            }
+        }
+
+        // ─── Scenario Bingo: nieuw speelscherm ───────────────────────────────────
+        function initScenTypeSelect() {
+            const sel = document.getElementById('scen-type-select');
+            while (sel.options.length > 1) sel.remove(1);
+            const myCards = loadMyCards();
+            const hasEigen      = myCards.some(cs => cs.soort === 'scenario');
+            const hasIngezonden = myCards.some(cs => cs.soort === 'scenario' && cs.publiek === true);
+            if (hasEigen) {
+                const o = document.createElement('option');
+                o.value = 'eigen'; o.textContent = '🃏 Eigen thema\'s';
+                sel.appendChild(o);
+            }
+            if (hasIngezonden) {
+                const o = document.createElement('option');
+                o.value = 'ingezonden'; o.textContent = '📬 Ingezonden';
+                sel.appendChild(o);
+            }
+            sel.value = 'standaard';
+            onScenTypeChange();
+        }
+
+        window.onScenTypeChange = function() {
+            const val = document.getElementById('scen-type-select').value;
+            document.getElementById('scen-standaard-wrap').style.display   = val === 'standaard'  ? 'block' : 'none';
+            document.getElementById('scen-eigen-wrap').style.display       = val === 'eigen'      ? 'block' : 'none';
+            document.getElementById('scen-ingezonden-wrap').style.display  = val === 'ingezonden' ? 'block' : 'none';
+            document.getElementById('scen-start-btn').disabled = true;
+
+            if (val === 'eigen' || val === 'ingezonden') {
+                const ingezondenOnly = val === 'ingezonden';
+                const myCards = loadMyCards().filter(cs => cs.soort === 'scenario'
+                                                        && cs.thema
+                                                        && (!ingezondenOnly || cs.publiek === true));
+                const selId = val === 'eigen' ? 'scen-eigen-theme-select' : 'scen-ingezonden-theme-select';
+                const themeSel = document.getElementById(selId);
+                themeSel.innerHTML = '<option value="">-- Kies een thema --</option>';
+                [...new Set(myCards.map(cs => cs.thema))].forEach(thema => {
+                    const o = document.createElement('option');
+                    o.value = o.textContent = thema;
+                    themeSel.appendChild(o);
+                });
+            }
+        };
+
+        window.onScenThemeChange = function() {
+            const val = document.getElementById('scen-type-select').value;
+            let hasVal = false;
+            if (val === 'standaard') {
+                hasVal = !!document.getElementById('scen-theme-play').value;
+            } else if (val === 'eigen') {
+                hasVal = !!document.getElementById('scen-eigen-theme-select').value;
+            } else if (val === 'ingezonden') {
+                hasVal = !!document.getElementById('scen-ingezonden-theme-select').value;
+            }
+            document.getElementById('scen-start-btn').disabled = !hasVal;
+        };
+
+        window.startScenarioGame = function() {
+            const val = document.getElementById('scen-type-select').value;
+            let words = [], title = 'Scenario Bingo';
+
+            if (val === 'standaard') {
+                const key = document.getElementById('scen-theme-play').value;
+                if (!key) return;
+                const theme = SCENARIO_THEMES[key];
+                words = theme ? [...theme.words] : [];
+                title = (theme ? theme.label : key) + ' Bingo';
+            } else {
+                const ingezondenOnly = val === 'ingezonden';
+                const selId = val === 'eigen' ? 'scen-eigen-theme-select' : 'scen-ingezonden-theme-select';
+                const thema = document.getElementById(selId).value;
+                if (!thema) return;
+                const myCards = loadMyCards().filter(cs => cs.soort === 'scenario' && cs.thema === thema
+                                                        && (!ingezondenOnly || cs.publiek === true));
+                if (!myCards.length || !myCards[0].words || !myCards[0].words.length) {
+                    alert('Geen woordenlijst gevonden voor dit thema.'); return;
+                }
+                words = [...myCards[0].words];
+                title = thema + ' Bingo';
+            }
+
+            startGameWithWords(title, words);
+        };
+
+        // ─── startGameWithWords (gedeeld) ────────────────────────────────────────
+        function startGameWithWords(title, words) {
+            let pool = [...words];
+            while (pool.length < 16) pool = pool.concat(pool);
+            _currentGameWords = words; // store for reshuffle
+            refreshesLeft = 3; updateRefreshUI();
+            currentWords = pickRandom(pool, 16);
+            document.getElementById('game-title').innerText = title;
+            winningLines.clear();
+            document.getElementById('bingo-lines').innerHTML = '';
+            renderGrid();
+            switchScreen('screen-game');
+        }
+        window.startGameWithWords = startGameWithWords;
+
+        // ─── Ingezonden kaarten ───────────────────────────────────────────────────
+        function renderIngezonden() {
+            const list      = loadMyCards().filter(cs => cs.publiek === true);
+            const container = document.getElementById('ingezonden-list');
+            const empty     = document.getElementById('ingezonden-empty');
+            if (!container) return;
+            container.innerHTML = '';
+            if (!list.length) { empty.style.display = 'block'; return; }
+            empty.style.display = 'none';
+            list.forEach(cs => {
+                const d = new Date(cs.created);
+                const dateStr = d.toLocaleDateString('nl-NL', { day:'numeric', month:'short', year:'numeric' });
+                const icon = cs.soort === 'tv' ? '📺' : cs.soort === 'scenario' ? '🎪' : '🎲';
+                const div = document.createElement('div');
+                div.className = 'mycard-item';
+                div.innerHTML = `
+                    <div class="mycard-icon">${icon}</div>
+                    <div class="mycard-info">
+                        <div class="mycard-title-text">${cs.title}</div>
+                        <div class="mycard-meta-text">${cs.count} kaart${cs.count !== 1 ? 'en' : ''} · ${cs.size}×${cs.size} · ${dateStr}</div>
+                    </div>
+                    <div class="mycard-actions">
+                        <button class="mycard-btn-play" onclick="playCardSet('${cs.id}')">▶ Spelen</button>
+                        ${(cs.words && cs.words.length) ? `<button class="mycard-btn-share" onclick="shareCardSet('${cs.id}')">🔗</button>` : ''}
+                    </div>`;
+                container.appendChild(div);
+            });
+        }
+
+        // ─── Share link ───────────────────────────────────────────────────────────
+        window.shareCardSet = function(id) {
+            const cs = loadMyCards().find(cs => cs.id === id);
+            if (!cs || !cs.words || !cs.words.length) {
+                alert('Geen woordenlijst beschikbaar voor delen.'); return;
+            }
+            const payload = btoa(unescape(encodeURIComponent(JSON.stringify({
+                words: cs.words, size: cs.size, title: cs.title
+            }))));
+            const url = window.location.origin + window.location.pathname + '?play=' + payload;
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(url).then(() => alert('Link gekopieerd!'));
+            } else {
+                prompt('Kopieer deze link:', url);
+            }
+        };
+
+        // ─── Share param afhandeling ──────────────────────────────────────────────
+        (function checkShareParam() {
+            const params = new URLSearchParams(window.location.search);
+            const play = params.get('play');
+            if (!play) return;
+            try {
+                const data = JSON.parse(decodeURIComponent(escape(atob(play))));
+                if (data.words && data.words.length) {
+                    setTimeout(() => {
+                        startGameWithWords(data.title || 'Gedeelde Bingo', data.words);
+                        history.replaceState(null, '', window.location.pathname);
+                    }, 100);
+                }
+            } catch(e) { console.warn('Invalid share link', e); }
+        })();
 
         // ─── Start ────────────────────────────────────────────────────────────────
         initFirebase();
