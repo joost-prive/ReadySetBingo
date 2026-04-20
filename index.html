@@ -1502,14 +1502,6 @@
                     Geen thema's gevonden
                 </div>
 
-                <!-- Actief thema preview + beheer -->
-                <div id="gen-active-theme-panel" style="display:none;">
-                    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
-                        <span style="font-size:.75rem;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;">Geselecteerd thema</span>
-                        <div style="display:flex;gap:6px;" id="gen-active-theme-actions"></div>
-                    </div>
-                    <div id="gen-active-theme-preview" style="border-radius:10px;overflow:hidden;border:2px solid var(--brand-primary);"></div>
-                </div>
             </div>
 
             <!-- Inline thema-formulier (eigen/nieuw) -->
@@ -2690,14 +2682,22 @@
                         </div>
                         <div class="theme-mini-card-grid">${cells}</div>
                         ${footer ? `<div class="theme-mini-card-footer" style="background:${bg};color:${headColor};">${footer}</div>` : ''}
-                        <div class="theme-mini-card-name" style="background:rgba(0,0,0,.07);color:${bg === '#f3f0ff' ? '#333' : headColor};">${theme.name}</div>
+                        <div class="theme-mini-card-name" style="background:rgba(0,0,0,.07);color:${bg === '#f3f0ff' ? '#333' : headColor};display:flex;align-items:center;justify-content:space-between;gap:4px;">
+                            <span>${theme.name}</span>
+                            <div style="display:flex;gap:3px;">
+                                ${theme.builtIn
+                                    ? `<button onclick="event.stopPropagation();openInlineThemeForm('${theme.id}',true)" style="width:auto;padding:2px 6px;font-size:.6rem;margin:0;border-radius:4px;">✏️ Aanpassen</button>`
+                                    : `<button onclick="event.stopPropagation();openInlineThemeForm('${theme.id}',false)" style="width:auto;padding:2px 6px;font-size:.6rem;margin:0;border-radius:4px;">✏️</button>
+                                       <button onclick="event.stopPropagation();deleteTheme('${theme.id}')" style="width:auto;padding:2px 6px;font-size:.6rem;margin:0;background:rgba(255,51,51,.15);color:#e05555;border-radius:4px;">🗑</button>`
+                                }
+                            </div>
+                        </div>
                     </div>`;
         }
 
         function renderThemePicker() {
-            const grid    = document.getElementById('gen-theme-grid');
-            const empty   = document.getElementById('gen-theme-empty');
-            const panel   = document.getElementById('gen-active-theme-panel');
+            const grid  = document.getElementById('gen-theme-grid');
+            const empty = document.getElementById('gen-theme-empty');
             if (!grid) return;
 
             const custom = JSON.parse(localStorage.getItem('bingoThemes') || '[]');
@@ -2707,13 +2707,10 @@
                 themes = BUILTIN_THEMES;
             } else if (_currentThemeTab === 'eigen') {
                 themes = custom;
-            } else {
-                themes = []; // ingezonden: later
             }
 
             grid.innerHTML = themes.map(t => buildMiniCard(t)).join('');
-            if (empty)  empty.style.display  = themes.length ? 'none' : '';
-            if (panel)  panel.style.display  = 'none';
+            if (empty) empty.style.display = themes.length ? 'none' : '';
 
             // Voeg "+ Nieuw" knop toe onderaan bij Eigen-tab
             if (_currentThemeTab === 'eigen') {
@@ -2723,9 +2720,6 @@
                 addBtn.onclick = () => openInlineThemeForm(null);
                 grid.parentElement.insertBefore(addBtn, grid.nextSibling);
             }
-
-            // Toon actief thema panel als het actief is in deze tab
-            updateActiveThemePanel();
         }
 
         window.selectThemeFromPicker = function(id) {
@@ -2743,81 +2737,7 @@
             renderThemePicker();
         };
 
-        window.updateActiveThemePreview = function() {
-            const preview = document.getElementById('gen-active-theme-preview');
-            if (!preview || preview.closest('#gen-active-theme-panel')?.style.display === 'none') return;
-            const theme = getActiveTheme();
-            if (theme) preview.innerHTML = buildFullPreviewCard(theme);
-        };
-
-        function updateActiveThemePanel() {
-            const panel   = document.getElementById('gen-active-theme-panel');
-            const preview = document.getElementById('gen-active-theme-preview');
-            const actions = document.getElementById('gen-active-theme-actions');
-            if (!panel) return;
-
-            const theme = getThemes().find(t => t.id === _activeThemeId);
-            if (!theme) { panel.style.display = 'none'; return; }
-
-            // Check of actief thema in huidige tab zit
-            const custom = JSON.parse(localStorage.getItem('bingoThemes') || '[]');
-            const inTab = (_currentThemeTab === 'standaard' && theme.builtIn) ||
-                          (_currentThemeTab === 'eigen' && !theme.builtIn);
-            if (!inTab) { panel.style.display = 'none'; return; }
-
-            panel.style.display = '';
-            if (preview) preview.innerHTML = buildFullPreviewCard(theme);
-
-            if (actions) {
-                actions.innerHTML = '';
-                if (theme.builtIn) {
-                    const aanpasBtn = document.createElement('button');
-                    aanpasBtn.textContent = '✏️ Aanpassen';
-                    aanpasBtn.style.cssText = 'width:auto;padding:5px 10px;font-size:.72rem;margin:0;border-radius:6px;';
-                    aanpasBtn.onclick = () => openInlineThemeForm(theme.id, true);
-                    actions.appendChild(aanpasBtn);
-                } else {
-                    const editBtn = document.createElement('button');
-                    editBtn.textContent = '✏️ Bewerken';
-                    editBtn.style.cssText = 'width:auto;padding:5px 10px;font-size:.72rem;margin:0;border-radius:6px;';
-                    editBtn.onclick = () => openInlineThemeForm(theme.id, false);
-                    actions.appendChild(editBtn);
-
-                    const delBtn = document.createElement('button');
-                    delBtn.textContent = '🗑';
-                    delBtn.style.cssText = 'width:auto;padding:5px 8px;font-size:.72rem;margin:0;background:rgba(255,51,51,.15);color:#fca5a5;border-radius:6px;';
-                    delBtn.onclick = () => deleteTheme(theme.id);
-                    actions.appendChild(delBtn);
-                }
-            }
-        }
-
-        function buildFullPreviewCard(theme) {
-            const bg        = theme.bg        || '#f3f0ff';
-            const cellBg    = theme.cellBg    || '#ffffff';
-            const cellColor = theme.cellColor || '#333';
-            const headColor = theme.headColor || '#ffffff';
-            // Generator-velden hebben prioriteit; thema-standaard als fallback
-            const title     = document.getElementById('gen-design-title')?.value.trim()    || theme.title    || '';
-            const subtitle  = document.getElementById('gen-design-subtitle')?.value.trim() || theme.subtitle || '';
-            const footer    = theme.footer    || '';
-
-            const cells = Array(16).fill(0).map((_, i) => {
-                const words = ['Woord', 'Bingo', 'Spel', 'Kaart', 'Ready', 'Set', 'Fun', 'Leuk', 'Win', 'Ja', 'Nee', 'Hm', 'Oei', 'Top', 'Yes', '🎉'];
-                return `<div style="background:${cellBg};color:${cellColor};border-radius:3px;aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;font-size:.5rem;font-weight:600;">${words[i]}</div>`;
-            }).join('');
-
-            return `<div style="background:${bg};border-radius:8px;overflow:hidden;${theme.cardBgImage ? `background-image:url(${theme.cardBgImage});background-size:cover;` : ''}">
-                ${(title || subtitle) ? `<div style="background:${bg};color:${headColor};padding:8px 10px 5px;text-align:center;">
-                    ${title ? `<div style="font-size:.75rem;font-weight:800;">${title}</div>` : ''}
-                    ${subtitle ? `<div style="font-size:.58rem;opacity:.85;">${subtitle}</div>` : ''}
-                </div>` : ''}
-                <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:3px;padding:4px 6px;background:${bg};">${cells}</div>
-                <div style="background:${bg};color:${headColor};padding:4px 10px;display:flex;justify-content:space-between;font-size:.6rem;font-weight:700;">
-                    <span>Kaart 1</span>${footer ? `<span>${footer}</span>` : ''}
-                </div>
-            </div>`;
-        }
+        window.updateActiveThemePreview = function() { /* niet meer nodig */ };
 
         // Inline thema-formulier openen vanuit de picker
         window.openInlineThemeForm = function(id, copyFromBuiltin = false) {
