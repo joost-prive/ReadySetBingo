@@ -1552,7 +1552,20 @@
                 <div class="theme-form-row"><label>Celtekst</label><input type="color" id="tf-cellColor" value="#351C75"></div>
                 <div class="theme-form-row"><label>Kop- &amp; labeltekst</label><input type="color" id="tf-headColor" value="#FFFFFF"></div>
 
-                <p class="gen-sec-title" style="margin:14px 0 4px;">Afbeeldingen</p>
+                <p class="gen-sec-title" style="margin:14px 0 6px;">Kaartachtergrond <span class="gen-hint">(optioneel – volledig ontwerp)</span></p>
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+                    <div id="tf-cardbg-preview" style="width:40px;height:40px;border-radius:5px;border:1px solid rgba(0,0,0,.12);background:rgba(0,0,0,.05);overflow:hidden;flex-shrink:0;"></div>
+                    <button type="button" onclick="uploadCardBgImage()" style="width:auto;padding:5px 10px;font-size:.75rem;margin:0;border-radius:6px;">Uploaden</button>
+                    <button type="button" id="tf-cardbg-clear" onclick="clearCardBgImage()" style="display:none;width:auto;padding:5px 8px;font-size:.72rem;margin:0;background:rgba(255,51,51,.1);color:var(--danger);border-radius:6px;">✕ Verwijder</button>
+                </div>
+                <div id="tf-cellopacity-row" style="display:none;margin-bottom:10px;">
+                    <div style="font-size:.7rem;color:var(--text-muted);margin-bottom:3px;">Cel-doorschijnendheid: <span id="tf-cell-opacity-lbl">100%</span></div>
+                    <input type="range" id="tf-cell-opacity" min="0" max="100" value="100"
+                           oninput="document.getElementById('tf-cell-opacity-lbl').textContent=this.value+'%'"
+                           style="width:100%;margin:0;padding:0;height:18px;">
+                </div>
+
+                <p class="gen-sec-title" style="margin:14px 0 4px;">Losse afbeeldingen</p>
                 <div id="theme-img-preview" class="theme-img-preview" style="background:#9F1F96;">
                     <div class="theme-img-grid-overlay">
                         <div class="theme-img-grid-header"></div>
@@ -2635,11 +2648,17 @@
         // ─── Thema afbeeldingen ───────────────────────────────────────────────────
 
         let _themeImages = [];
+        let _cardBgImage = null;
 
-        function compressImage(src, callback) {
+        function hexToRgba(hex, opacity) {
+            const r = parseInt(hex.slice(1,3),16), g = parseInt(hex.slice(3,5),16), b = parseInt(hex.slice(5,7),16);
+            return `rgba(${r},${g},${b},${opacity})`;
+        }
+
+        function compressImage(src, mimeType, callback) {
             const img = new Image();
             img.onload = () => {
-                const max = 500;
+                const max = 600;
                 let w = img.naturalWidth, h = img.naturalHeight;
                 if (w > max || h > max) {
                     if (w > h) { h = Math.round(h * max / w); w = max; }
@@ -2647,8 +2666,11 @@
                 }
                 const c = document.createElement('canvas');
                 c.width = w; c.height = h;
-                c.getContext('2d').drawImage(img, 0, 0, w, h);
-                callback(c.toDataURL('image/jpeg', 0.78), w / h);
+                const ctx = c.getContext('2d');
+                const keepAlpha = (mimeType === 'image/png' || mimeType === 'image/webp');
+                if (!keepAlpha) { ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, w, h); }
+                ctx.drawImage(img, 0, 0, w, h);
+                callback(c.toDataURL(keepAlpha ? 'image/png' : 'image/jpeg', keepAlpha ? undefined : 0.78), w / h);
             };
             img.src = src;
         }
@@ -2656,7 +2678,15 @@
         function initThemeImgPreview() {
             const preview = document.getElementById('theme-img-preview');
             if (!preview) return;
-            preview.style.background = document.getElementById('tf-bg').value;
+            const bgColor = document.getElementById('tf-bg').value;
+            preview.style.background = bgColor;
+            if (_cardBgImage) {
+                preview.style.backgroundImage = `url(${_cardBgImage})`;
+                preview.style.backgroundSize = 'cover';
+                preview.style.backgroundPosition = 'center';
+            } else {
+                preview.style.backgroundImage = '';
+            }
             const body = document.getElementById('theme-img-grid-body');
             body.innerHTML = '';
             body.style.gridTemplateColumns = 'repeat(4,1fr)';
@@ -2676,6 +2706,8 @@
             const imgEl = document.createElement('img');
             imgEl.src = imgData.src;
             imgEl.draggable = false;
+            imgEl.style.transform = `rotate(${imgData.deg || 0}deg)`;
+            imgEl.style.transformOrigin = 'center center';
             handle.appendChild(imgEl);
 
             handle.addEventListener('pointerdown', (e) => {
@@ -2712,6 +2744,41 @@
             if (p) p.style.background = val;
         };
 
+        window.uploadCardBgImage = function() {
+            const input = document.createElement('input');
+            input.type = 'file'; input.accept = 'image/*';
+            input.onchange = (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = (ev) => {
+                    compressImage(ev.target.result, file.type, (src) => {
+                        _cardBgImage = src;
+                        updateCardBgUI();
+                        initThemeImgPreview();
+                    });
+                };
+                reader.readAsDataURL(file);
+            };
+            input.click();
+        };
+
+        window.clearCardBgImage = function() {
+            _cardBgImage = null;
+            updateCardBgUI();
+            initThemeImgPreview();
+        };
+
+        function updateCardBgUI() {
+            const preview = document.getElementById('tf-cardbg-preview');
+            const clearBtn = document.getElementById('tf-cardbg-clear');
+            const opRow = document.getElementById('tf-cellopacity-row');
+            if (preview) preview.style.backgroundImage = _cardBgImage ? `url(${_cardBgImage})` : '';
+            if (preview) preview.style.backgroundSize = 'cover';
+            if (clearBtn) clearBtn.style.display = _cardBgImage ? '' : 'none';
+            if (opRow) opRow.style.display = _cardBgImage ? '' : 'none';
+        }
+
         window.addThemeImage = function() {
             const input = document.createElement('input');
             input.type = 'file'; input.accept = 'image/*';
@@ -2720,8 +2787,8 @@
                 if (!file) return;
                 const reader = new FileReader();
                 reader.onload = (ev) => {
-                    compressImage(ev.target.result, (src, ar) => {
-                        const imgData = { id: 'ti_' + Date.now(), src, x: 5, y: 5, w: 30, ar };
+                    compressImage(ev.target.result, file.type, (src, ar) => {
+                        const imgData = { id: 'ti_' + Date.now(), src, x: 5, y: 5, w: 30, ar, deg: 0 };
                         _themeImages.push(imgData);
                         const preview = document.getElementById('theme-img-preview');
                         addImgHandle(preview, imgData);
@@ -2745,12 +2812,15 @@
                 const row = document.createElement('div');
                 row.style.cssText = 'display:flex;align-items:center;gap:8px;margin-bottom:8px;';
                 row.innerHTML = `
-                    <img src="${img.src}" style="width:36px;height:36px;object-fit:cover;border-radius:4px;flex-shrink:0;">
+                    <img src="${img.src}" style="width:36px;height:36px;object-fit:cover;border-radius:4px;flex-shrink:0;transform:rotate(${img.deg||0}deg);">
                     <div style="flex:1;">
-                        <div style="font-size:.7rem;color:var(--text-muted);margin-bottom:3px;">Grootte: <span id="sz-${img.id}">${Math.round(img.w)}</span>%</div>
+                        <div style="font-size:.7rem;color:var(--text-muted);margin-bottom:2px;">Grootte: <span id="sz-${img.id}">${Math.round(img.w)}</span>% &nbsp;·&nbsp; Hoek: <span id="rot-${img.id}">${Math.round(img.deg||0)}</span>°</div>
                         <input type="range" min="5" max="85" value="${img.w}"
                                oninput="resizeThemeImage('${img.id}',this.value)"
-                               style="width:100%;margin:0;padding:0;height:18px;">
+                               style="width:100%;margin:0 0 4px;padding:0;height:16px;">
+                        <input type="range" min="-180" max="180" value="${img.deg||0}"
+                               oninput="rotateThemeImage('${img.id}',this.value)"
+                               style="width:100%;margin:0;padding:0;height:16px;">
                     </div>
                     <button onclick="removeThemeImage('${img.id}')" style="width:auto;padding:5px 8px;font-size:.72rem;margin:0;background:rgba(255,51,51,.15);color:#fca5a5;border-radius:6px;">🗑</button>`;
                 list.appendChild(row);
@@ -2774,6 +2844,23 @@
             });
         };
 
+        window.rotateThemeImage = function(id, val) {
+            const img = _themeImages.find(i => i.id === id);
+            if (!img) return;
+            img.deg = parseFloat(val);
+            const lbl = document.getElementById('rot-' + id);
+            if (lbl) lbl.textContent = Math.round(val) + '°';
+            const preview = document.getElementById('theme-img-preview');
+            if (preview) {
+                preview.querySelectorAll('.theme-img-handle').forEach((h, idx) => {
+                    if (_themeImages[idx]?.id === id) {
+                        const imgEl = h.querySelector('img');
+                        if (imgEl) imgEl.style.transform = `rotate(${val}deg)`;
+                    }
+                });
+            }
+        };
+
         window.removeThemeImage = function(id) {
             _themeImages = _themeImages.filter(i => i.id !== id);
             initThemeImgPreview();
@@ -2792,6 +2879,11 @@
             document.getElementById('tf-headColor').value = theme?.headColor || '#FFFFFF';
             document.getElementById('theme-form-title').textContent = id ? 'Thema bewerken' : 'Nieuw thema';
             _themeImages = theme?.images ? JSON.parse(JSON.stringify(theme.images)) : [];
+            _cardBgImage = theme?.cardBgImage || null;
+            const opSlider = document.getElementById('tf-cell-opacity');
+            const opLbl    = document.getElementById('tf-cell-opacity-lbl');
+            if (opSlider) { const op = theme?.cellBgOpacity ?? 100; opSlider.value = op; if (opLbl) opLbl.textContent = op + '%'; }
+            setTimeout(() => updateCardBgUI(), 60);
             const form = document.getElementById('theme-form');
             form.style.display = 'block';
             form.scrollIntoView({ behavior:'smooth', block:'start' });
@@ -2809,7 +2901,9 @@
                 cellBg:    document.getElementById('tf-cellBg').value,
                 cellColor: document.getElementById('tf-cellColor').value,
                 headColor: document.getElementById('tf-headColor').value,
-                images:    _themeImages,
+                images:       _themeImages,
+                cardBgImage:  _cardBgImage || null,
+                cellBgOpacity: _cardBgImage ? parseInt(document.getElementById('tf-cell-opacity')?.value || '100') : 100,
             };
             if (_editingThemeId) {
                 const idx = custom.findIndex(t => t.id === _editingThemeId);
@@ -2848,6 +2942,11 @@
 
                 if (themed) {
                     el.style.background = theme.bg;
+                    if (theme.cardBgImage) {
+                        el.style.backgroundImage = `url(${theme.cardBgImage})`;
+                        el.style.backgroundSize = 'cover';
+                        el.style.backgroundPosition = 'center';
+                    }
 
                     if (title || subtitle) {
                         const hdr = document.createElement('div');
@@ -2864,7 +2963,10 @@
                     card.forEach(word => {
                         const cell = document.createElement('div');
                         cell.className = 'gen-card-cell';
-                        cell.style.cssText = `background:${theme.cellBg};color:${theme.cellColor};border:none;`;
+                        const cellBg = theme.cardBgImage
+                            ? hexToRgba(theme.cellBg, (theme.cellBgOpacity ?? 100) / 100)
+                            : theme.cellBg;
+                        cell.style.cssText = `background:${cellBg};color:${theme.cellColor};border:none;`;
                         cell.textContent = word;
                         body.appendChild(cell);
                     });
@@ -2880,7 +2982,7 @@
                     (theme.images || []).forEach(img => {
                         const imgEl = document.createElement('img');
                         imgEl.src = img.src;
-                        imgEl.style.cssText = `position:absolute;left:${img.x}%;top:${img.y}%;width:${img.w}%;pointer-events:none;z-index:5;display:block;`;
+                        imgEl.style.cssText = `position:absolute;left:${img.x}%;top:${img.y}%;width:${img.w}%;transform:rotate(${img.deg||0}deg);transform-origin:center;pointer-events:none;z-index:5;display:block;`;
                         el.appendChild(imgEl);
                     });
 
@@ -2943,11 +3045,18 @@
                                      <span>${label}</span>${footer ? `<span>${footer}</span>` : ''}
                                  </div>`;
                     const imgOverlays = (theme.images || []).map(img =>
-                        `<img src="${img.src}" style="position:absolute;left:${img.x}%;top:${img.y}%;width:${img.w}%;pointer-events:none;z-index:5;display:block;">`
+                        `<img src="${img.src}" style="position:absolute;left:${img.x}%;top:${img.y}%;width:${img.w}%;transform:rotate(${img.deg||0}deg);transform-origin:center;pointer-events:none;z-index:5;display:block;">`
                     ).join('');
-                    rows += `<div class="card" style="border-color:${theme.bg};position:relative;">
+                    const cardBgStyle = theme.cardBgImage
+                        ? `background-image:url(${theme.cardBgImage});background-size:cover;background-position:center;`
+                        : '';
+                    const printCellBg = theme.cardBgImage
+                        ? hexToRgba(theme.cellBg, (theme.cellBgOpacity ?? 100) / 100)
+                        : theme.cellBg;
+                    const cellsStyled = words.map(w => `<div class="c" style="background:${printCellBg};color:${theme.cellColor};">${w}</div>`).join('');
+                    rows += `<div class="card" style="border-color:${theme.bg};position:relative;${cardBgStyle}">
                                  ${hdr}
-                                 <div class="cg" style="grid-template-columns:repeat(${n},1fr);background:${theme.bg};">${cells}</div>
+                                 <div class="cg" style="grid-template-columns:repeat(${n},1fr);background:${theme.bg};">${cellsStyled}</div>
                                  ${ftr}
                                  ${imgOverlays}
                              </div>`;
