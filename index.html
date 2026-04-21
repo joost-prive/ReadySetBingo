@@ -1700,9 +1700,9 @@
                 <div class="theme-form-row"><label>Kop- &amp; labeltekst</label><input type="color" id="tf-headColor" value="#FFFFFF" oninput="renderGenPreview()"></div>
 
                 <p class="gen-sec-title" style="margin:14px 0 2px;">Standaard teksten <span class="gen-hint">(worden vooraf ingevuld bij dit thema)</span></p>
-                <input type="text" id="tf-title" placeholder="Koptekst (bijv. Paars Bingo)" style="margin-bottom:6px;" oninput="updateThemePreviewTexts()">
-                <input type="text" id="tf-subtitle" placeholder="Subtitel (optioneel)" style="margin-bottom:6px;" oninput="updateThemePreviewTexts()">
-                <input type="text" id="tf-footer" placeholder="Voettekst (optioneel)" style="margin-bottom:0;" oninput="updateThemePreviewTexts()">
+                <input type="text" id="tf-title" placeholder="Koptekst (bijv. Paars Bingo)" style="margin-bottom:6px;" oninput="updateThemePreviewTexts();renderGenPreview()">
+                <input type="text" id="tf-subtitle" placeholder="Subtitel (optioneel)" style="margin-bottom:6px;" oninput="updateThemePreviewTexts();renderGenPreview()">
+                <input type="text" id="tf-footer" placeholder="Voettekst (optioneel)" style="margin-bottom:0;" oninput="updateThemePreviewTexts();renderGenPreview()">
 
                 <p class="gen-sec-title" style="margin:14px 0 6px;">Kaartachtergrond <span class="gen-hint">(optioneel – volledig ontwerp)</span></p>
                 <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
@@ -3392,6 +3392,7 @@ h1{font-size:13pt;text-align:center;margin-bottom:6mm;}
    display:flex;align-items:center;justify-content:center;
    word-break:break-word;hyphens:auto;line-height:1.2;font-weight:600;}
 .cf{display:flex;justify-content:space-between;align-items:center;padding:3px 8px 5px;font-size:6pt;font-weight:700;letter-spacing:.3px;}
+*{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
 @media print{@page{size:A4;margin:10mm;} .grid{gap:6mm;}}
 </style></head><body>
 <h1>Bingo-kaarten</h1>
