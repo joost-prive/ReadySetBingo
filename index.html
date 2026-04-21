@@ -4859,14 +4859,14 @@ h1{font-size:13pt;text-align:center;margin-bottom:6mm;}
         };
 
         // Tijdelijke testknop: vult woordenlijst met Nederlandse steden
-        function fillTestWords() {
+        window.fillTestWords = function() {
             const words = ['Groningen','Amsterdam','Eindhoven','Assen','Emmen','Emmeloord','Drunen','Vught','Cromvoirt','Arnhem','Nijmegen','Apeldoorn','Ouddorp','Den Haag','Dordrecht','Rotterdam','Venray','Maastricht','Heerlen','Haaren','Werkhoven','Wijk bij Duurstede','Urk','Volendam'];
             document.getElementById('gen-words').value = words.join('\n');
-            updateWordCounter();
+            window.updateWordCounter();
         }
 
         // Woordteller in stap 3
-        function updateWordCounter() {
+        window.updateWordCounter = function() {
             const textarea = document.getElementById('gen-words');
             const counter  = document.getElementById('gen-word-counter');
             if (!textarea || !counter) return;
@@ -4874,7 +4874,7 @@ h1{font-size:13pt;text-align:center;margin-bottom:6mm;}
             const min   = genGridSize * genGridSize;
             counter.textContent = `${words.length} woord${words.length !== 1 ? 'en' : ''} (minimaal ${min})`;
             counter.style.color = words.length >= min ? 'var(--teal)' : 'var(--text-muted)';
-        }
+        };
 
         // Lees thema live uit het formulier als dat open staat (draft, nog niet opgeslagen)
         function getFormDraftTheme() {
