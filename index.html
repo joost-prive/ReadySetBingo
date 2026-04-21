@@ -1472,12 +1472,10 @@
                         <div class="gen-option-desc">Kaart op scherm</div>
                     </div>
                 </div>
-                <div id="gen-antal-wrap" class="gen-config-box">
-                    <p class="gen-sec-title" style="margin:0 0 6px;">Aantal kaarten</p>
-                    <div class="gen-num-row">
-                        <input type="number" id="gen-num-cards" class="gen-small-num" value="10" min="1" max="500">
-                        <span style="font-size:.8rem;color:var(--text-muted);">kaarten</span>
-                    </div>
+                <div id="gen-antal-wrap" class="gen-config-box" style="flex-direction:row;align-items:center;gap:10px;padding:12px 16px;">
+                    <span style="font-size:.82rem;font-weight:600;color:var(--text-muted);flex:1;">Aantal kaarten</span>
+                    <input type="number" id="gen-num-cards" class="gen-small-num" value="10" min="1" max="500">
+                    <span style="font-size:.82rem;color:var(--text-muted);">kaarten</span>
                 </div>
             </div>
 
@@ -1530,10 +1528,10 @@
                 <div class="gen-config-box" id="gen-koptekst-box" style="margin-top:10px;">
                     <p class="gen-sec-title" style="margin:0 0 4px;">Koptekst &amp; voettekst</p>
                     <p style="font-size:.72rem;color:var(--text-muted);margin:0 0 8px;line-height:1.4;">Teksten die op <em>deze</em> kaarten komen te staan. Laat leeg om de standaardteksten uit het thema te gebruiken.</p>
-                    <input type="text" id="gen-design-title" placeholder="Koptekst (bijv. Expeditie Robinson Bingo)" style="margin-bottom:4px;" oninput="window.renderGenPreview()">
+                    <textarea id="gen-design-title" rows="2" placeholder="Koptekst (bijv. Expeditie Robinson Bingo)" style="margin-bottom:4px;resize:vertical;" oninput="window.renderGenPreview()"></textarea>
                     <div id="gen-design-title-warn" style="font-size:.7rem;min-height:1em;margin-bottom:6px;"></div>
-                    <input type="text" id="gen-design-subtitle" placeholder="Subtitel (optioneel)" style="margin-bottom:6px;" oninput="window.renderGenPreview()">
-                    <input type="text" id="gen-design-footer" placeholder="Voettekst (optioneel)" style="margin-bottom:0;" oninput="window.renderGenPreview()">
+                    <textarea id="gen-design-subtitle" rows="2" placeholder="Subtitel (optioneel)" style="margin-bottom:6px;resize:vertical;" oninput="window.renderGenPreview()"></textarea>
+                    <textarea id="gen-design-footer" rows="2" placeholder="Voettekst (optioneel)" style="margin-bottom:0;resize:vertical;" oninput="window.renderGenPreview()"></textarea>
                 </div>
 
                 <!-- Voorbeeld-kaart -->
@@ -3259,9 +3257,9 @@
             container.innerHTML = '';
             const n        = genGridSize;
             const theme    = getFormDraftTheme() || getActiveTheme();
-            const title    = document.getElementById('gen-design-title')?.value.trim()  || theme.title    || '';
-            const subtitle = document.getElementById('gen-design-subtitle')?.value.trim() || theme.subtitle || '';
-            const footer   = document.getElementById('gen-design-footer')?.value.trim()  || theme.footer   || '';
+            const title    = (document.getElementById('gen-design-title')?.value.trim()    || theme.title    || '').replace(/\n/g,'<br>');
+            const subtitle = (document.getElementById('gen-design-subtitle')?.value.trim() || theme.subtitle || '').replace(/\n/g,'<br>');
+            const footer   = (document.getElementById('gen-design-footer')?.value.trim()   || theme.footer   || '').replace(/\n/g,'<br>');
             const themed   = !!theme.bg;
 
             cards.forEach((card, i) => {
@@ -3351,9 +3349,9 @@
             const n        = genGridSize;
             const fs       = n === 5 ? '9' : '11';
             const theme    = getActiveTheme();
-            const title    = document.getElementById('gen-design-title')?.value.trim()    || theme.title    || '';
-            const subtitle = document.getElementById('gen-design-subtitle')?.value.trim() || theme.subtitle || '';
-            const footer   = document.getElementById('gen-design-footer')?.value.trim()   || theme.footer   || '';
+            const title    = (document.getElementById('gen-design-title')?.value.trim()    || theme.title    || '').replace(/\n/g,'<br>');
+            const subtitle = (document.getElementById('gen-design-subtitle')?.value.trim() || theme.subtitle || '').replace(/\n/g,'<br>');
+            const footer   = (document.getElementById('gen-design-footer')?.value.trim()   || theme.footer   || '').replace(/\n/g,'<br>');
             const themed   = !!theme.bg;
 
             let rows = '';
@@ -4923,31 +4921,37 @@ h1{font-size:13pt;text-align:center;margin-bottom:6mm;}
                 previewWords.push(words.length ? words[(offset + i) % words.length] : '–');
             }
 
-            // Afbeeldingen: theme.images zijn objecten {src, x, y, w, deg}
-            const imgs = (theme.images && theme.images.length) ? theme.images : [];
+            // Cellen: alleen tekst, geen afbeeldingen in cellen
+            const cells = previewWords.map(w =>
+                `<div style="background:${cellBg};color:${cellColor};border-radius:4px;padding:2px;text-align:center;font-size:.55rem;font-weight:600;line-height:1.2;display:flex;align-items:center;justify-content:center;aspect-ratio:1/1;overflow:hidden;"><span style="word-break:break-word;">${w}</span></div>`
+            ).join('');
 
-            const cells = previewWords.map((w, i) => {
-                const imgObj = imgs.length ? imgs[i % imgs.length] : null;
-                const inner = (imgObj && imgObj.src)
-                    ? `<img src="${imgObj.src}" style="max-width:90%;max-height:90%;object-fit:contain;display:block;">`
-                    : `<span style="word-break:break-word;">${w}</span>`;
-                return `<div style="background:${cellBg};color:${cellColor};border-radius:4px;padding:2px;text-align:center;font-size:.55rem;font-weight:600;line-height:1.2;display:flex;align-items:center;justify-content:center;aspect-ratio:1/1;overflow:hidden;">${inner}</div>`;
-            }).join('');
+            // Afbeeldingen als overlay op de kaart (net zoals de echte gegenereerde kaart)
+            const imgs = (theme.images && theme.images.length) ? theme.images : [];
+            const imgOverlays = imgs.map(img =>
+                `<img src="${img.src}" style="position:absolute;left:${img.x}%;top:${img.y}%;width:${img.w}%;transform:rotate(${img.deg||0}deg);transform-origin:center;pointer-events:none;z-index:5;display:block;">`
+            ).join('');
 
             const cardBgStyle = (theme.cardBgImage || _cardBgImage)
                 ? `background-image:url(${theme.cardBgImage || _cardBgImage});background-size:cover;background-position:center;`
                 : '';
 
+            // Newlines in teksten → <br>
+            const titleHtml = title.replace(/\n/g,'<br>');
+            const subHtml   = sub.replace(/\n/g,'<br>');
+            const ftrHtml   = ftr.replace(/\n/g,'<br>');
+
             container.innerHTML = `
-                <div style="background:${bg};${cardBgStyle}border-radius:10px;overflow:hidden;max-width:280px;margin:0 auto;">
-                    ${(title || sub) ? `<div style="background:${bg};color:${headColor};padding:7px 10px 4px;text-align:center;">
-                        ${title ? `<div style="font-size:.75rem;font-weight:800;">${title}</div>` : ''}
-                        ${sub   ? `<div style="font-size:.58rem;opacity:.85;">${sub}</div>` : ''}
+                <div style="position:relative;background:${bg};${cardBgStyle}border-radius:10px;overflow:hidden;max-width:280px;margin:0 auto;">
+                    ${(titleHtml || subHtml) ? `<div style="background:${bg};color:${headColor};padding:7px 10px 4px;text-align:center;">
+                        ${titleHtml ? `<div style="font-size:.75rem;font-weight:800;">${titleHtml}</div>` : ''}
+                        ${subHtml   ? `<div style="font-size:.58rem;opacity:.85;">${subHtml}</div>` : ''}
                     </div>` : ''}
                     <div style="display:grid;grid-template-columns:repeat(${n},1fr);gap:3px;padding:4px 6px;background:${bg};">${cells}</div>
                     <div style="background:${bg};color:${headColor};padding:4px 10px;display:flex;justify-content:space-between;font-size:.6rem;font-weight:700;">
-                        <span>Voorbeeld</span>${ftr ? `<span>${ftr}</span>` : ''}
+                        <span>Voorbeeld</span>${ftrHtml ? `<span>${ftrHtml}</span>` : ''}
                     </div>
+                    ${imgOverlays}
                 </div>`;
         };
 
