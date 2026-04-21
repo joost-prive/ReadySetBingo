@@ -793,6 +793,60 @@
 
         body.light ::-webkit-scrollbar-thumb { background:rgba(0,0,0,.15); }
 
+        /* ── WIZARD ── */
+        .gen-step-title {
+            font-size: 1.05rem; font-weight: 800; color: var(--text-main);
+            margin: 0 0 6px; letter-spacing: -.3px;
+        }
+        .gen-step-desc {
+            font-size: .82rem; color: var(--text-muted);
+            margin: 0 0 14px; line-height: 1.5;
+        }
+        .gen-option-card {
+            border: 2px solid rgba(0,0,0,.1); border-radius: 14px;
+            padding: 16px 10px; cursor: pointer; text-align: center;
+            transition: border-color .15s, background .15s;
+            background: var(--glass-bg);
+        }
+        .gen-option-card.selected {
+            border-color: var(--brand-primary);
+            background: rgba(255,94,98,.08);
+        }
+        .gen-option-card:active { transform: scale(.97); }
+        .gen-option-icon  { font-size: 1.8rem; margin-bottom: 5px; line-height: 1; }
+        .gen-option-label { font-size: .88rem; font-weight: 700; color: var(--text-main); }
+        .gen-option-desc  { font-size: .68rem; color: var(--text-muted); margin-top: 3px; }
+
+        .gen-wizard-bar {
+            display: flex; align-items: center; justify-content: center;
+            gap: 0; margin-bottom: 20px; position: relative;
+        }
+        .gen-wizard-step-dot {
+            width: 28px; height: 28px; border-radius: 50%;
+            background: rgba(0,0,0,.08); border: 2px solid rgba(0,0,0,.12);
+            display: flex; align-items: center; justify-content: center;
+            font-size: .65rem; font-weight: 800; color: var(--text-muted);
+            flex-shrink: 0; transition: all .2s; position: relative; z-index: 1;
+        }
+        .gen-wizard-step-dot.active {
+            background: var(--brand-primary); border-color: var(--brand-primary); color: white;
+            box-shadow: 0 2px 8px rgba(255,94,98,.4);
+        }
+        .gen-wizard-step-dot.done {
+            background: rgba(45,212,191,.2); border-color: var(--teal); color: var(--teal);
+        }
+        .gen-wizard-connector {
+            height: 2px; flex: 1; background: rgba(0,0,0,.08); max-width: 28px;
+        }
+        .gen-wizard-connector.done { background: var(--teal); }
+        .gen-wizard-nav {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-top: 18px; gap: 10px;
+        }
+        body.light .gen-option-card { border-color: rgba(0,0,0,.1); }
+        body.light .gen-wizard-step-dot { background: rgba(0,0,0,.05); border-color: rgba(0,0,0,.15); }
+        body.light .gen-wizard-connector { background: rgba(0,0,0,.12); }
+
         /* ── SHARE KNOP ── */
         .mycard-btn-share {
             background:rgba(45,212,191,.18); color:#2dd4bf;
@@ -1386,159 +1440,199 @@
                 <h2>🎲 Genereer Bingo-kaarten</h2>
             </div>
 
-            <label>Soort <span class="gen-hint">(optioneel)</span></label>
-            <select id="gen-soort" onchange="onGenSoortChange()">
-                <option value="">-- Geen --</option>
-                <option value="tv">📺 TV Bingo</option>
-                <option value="scenario">🎪 Scenario Bingo</option>
-            </select>
+            <!-- Wizard voortgangsbalk -->
+            <div class="gen-wizard-bar" id="gen-wizard-bar"></div>
 
-            <div id="gen-context-tv" style="display:none;">
-                <label>Programma</label>
-                <input type="text" id="gen-tv-programma" placeholder="Bijv. Expeditie Robinson">
-                <label>Categorie/Scenario</label>
-                <input type="text" id="gen-tv-categorie" placeholder="Bijv. De Uitzending">
-            </div>
-
-            <div id="gen-context-scenario" style="display:none;">
-                <label>Thema</label>
-                <input type="text" id="gen-scenario-thema" placeholder="Bijv. Kermis">
-            </div>
-
-            <label>Woorden / termen <span id="gen-words-hint" class="gen-hint">(min. 16 woorden)</span></label>
-            <textarea id="gen-words" rows="7" placeholder="Voer hier alle woorden in, één per regel&#10;Bijv:&#10;Immuniteit&#10;Eilandraad&#10;Kampvuur&#10;..."></textarea>
-
-            <!-- Modus + Rastergrootte -->
-            <div class="gen-options-row">
-                <div>
-                    <div class="gen-label-sm">Modus</div>
-                    <div class="gen-toggle-group">
-                        <button class="gen-tog-btn active" data-val="print" onclick="setGenMode('print')">🖨️ Printen</button>
-                        <button class="gen-tog-btn" data-val="online" onclick="setGenMode('online')">📱 Online</button>
+            <!-- ── STAP 1: Modus + Aantal ── -->
+            <div id="gen-step-1" class="gen-step">
+                <p class="gen-step-title">Printen of online spelen?</p>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;">
+                    <div class="gen-option-card selected" id="gen-opt-print" onclick="setGenMode('print')">
+                        <div class="gen-option-icon">🖨️</div>
+                        <div class="gen-option-label">Printen</div>
+                        <div class="gen-option-desc">PDF of papier</div>
+                    </div>
+                    <div class="gen-option-card" id="gen-opt-online" onclick="setGenMode('online')">
+                        <div class="gen-option-icon">📱</div>
+                        <div class="gen-option-label">Online spelen</div>
+                        <div class="gen-option-desc">Kaart op scherm</div>
                     </div>
                 </div>
-                <div>
-                    <div class="gen-label-sm">Rastergrootte</div>
-                    <div class="gen-toggle-group">
-                        <button class="gen-tog-btn active" data-val="4" onclick="setGridSize(4)">4×4</button>
-                        <button class="gen-tog-btn" data-val="5" onclick="setGridSize(5)">5×5</button>
+                <div id="gen-antal-wrap" class="gen-config-box">
+                    <p class="gen-sec-title" style="margin:0 0 6px;">Aantal kaarten</p>
+                    <div class="gen-num-row">
+                        <input type="number" id="gen-num-cards" class="gen-small-num" value="10" min="1" max="500">
+                        <span style="font-size:.8rem;color:var(--text-muted);">kaarten</span>
                     </div>
                 </div>
             </div>
 
-            <!-- Volgorde + Aantal -->
-            <div class="gen-inline-row" style="margin-top:6px;">
-                <label class="gen-check-label">
-                    <input type="checkbox" id="gen-order-known" onchange="onOrderKnownChange()">
-                    Volgorde vooraf bekend?
-                </label>
-                <div id="gen-antal-wrap" class="gen-num-row">
-                    <span>Aantal:</span>
-                    <input type="number" id="gen-num-cards" class="gen-small-num" value="10" min="1" max="500">
+            <!-- ── STAP 2: Formaat ── -->
+            <div id="gen-step-2" class="gen-step" style="display:none;">
+                <p class="gen-step-title">Welk formaat?</p>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+                    <div class="gen-option-card selected" id="gen-opt-4x4" onclick="setGridSize(4)">
+                        <div class="gen-option-icon">⊞</div>
+                        <div class="gen-option-label">4 × 4</div>
+                        <div class="gen-option-desc">16 vakjes · makkelijker</div>
+                    </div>
+                    <div class="gen-option-card" id="gen-opt-5x5" onclick="setGridSize(5)">
+                        <div class="gen-option-icon">⊟</div>
+                        <div class="gen-option-label">5 × 5</div>
+                        <div class="gen-option-desc">25 vakjes · meer spanning</div>
+                    </div>
                 </div>
             </div>
 
-            <!-- Configuratie (volgorde bekend) -->
-            <div id="gen-config-panel" style="display:none;">
-                <div class="gen-config-box">
-                    <p style="margin:0 0 14px; font-size:.95rem; font-weight:700; color:var(--text-main);">Configureer bingokaarten</p>
+            <!-- ── STAP 3: Woordenlijst ── -->
+            <div id="gen-step-3" class="gen-step" style="display:none;">
+                <p class="gen-step-title">Voer de woordenlijst in</p>
+                <p class="gen-step-desc" id="gen-words-hint">Vul minimaal 16 woorden in, één per regel.</p>
+                <textarea id="gen-words" rows="10" placeholder="Bijv:&#10;Immuniteit&#10;Eilandraad&#10;Kampvuur&#10;..." oninput="updateWordCounter()"></textarea>
+                <div id="gen-word-counter" style="font-size:.72rem;color:var(--text-muted);margin-top:4px;text-align:right;"></div>
+            </div>
 
-                    <p class="gen-sec-title">Type Bingo</p>
+            <!-- ── STAP 4: Ontwerp ── -->
+            <div id="gen-step-4" class="gen-step" style="display:none;">
+                <p class="gen-step-title">Ontwerp de bingo-kaart</p>
 
-                    <div id="gen-min-info-box" class="gen-info-box" style="display:none;">
-                        <strong>Wat is het Minimale nummer?</strong>
-                        <p>Het vroegste oproepnummer waarop dit bingo-type <em>mag</em> vallen.</p>
-                        <p>Voorbeeld: "Tweede rij – min. 15" betekent dat de kaart zo gegenereerd wordt dat de 2e volledige lijn (horizontaal, verticaal of diagonaal) pas valt als minimaal het 15e woord is opgeroepen.</p>
-                        <p>Een hogere waarde = bingo valt later in het spel = meer spanning.</p>
-                        <button class="gen-info-close" onclick="document.getElementById('gen-min-info-box').style.display='none'">Sluiten ×</button>
+                <!-- Thema kiezen -->
+                <div class="gen-config-box" id="gen-theme-picker-box">
+                    <p class="gen-sec-title" style="margin:0 0 10px;">Thema</p>
+                    <div class="gen-toggle-group" style="margin-bottom:12px;">
+                        <button class="gen-tog-btn active" id="theme-tab-btn-standaard" onclick="setThemeTab('standaard')">Standaard</button>
+                        <button class="gen-tog-btn" id="theme-tab-btn-eigen" onclick="setThemeTab('eigen')">Eigen</button>
+                        <button class="gen-tog-btn" id="theme-tab-btn-ingezonden" onclick="setThemeTab('ingezonden')">Ingezonden</button>
                     </div>
+                    <div id="gen-theme-grid" style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:12px;"></div>
+                    <div id="gen-theme-empty" style="display:none;text-align:center;padding:20px 0;font-size:.8rem;color:var(--text-muted);">Geen thema's gevonden</div>
+                </div>
 
-                    <table class="gen-table">
-                        <thead>
-                            <tr>
+                <!-- Inline thema-formulier -->
+                <div id="gen-theme-form-wrap" style="display:none;margin-top:10px;"></div>
+
+                <!-- Koptekst & voettekst -->
+                <div class="gen-config-box" style="margin-top:10px;">
+                    <p class="gen-sec-title" style="margin:0 0 8px;">Koptekst &amp; voettekst</p>
+                    <input type="text" id="gen-design-title" placeholder="Koptekst (bijv. Expeditie Robinson Bingo)" style="margin-bottom:6px;" oninput="updateActiveThemePreview()">
+                    <input type="text" id="gen-design-subtitle" placeholder="Subtitel (optioneel)" style="margin-bottom:6px;" oninput="updateActiveThemePreview()">
+                    <input type="text" id="gen-design-footer" placeholder="Voettekst (optioneel)" style="margin-bottom:0;" oninput="updateActiveThemePreview()">
+                </div>
+
+                <!-- Voorbeeld-kaart -->
+                <div class="gen-config-box" style="margin-top:10px;">
+                    <p class="gen-sec-title" style="margin:0 0 8px;">Voorbeeld</p>
+                    <div id="gen-preview-card"></div>
+                </div>
+            </div>
+
+            <!-- ── STAP 5: Volgorde ── -->
+            <div id="gen-step-5" class="gen-step" style="display:none;">
+                <!-- Hidden checkbox voor bestaande JS-compatibiliteit -->
+                <input type="checkbox" id="gen-order-known" onchange="onOrderKnownChange()" style="display:none;">
+                <p class="gen-step-title">Is de volgorde vooraf bekend?</p>
+                <p class="gen-step-desc">Als je weet in welke volgorde de woorden worden opgeroepen, kun je de kaarten zo genereren dat er niet te snel bingo valt.</p>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;">
+                    <div class="gen-option-card" id="gen-opt-order-no" onclick="setOrderKnown(false)">
+                        <div class="gen-option-icon">🎲</div>
+                        <div class="gen-option-label">Nee</div>
+                        <div class="gen-option-desc">Willekeurige volgorde</div>
+                    </div>
+                    <div class="gen-option-card" id="gen-opt-order-yes" onclick="setOrderKnown(true)">
+                        <div class="gen-option-icon">📋</div>
+                        <div class="gen-option-label">Ja</div>
+                        <div class="gen-option-desc">Volgorde staat vast</div>
+                    </div>
+                </div>
+
+                <!-- Configuratie (volgorde bekend) -->
+                <div id="gen-config-panel" style="display:none;">
+                    <div class="gen-config-box">
+                        <p class="gen-sec-title">Type Bingo</p>
+                        <div id="gen-min-info-box" class="gen-info-box" style="display:none;">
+                            <strong>Wat is het Minimale nummer?</strong>
+                            <p>Het vroegste oproepnummer waarop dit bingo-type <em>mag</em> vallen.</p>
+                            <p>Voorbeeld: "Tweede rij – min. 15" betekent dat de kaart zo gegenereerd wordt dat de 2e volledige lijn (horizontaal, verticaal of diagonaal) pas valt als minimaal het 15e woord is opgeroepen.</p>
+                            <p>Een hogere waarde = bingo valt later in het spel = meer spanning.</p>
+                            <button class="gen-info-close" onclick="document.getElementById('gen-min-info-box').style.display='none'">Sluiten ×</button>
+                        </div>
+                        <table class="gen-table">
+                            <thead><tr>
                                 <th>Type</th>
                                 <th style="text-align:center;">Actief</th>
-                                <th>Min. nr <button class="gen-info-icon" type="button"
-                                    onclick="document.getElementById('gen-min-info-box').style.display='block'">ℹ</button></th>
-                            </tr>
-                        </thead>
-                        <tbody id="gen-types-tbody"></tbody>
-                    </table>
-
-                    <p class="gen-sec-title" style="margin-top:14px;">Voorwaarden</p>
-                    <div class="gen-voorwaarde">
-                        <label class="gen-cond-label">
-                            <input type="checkbox" id="gen-no-same" checked>
-                            Geen kaarten hetzelfde
-                        </label>
-                    </div>
-                    <div class="gen-voorwaarde">
-                        <label class="gen-cond-label">
-                            <input type="checkbox" id="gen-max-enabled" onchange="toggleMaxBingo()">
-                            Max tegelijk Bingo:
-                        </label>
-                        <input type="number" id="gen-max-bingo" class="gen-small-num" min="1" value="2"
-                               disabled style="opacity:.35; transition:opacity .2s;">
+                                <th>Min. nr <button class="gen-info-icon" type="button" onclick="document.getElementById('gen-min-info-box').style.display='block'">ℹ</button></th>
+                            </tr></thead>
+                            <tbody id="gen-types-tbody"></tbody>
+                        </table>
+                        <p class="gen-sec-title" style="margin-top:14px;">Voorwaarden</p>
+                        <div class="gen-voorwaarde">
+                            <label class="gen-cond-label">
+                                <input type="checkbox" id="gen-no-same" checked>
+                                Geen kaarten hetzelfde
+                            </label>
+                        </div>
+                        <div class="gen-voorwaarde">
+                            <label class="gen-cond-label">
+                                <input type="checkbox" id="gen-max-enabled" onchange="toggleMaxBingo()">
+                                Max tegelijk Bingo:
+                            </label>
+                            <input type="number" id="gen-max-bingo" class="gen-small-num" min="1" value="2" disabled style="opacity:.35;transition:opacity .2s;">
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Thema kiezen -->
-            <div class="gen-config-box" style="margin-top:6px;" id="gen-theme-picker-box">
-                <p class="gen-sec-title" style="margin:0 0 10px;">Thema</p>
+            <!-- ── STAP 6: Overig ── -->
+            <div id="gen-step-6" class="gen-step" style="display:none;">
+                <p class="gen-step-title">Nog een paar instellingen</p>
 
-                <!-- Tabs -->
-                <div class="gen-toggle-group" style="margin-bottom:12px;">
-                    <button class="gen-tog-btn active" id="theme-tab-btn-standaard" onclick="setThemeTab('standaard')">Standaard</button>
-                    <button class="gen-tog-btn" id="theme-tab-btn-eigen" onclick="setThemeTab('eigen')">Eigen</button>
-                    <button class="gen-tog-btn" id="theme-tab-btn-ingezonden" onclick="setThemeTab('ingezonden')">Ingezonden</button>
+                <!-- Soort -->
+                <div class="gen-config-box">
+                    <p class="gen-sec-title" style="margin:0 0 8px;">Categorie <span class="gen-hint">(optioneel)</span></p>
+                    <select id="gen-soort" onchange="onGenSoortChange()" style="margin-bottom:8px;">
+                        <option value="">— Geen categorie —</option>
+                        <option value="tv">📺 TV Bingo</option>
+                        <option value="scenario">🎪 Scenario Bingo</option>
+                    </select>
+                    <div id="gen-context-tv" style="display:none;">
+                        <input type="text" id="gen-tv-programma" placeholder="Programma (bijv. Expeditie Robinson)" style="margin-bottom:6px;">
+                        <input type="text" id="gen-tv-categorie" placeholder="Categorie / Scenario (bijv. De Uitzending)">
+                    </div>
+                    <div id="gen-context-scenario" style="display:none;">
+                        <input type="text" id="gen-scenario-thema" placeholder="Thema (bijv. Kermis)">
+                    </div>
                 </div>
 
-                <!-- Themakaarten grid -->
-                <div id="gen-theme-grid" style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:12px;"></div>
-
-                <!-- Lege toestand -->
-                <div id="gen-theme-empty" style="display:none;text-align:center;padding:20px 0;font-size:.8rem;color:var(--text-muted);">
-                    Geen thema's gevonden
+                <!-- Zichtbaarheid -->
+                <div class="gen-config-box" style="margin-top:10px;">
+                    <p class="gen-sec-title" style="margin:0 0 8px;">Zichtbaarheid</p>
+                    <div class="publiek-toggle-group">
+                        <button class="publiek-tog-btn active" id="gen-prive-btn" onclick="setGenPubliek(false)">🔒 Privé</button>
+                        <button class="publiek-tog-btn" id="gen-publiek-btn" onclick="setGenPubliek(true)">🌐 Publiek</button>
+                    </div>
                 </div>
 
+                <!-- Genereer-knop -->
+                <button class="btn-primary" onclick="generateBingoCards()" style="margin-top:16px;">🎲 Genereer kaarten</button>
             </div>
 
-            <!-- Inline thema-formulier (eigen/nieuw) -->
-            <div id="gen-theme-form-wrap" style="display:none;margin-top:10px;"></div>
-
-            <!-- Koptekst & voettekst (per gebruik, overschrijft thema-standaard) -->
-            <div class="gen-config-box" style="margin-top:6px;">
-                <p class="gen-sec-title" style="margin:0 0 8px;">Koptekst &amp; voettekst</p>
-                <input type="text" id="gen-design-title" placeholder="Koptekst (bijv. Expeditie Robinson Bingo)" style="margin-bottom:6px;" oninput="updateActiveThemePreview()">
-                <input type="text" id="gen-design-subtitle" placeholder="Subtitel (optioneel)" style="margin-bottom:6px;" oninput="updateActiveThemePreview()">
-                <input type="text" id="gen-design-footer" placeholder="Voettekst (optioneel)" style="margin-bottom:0;" oninput="updateActiveThemePreview()">
+            <!-- ── Navigatie ── -->
+            <div class="gen-wizard-nav" id="gen-wizard-nav">
+                <button class="btn-secondary" id="gen-prev-btn" onclick="genWizardPrev()" style="display:none;width:auto;padding:10px 18px;margin:0;">← Vorige</button>
+                <button class="btn-primary"   id="gen-next-btn" onclick="genWizardNext()" style="width:auto;padding:10px 22px;margin:0;">Volgende →</button>
             </div>
 
-            <div>
-                <label>Zichtbaarheid</label>
-                <div class="publiek-toggle-group">
-                    <button class="publiek-tog-btn active" id="gen-prive-btn" onclick="setGenPubliek(false)">🔒 Privé</button>
-                    <button class="publiek-tog-btn" id="gen-publiek-btn" onclick="setGenPubliek(true)">🌐 Publiek</button>
-                </div>
-            </div>
-
-            <button class="btn-primary" onclick="generateBingoCards()" style="margin-top:4px;">🎲 Genereer kaarten</button>
-
-            <div id="gen-progress" class="gen-progress" style="display:none;">
-                Bezig met genereren… <span id="gen-prog-txt"></span>
-            </div>
-
+            <!-- Voortgang & foutmelding -->
+            <div id="gen-progress" class="gen-progress" style="display:none;">Bezig met genereren… <span id="gen-prog-txt"></span></div>
             <div id="gen-error" class="gen-error" style="display:none;"></div>
 
+            <!-- Output -->
             <div id="gen-output" style="display:none;">
                 <div class="gen-output-header">
                     <h3 id="gen-output-title"></h3>
                     <div style="display:flex;gap:8px;">
-                        <button id="gen-print-btn" class="btn-secondary" onclick="printBingoCards()"
-                                style="width:auto; margin:0; padding:8px 14px; font-size:.82rem;">🖨️ Afdrukken</button>
-                        <button class="btn-primary" onclick="saveCardsToMyCards('manual')"
-                                style="width:auto; margin:0; padding:8px 12px; font-size:.82rem;">💾 Opslaan</button>
+                        <button id="gen-print-btn" class="btn-secondary" onclick="printBingoCards()" style="width:auto;margin:0;padding:8px 14px;font-size:.82rem;">🖨️ Afdrukken</button>
+                        <button class="btn-primary" onclick="saveCardsToMyCards('manual')" style="width:auto;margin:0;padding:8px 12px;font-size:.82rem;">💾 Opslaan</button>
                     </div>
                 </div>
                 <div id="gen-cards-container" class="gen-cards-grid"></div>
@@ -3389,7 +3483,7 @@ h1{font-size:13pt;text-align:center;margin-bottom:6mm;}
         const _origGoTo = window.goTo;
         window.goTo = function(id) {
             if (id === 'screen-mycards')    renderMyCards();
-            if (id === 'screen-generate')   renderThemePills();
+            if (id === 'screen-generate')   { genWizardInit(); renderThemePills(); }
             if (id === 'screen-themes')     renderThemeList();
             if (id === 'screen-ingezonden') renderIngezonden();
             if (id === 'screen-scenario')   initScenTypeSelect();
@@ -3541,11 +3635,6 @@ h1{font-size:13pt;text-align:center;margin-bottom:6mm;}
             el.style.display = 'block';
         }
 
-        function spotifyExtractPlaylistId(url) {
-            const m = (url || '').match(/playlist\/([A-Za-z0-9]+)/);
-            return m ? m[1] : null;
-        }
-
         window.spotifyLoadManual = function() {
             const raw = document.getElementById('spotify-manual-input').value.trim();
             if (!raw) { showSpotifyStatus('Plak eerst songnamen.', 'error'); return; }
@@ -3571,24 +3660,6 @@ h1{font-size:13pt;text-align:center;margin-bottom:6mm;}
             };
             document.getElementById('spotify-status').style.display = 'none';
             renderSpotifyStep2();
-        };
-
-        window.spotifyConnect = async function() {
-            const playlistUrl = document.getElementById('spotify-playlist-url').value.trim();
-            const playlistId  = spotifyExtractPlaylistId(playlistUrl);
-            if (!playlistId) { showSpotifyStatus('Geen geldige Spotify afspeellijst URL.', 'error'); return; }
-
-            showSpotifyStatus('⏳ Afspeellijst ophalen…', 'loading');
-            try {
-                const res = await fetch('/api/spotify-playlist?id=' + playlistId);
-                const data = await res.json();
-                if (!res.ok) throw new Error(data.error || 'Onbekende fout');
-                spotifyPlaylistData = data;
-                document.getElementById('spotify-status').style.display = 'none';
-                renderSpotifyStep2();
-            } catch(e) {
-                showSpotifyStatus('Fout: ' + e.message, 'error');
-            }
         };
 
         function renderSpotifyStep2() {
@@ -4600,6 +4671,186 @@ h1{font-size:13pt;text-align:center;margin-bottom:6mm;}
             _prevGoTo(id);
         };
         window.goHome = () => { window.goTo('screen-home'); };
+
+        // ─── Generator Wizard ─────────────────────────────────────────────────────
+        let genWizardStep = 1;
+        const GEN_WIZARD_STEPS = [
+            { label: '1' },
+            { label: '2' },
+            { label: '3' },
+            { label: '4' },
+            { label: '5' },
+            { label: '6' },
+        ];
+
+        function genWizardInit() {
+            genWizardStep = 1;
+            // Reset option-card states
+            document.getElementById('gen-opt-print')?.classList.add('selected');
+            document.getElementById('gen-opt-online')?.classList.remove('selected');
+            document.getElementById('gen-opt-4x4')?.classList.add('selected');
+            document.getElementById('gen-opt-5x5')?.classList.remove('selected');
+            document.getElementById('gen-opt-order-no')?.classList.remove('selected');
+            document.getElementById('gen-opt-order-yes')?.classList.remove('selected');
+            showGenStep(1);
+        }
+
+        function showGenStep(step) {
+            for (let i = 1; i <= 6; i++) {
+                const el = document.getElementById('gen-step-' + i);
+                if (el) el.style.display = i === step ? '' : 'none';
+            }
+            const prevBtn = document.getElementById('gen-prev-btn');
+            const nextBtn = document.getElementById('gen-next-btn');
+            if (prevBtn) prevBtn.style.display = step === 1 ? 'none' : '';
+            if (nextBtn) {
+                nextBtn.style.display = step === 6 ? 'none' : '';
+            }
+            const nav = document.getElementById('gen-wizard-nav');
+            if (nav) nav.style.display = step === 6 ? 'none' : '';
+
+            // Stap 4: render preview
+            if (step === 4) {
+                renderThemePicker();
+                renderGenPreview();
+            }
+
+            updateGenWizardBar(step);
+        }
+
+        function updateGenWizardBar(currentStep) {
+            const bar = document.getElementById('gen-wizard-bar');
+            if (!bar) return;
+            bar.innerHTML = '';
+            for (let i = 1; i <= 6; i++) {
+                if (i > 1) {
+                    const conn = document.createElement('div');
+                    conn.className = 'gen-wizard-connector' + (i <= currentStep ? ' done' : '');
+                    bar.appendChild(conn);
+                }
+                const dot = document.createElement('div');
+                dot.className = 'gen-wizard-step-dot' +
+                    (i === currentStep ? ' active' : i < currentStep ? ' done' : '');
+                dot.textContent = i < currentStep ? '✓' : i;
+                bar.appendChild(dot);
+            }
+        }
+
+        window.genWizardNext = function() {
+            if (!validateGenStep(genWizardStep)) return;
+            if (genWizardStep < 6) {
+                genWizardStep++;
+                showGenStep(genWizardStep);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        };
+
+        window.genWizardPrev = function() {
+            if (genWizardStep > 1) {
+                genWizardStep--;
+                showGenStep(genWizardStep);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        };
+
+        function validateGenStep(step) {
+            if (step === 3) {
+                const words = (document.getElementById('gen-words')?.value || '')
+                    .split('\n').map(w => w.trim()).filter(Boolean);
+                const minWords = genGridSize * genGridSize;
+                if (words.length < minWords) {
+                    const hint = document.getElementById('gen-words-hint');
+                    if (hint) {
+                        hint.textContent = `⚠️ Voer minimaal ${minWords} woorden in (je hebt er ${words.length}).`;
+                        hint.style.color = 'var(--danger)';
+                        setTimeout(() => { hint.textContent = `Vul minimaal ${minWords} woorden in, één per regel.`; hint.style.color = ''; }, 3000);
+                    }
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        window.setOrderKnown = function(known) {
+            const checkbox = document.getElementById('gen-order-known');
+            if (checkbox) checkbox.checked = known;
+            document.getElementById('gen-opt-order-no')?.classList.toggle('selected', !known);
+            document.getElementById('gen-opt-order-yes')?.classList.toggle('selected', known);
+            onOrderKnownChange();
+        };
+
+        // Woordteller in stap 3
+        function updateWordCounter() {
+            const textarea = document.getElementById('gen-words');
+            const counter  = document.getElementById('gen-word-counter');
+            if (!textarea || !counter) return;
+            const words = textarea.value.split('\n').map(w => w.trim()).filter(Boolean);
+            const min   = genGridSize * genGridSize;
+            counter.textContent = `${words.length} woord${words.length !== 1 ? 'en' : ''} (minimaal ${min})`;
+            counter.style.color = words.length >= min ? 'var(--teal)' : 'var(--text-muted)';
+        }
+
+        // Voorbeeld-kaart in stap 4
+        function renderGenPreview() {
+            const container = document.getElementById('gen-preview-card');
+            if (!container) return;
+            const theme = getActiveTheme();
+            const words = (document.getElementById('gen-words')?.value || '')
+                .split('\n').map(w => w.trim()).filter(Boolean);
+            const n     = genGridSize;
+            const title = document.getElementById('gen-design-title')?.value.trim()    || theme.title    || '';
+            const sub   = document.getElementById('gen-design-subtitle')?.value.trim() || theme.subtitle || '';
+            const ftr   = document.getElementById('gen-design-footer')?.value.trim()   || theme.footer   || '';
+
+            const bg        = theme.bg        || 'rgba(255,255,255,.07)';
+            const cellBg    = theme.cellBg    || 'rgba(255,255,255,.1)';
+            const cellColor = theme.cellColor || 'var(--text-main)';
+            const headColor = theme.headColor || 'var(--text-main)';
+
+            // Pak de eerste n*n woorden (of vul aan met placeholders)
+            const previewWords = [];
+            for (let i = 0; i < n * n; i++) {
+                previewWords.push(words[i] || '–');
+            }
+
+            const cells = previewWords.map(w =>
+                `<div style="background:${cellBg};color:${cellColor};border-radius:4px;padding:4px 2px;text-align:center;font-size:.55rem;font-weight:600;line-height:1.2;display:flex;align-items:center;justify-content:center;aspect-ratio:1/1;">${w}</div>`
+            ).join('');
+
+            const cardBgStyle = theme.cardBgImage
+                ? `background-image:url(${theme.cardBgImage});background-size:cover;background-position:center;`
+                : '';
+
+            container.innerHTML = `
+                <div style="background:${bg};${cardBgStyle}border-radius:10px;overflow:hidden;max-width:280px;margin:0 auto;">
+                    ${(title || sub) ? `<div style="background:${bg};color:${headColor};padding:7px 10px 4px;text-align:center;">
+                        ${title ? `<div style="font-size:.75rem;font-weight:800;">${title}</div>` : ''}
+                        ${sub   ? `<div style="font-size:.58rem;opacity:.85;">${sub}</div>` : ''}
+                    </div>` : ''}
+                    <div style="display:grid;grid-template-columns:repeat(${n},1fr);gap:3px;padding:4px 6px;background:${bg};">${cells}</div>
+                    <div style="background:${bg};color:${headColor};padding:4px 10px;display:flex;justify-content:space-between;font-size:.6rem;font-weight:700;">
+                        <span>Voorbeeld</span>${ftr ? `<span>${ftr}</span>` : ''}
+                    </div>
+                </div>`;
+        }
+
+        // Override setGenMode om ook de option-cards bij te werken
+        const _origSetGenMode = window.setGenMode;
+        window.setGenMode = function(mode) {
+            if (_origSetGenMode) _origSetGenMode(mode);
+            document.getElementById('gen-opt-print')?.classList.toggle('selected', mode === 'print');
+            document.getElementById('gen-opt-online')?.classList.toggle('selected', mode === 'online');
+            const wrap = document.getElementById('gen-antal-wrap');
+            if (wrap) wrap.style.display = mode === 'print' ? '' : 'none';
+        };
+
+        // Override setGridSize om ook option-cards bij te werken
+        const _origSetGridSize = window.setGridSize;
+        window.setGridSize = function(size) {
+            if (_origSetGridSize) _origSetGridSize(size);
+            document.getElementById('gen-opt-4x4')?.classList.toggle('selected', size === 4);
+            document.getElementById('gen-opt-5x5')?.classList.toggle('selected', size === 5);
+        };
 
         // ─── Start ────────────────────────────────────────────────────────────────
         initFromLocal();   // direct home tonen vanuit localStorage
