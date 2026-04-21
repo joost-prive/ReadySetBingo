@@ -768,6 +768,7 @@
         body.light .gen-toggle-group { border-color:rgba(0,0,0,.12); }
         body.light .gen-tog-btn { background:rgba(0,0,0,.04); color:var(--text-muted); }
         body.light .gen-tog-btn:not(:last-child) { border-right-color:rgba(0,0,0,.08); }
+        body.light .gen-tog-btn.active { background:var(--brand-gradient); color:#fff; box-shadow:0 2px 8px rgba(255,94,98,.35); }
         body.light .gen-config-box { background:rgba(255,255,255,.62); border-color:rgba(0,0,0,.09); }
         body.light .gen-card { background:rgba(255,255,255,.62); border-color:rgba(0,0,0,.09); }
         body.light .gen-card-cell {
@@ -816,6 +817,19 @@
         .gen-option-icon  { font-size: 1.8rem; margin-bottom: 5px; line-height: 1; }
         .gen-option-label { font-size: .88rem; font-weight: 700; color: var(--text-main); }
         .gen-option-desc  { font-size: .68rem; color: var(--text-muted); margin-top: 3px; }
+
+        /* ── Raster-preview in stap 2 ── */
+        .gen-grid-preview {
+            display: grid; gap: 3px;
+            width: 64px; height: 64px;
+            margin: 0 auto 8px;
+        }
+        .gen-grid-preview span {
+            background: var(--brand-primary);
+            border-radius: 2px;
+            opacity: .55;
+        }
+        .gen-option-card.selected .gen-grid-preview span { opacity: 1; }
 
         .gen-wizard-bar {
             display: flex; align-items: center; justify-content: center;
@@ -1472,12 +1486,12 @@
                 <p class="gen-step-title">Welk formaat?</p>
                 <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
                     <div class="gen-option-card selected" id="gen-opt-4x4" onclick="setGridSize(4)">
-                        <div class="gen-option-icon">⊞</div>
+                        <div class="gen-grid-preview" style="grid-template-columns:repeat(4,1fr);"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
                         <div class="gen-option-label">4 × 4</div>
                         <div class="gen-option-desc">16 vakjes · makkelijker</div>
                     </div>
                     <div class="gen-option-card" id="gen-opt-5x5" onclick="setGridSize(5)">
-                        <div class="gen-option-icon">⊟</div>
+                        <div class="gen-grid-preview" style="grid-template-columns:repeat(5,1fr);"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
                         <div class="gen-option-label">5 × 5</div>
                         <div class="gen-option-desc">25 vakjes · meer spanning</div>
                     </div>
@@ -1513,10 +1527,11 @@
 
                 <!-- Koptekst & voettekst -->
                 <div class="gen-config-box" style="margin-top:10px;">
-                    <p class="gen-sec-title" style="margin:0 0 8px;">Koptekst &amp; voettekst</p>
-                    <input type="text" id="gen-design-title" placeholder="Koptekst (bijv. Expeditie Robinson Bingo)" style="margin-bottom:6px;" oninput="updateActiveThemePreview()">
-                    <input type="text" id="gen-design-subtitle" placeholder="Subtitel (optioneel)" style="margin-bottom:6px;" oninput="updateActiveThemePreview()">
-                    <input type="text" id="gen-design-footer" placeholder="Voettekst (optioneel)" style="margin-bottom:0;" oninput="updateActiveThemePreview()">
+                    <p class="gen-sec-title" style="margin:0 0 4px;">Koptekst &amp; voettekst</p>
+                    <p style="font-size:.72rem;color:var(--text-muted);margin:0 0 8px;line-height:1.4;">Teksten die op <em>deze</em> kaarten komen te staan. Laat leeg om de standaardteksten uit het thema te gebruiken.</p>
+                    <input type="text" id="gen-design-title" placeholder="Koptekst (bijv. Expeditie Robinson Bingo)" style="margin-bottom:6px;" oninput="renderGenPreview()">
+                    <input type="text" id="gen-design-subtitle" placeholder="Subtitel (optioneel)" style="margin-bottom:6px;" oninput="renderGenPreview()">
+                    <input type="text" id="gen-design-footer" placeholder="Voettekst (optioneel)" style="margin-bottom:0;" oninput="renderGenPreview()">
                 </div>
 
                 <!-- Voorbeeld-kaart -->
@@ -1585,10 +1600,12 @@
             <!-- ── STAP 6: Overig ── -->
             <div id="gen-step-6" class="gen-step" style="display:none;">
                 <p class="gen-step-title">Nog een paar instellingen</p>
+                <p class="gen-step-desc">Bijna klaar! Geef aan onder welke categorie deze kaarten vallen, en wie ze mag zien. Daarna genereer je de kaarten.</p>
 
                 <!-- Soort -->
                 <div class="gen-config-box">
-                    <p class="gen-sec-title" style="margin:0 0 8px;">Categorie <span class="gen-hint">(optioneel)</span></p>
+                    <p class="gen-sec-title" style="margin:0 0 4px;">Categorie <span class="gen-hint">(optioneel)</span></p>
+                    <p style="font-size:.72rem;color:var(--text-muted);margin:0 0 8px;line-height:1.4;">Kies een categorie als je de kaarten later wilt terugvinden via de TV Bingo of Scenario Bingo-schermen. Sla je op als Privé? Dan zijn ze alleen zichtbaar in jouw <em>Mijn Kaarten</em>.</p>
                     <select id="gen-soort" onchange="onGenSoortChange()" style="margin-bottom:8px;">
                         <option value="">— Geen categorie —</option>
                         <option value="tv">📺 TV Bingo</option>
@@ -1605,7 +1622,8 @@
 
                 <!-- Zichtbaarheid -->
                 <div class="gen-config-box" style="margin-top:10px;">
-                    <p class="gen-sec-title" style="margin:0 0 8px;">Zichtbaarheid</p>
+                    <p class="gen-sec-title" style="margin:0 0 4px;">Zichtbaarheid</p>
+                    <p style="font-size:.72rem;color:var(--text-muted);margin:0 0 8px;line-height:1.4;"><strong>Privé</strong> — alleen jij kunt de kaarten zien en gebruiken. <strong>Publiek</strong> — de kaarten verschijnen ook bij andere gebruikers onder <em>Ingezonden</em>.</p>
                     <div class="publiek-toggle-group">
                         <button class="publiek-tog-btn active" id="gen-prive-btn" onclick="setGenPubliek(false)">🔒 Privé</button>
                         <button class="publiek-tog-btn" id="gen-publiek-btn" onclick="setGenPubliek(true)">🌐 Publiek</button>
@@ -4813,12 +4831,19 @@ h1{font-size:13pt;text-align:center;margin-bottom:6mm;}
                 previewWords.push(words[i] || '–');
             }
 
-            const cells = previewWords.map(w =>
-                `<div style="background:${cellBg};color:${cellColor};border-radius:4px;padding:4px 2px;text-align:center;font-size:.55rem;font-weight:600;line-height:1.2;display:flex;align-items:center;justify-content:center;aspect-ratio:1/1;">${w}</div>`
-            ).join('');
+            // Afbeeldingen uit thema (willekeurig verdeeld over de eerste cellen)
+            const imgs = (theme.images && theme.images.length) ? [...theme.images] : [];
 
-            const cardBgStyle = theme.cardBgImage
-                ? `background-image:url(${theme.cardBgImage});background-size:cover;background-position:center;`
+            const cells = previewWords.map((w, i) => {
+                const img = imgs[i % imgs.length] || null;
+                const inner = (img && _themeImages && _themeImages[img])
+                    ? `<img src="${_themeImages[img]}" style="max-width:90%;max-height:90%;object-fit:contain;${img.endsWith('png')||img.endsWith('PNG')?'':''}display:block;">`
+                    : `<span style="word-break:break-word;">${w}</span>`;
+                return `<div style="background:${cellBg};color:${cellColor};border-radius:4px;padding:2px;text-align:center;font-size:.5rem;font-weight:600;line-height:1.2;display:flex;align-items:center;justify-content:center;aspect-ratio:1/1;overflow:hidden;">${inner}</div>`;
+            }).join('');
+
+            const cardBgStyle = (theme.cardBgImage || _cardBgImage)
+                ? `background-image:url(${theme.cardBgImage || _cardBgImage});background-size:cover;background-position:center;`
                 : '';
 
             container.innerHTML = `
