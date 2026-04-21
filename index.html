@@ -538,7 +538,7 @@
         .gen-card-cell {
             background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.08);
             border-radius:5px; padding:3px 2px; text-align:center;
-            font-size:.6rem; line-height:1.2;
+            font-size:.78rem; line-height:1.2;
             display:flex; align-items:center; justify-content:center;
             word-break:break-word; hyphens:auto; color:#e2e8f0;
             aspect-ratio:1/1; overflow:hidden;
@@ -772,7 +772,7 @@
         body.light .gen-config-box { background:rgba(255,255,255,.62); border-color:rgba(0,0,0,.09); }
         body.light .gen-card { background:rgba(255,255,255,.62); border-color:rgba(0,0,0,.09); }
         body.light .gen-card-cell {
-            background:rgba(255,255,255,.82); border-color:rgba(0,0,0,.08); color:#1c1028;
+            background:rgba(255,255,255,.82); border-color:rgba(0,0,0,.08); color:#1c1028; font-size:.82rem;
         }
         body.light .gen-table th { border-bottom-color:rgba(0,0,0,.1); }
         body.light .gen-table td { border-bottom-color:rgba(0,0,0,.05); }
@@ -1526,7 +1526,7 @@
                 <div id="gen-theme-form-wrap" style="display:none;margin-top:10px;"></div>
 
                 <!-- Koptekst & voettekst -->
-                <div class="gen-config-box" style="margin-top:10px;">
+                <div class="gen-config-box" id="gen-koptekst-box" style="margin-top:10px;">
                     <p class="gen-sec-title" style="margin:0 0 4px;">Koptekst &amp; voettekst</p>
                     <p style="font-size:.72rem;color:var(--text-muted);margin:0 0 8px;line-height:1.4;">Teksten die op <em>deze</em> kaarten komen te staan. Laat leeg om de standaardteksten uit het thema te gebruiken.</p>
                     <input type="text" id="gen-design-title" placeholder="Koptekst (bijv. Expeditie Robinson Bingo)" style="margin-bottom:6px;" oninput="renderGenPreview()">
@@ -1536,7 +1536,10 @@
 
                 <!-- Voorbeeld-kaart -->
                 <div class="gen-config-box" style="margin-top:10px;">
-                    <p class="gen-sec-title" style="margin:0 0 8px;">Voorbeeld</p>
+                    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+                        <p class="gen-sec-title" style="margin:0;">Voorbeeld</p>
+                        <button onclick="renderGenPreview(true)" style="width:auto;padding:4px 10px;font-size:.72rem;margin:0;background:rgba(255,255,255,.1);color:var(--text-muted);border-radius:6px;">↻ Andere woorden</button>
+                    </div>
                     <div id="gen-preview-card"></div>
                 </div>
             </div>
@@ -1730,7 +1733,7 @@
 
                 <div style="display:flex;gap:8px;margin-top:4px;">
                     <button class="btn-primary btn-full" onclick="saveThemeForm()" style="margin:0;">Opslaan</button>
-                    <button class="btn-secondary" onclick="document.getElementById('theme-form').style.display='none'" style="width:auto;padding:12px 16px;margin:0;">✕</button>
+                    <button class="btn-secondary" onclick="closeInlineThemeForm()" style="width:auto;padding:12px 16px;margin:0;">✕</button>
                 </div>
             </div>
         </div>
@@ -2854,11 +2857,30 @@
 
         window.updateActiveThemePreview = function() { /* niet meer nodig */ };
 
+        // Sluit het inline themaformulier en herstel de koptekst-box
+        window.closeInlineThemeForm = function() {
+            const form = document.getElementById('theme-form');
+            const wrap = document.getElementById('gen-theme-form-wrap');
+            if (form) form.style.display = 'none';
+            if (wrap) {
+                wrap.style.display = 'none';
+                // Zet het form terug naar screen-themes zodat het daar ook werkt
+                const st = document.getElementById('screen-themes');
+                if (st && form) st.appendChild(form);
+            }
+            const kb = document.getElementById('gen-koptekst-box');
+            if (kb) kb.style.display = '';
+            renderGenPreview();
+        };
+
         // Inline thema-formulier openen vanuit de picker
         window.openInlineThemeForm = function(id, copyFromBuiltin = false) {
-            // Scroll naar thema-form-wrap en vul in
             const wrap = document.getElementById('gen-theme-form-wrap');
             if (!wrap) return;
+
+            // Verberg koptekst-box zodat teksten niet dubbel lijken
+            const kb = document.getElementById('gen-koptekst-box');
+            if (kb) kb.style.display = 'none';
 
             // Verplaats het theme-form (dat normaal in screen-themes staat) naar de wrap
             const form = document.getElementById('theme-form');
@@ -2870,9 +2892,8 @@
             }
 
             if (copyFromBuiltin) {
-                // Kopiëren van builtIn: bewaar als nieuw Eigen thema (id = null)
                 openThemeForm(id);
-                _editingThemeId = null;  // forceer nieuw
+                _editingThemeId = null;
                 const formTitle = document.getElementById('theme-form-title');
                 if (formTitle) formTitle.textContent = 'Aanpassen als Eigen thema';
             } else {
@@ -3205,9 +3226,11 @@
             const wrap = document.getElementById('gen-theme-form-wrap');
             if (wrap && wrap.contains(document.getElementById('theme-form'))) {
                 wrap.style.display = 'none';
-                // Zet het theme-form terug naar screen-themes
                 const screenThemes = document.getElementById('screen-themes');
                 if (screenThemes) screenThemes.appendChild(document.getElementById('theme-form'));
+                // Herstel koptekst-box
+                const kb = document.getElementById('gen-koptekst-box');
+                if (kb) kb.style.display = '';
             }
             document.getElementById('theme-form').style.display = 'none';
             // Activeer het nieuw opgeslagen thema als het een nieuw eigen thema is
@@ -3233,7 +3256,7 @@
             const container = document.getElementById('gen-cards-container');
             container.innerHTML = '';
             const n        = genGridSize;
-            const theme    = getActiveTheme();
+            const theme    = getFormDraftTheme() || getActiveTheme();
             const title    = document.getElementById('gen-design-title')?.value.trim()  || theme.title    || '';
             const subtitle = document.getElementById('gen-design-subtitle')?.value.trim() || theme.subtitle || '';
             const footer   = document.getElementById('gen-design-footer')?.value.trim()  || theme.footer   || '';
@@ -3324,7 +3347,7 @@
             const cards = document.querySelectorAll('.gen-card');
             if (!cards.length) return;
             const n        = genGridSize;
-            const fs       = n === 5 ? '6.5' : '7.5';
+            const fs       = n === 5 ? '9' : '11';
             const theme    = getActiveTheme();
             const title    = document.getElementById('gen-design-title')?.value.trim()    || theme.title    || '';
             const subtitle = document.getElementById('gen-design-subtitle')?.value.trim() || theme.subtitle || '';
@@ -4838,12 +4861,14 @@ h1{font-size:13pt;text-align:center;margin-bottom:6mm;}
             };
         }
 
-        // Voorbeeld-kaart in stap 4
-        function renderGenPreview() {
+        let _previewShuffleIdx = 0;
+
+        // Voorbeeld-kaart in stap 4 (shuffle=true → andere willekeurige woorden)
+        function renderGenPreview(shuffle = false) {
             const container = document.getElementById('gen-preview-card');
             if (!container) return;
             const theme = getFormDraftTheme() || getActiveTheme();
-            const words = (document.getElementById('gen-words')?.value || '')
+            let words = (document.getElementById('gen-words')?.value || '')
                 .split('\n').map(w => w.trim()).filter(Boolean);
             const n     = genGridSize;
             const title = document.getElementById('gen-design-title')?.value.trim()    || theme.title    || '';
@@ -4855,10 +4880,15 @@ h1{font-size:13pt;text-align:center;margin-bottom:6mm;}
             const cellColor = theme.cellColor || 'var(--text-main)';
             const headColor = theme.headColor || 'var(--text-main)';
 
-            // Pak de eerste n*n woorden (of vul aan met placeholders)
+            // Shuffle-offset zodat de knop andere woorden laat zien
+            if (shuffle) _previewShuffleIdx++;
+            const needed = n * n;
+            // Vul aan als er te weinig woorden zijn
+            while (words.length > 0 && words.length < needed) words = words.concat(words);
+            const offset = words.length >= needed ? (_previewShuffleIdx * needed) % words.length : 0;
             const previewWords = [];
-            for (let i = 0; i < n * n; i++) {
-                previewWords.push(words[i] || '–');
+            for (let i = 0; i < needed; i++) {
+                previewWords.push(words.length ? words[(offset + i) % words.length] : '–');
             }
 
             // Afbeeldingen uit thema (willekeurig verdeeld over de eerste cellen)
@@ -4913,7 +4943,7 @@ h1{font-size:13pt;text-align:center;margin-bottom:6mm;}
     </script>
 
     <footer style="text-align:center;padding:16px 0 10px;font-size:.68rem;color:rgba(0,0,0,.35);margin-top:auto;">
-        &copy; 2026 Joost van de Ven &nbsp;·&nbsp; versie 1.0.4
+        &copy; 2026 Joost van de Ven &nbsp;·&nbsp; versie 1.0.5
     </footer>
 </body>
 </html>
