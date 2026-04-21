@@ -1694,10 +1694,10 @@
             <div id="theme-form" class="gen-config-box" style="display:none;margin-top:12px;">
                 <p class="gen-sec-title" id="theme-form-title">Nieuw thema</p>
                 <input type="text" id="tf-name" placeholder="Naam" style="margin-bottom:10px;">
-                <div class="theme-form-row"><label>Frameachtergrond</label><input type="color" id="tf-bg" value="#9F1F96" oninput="updateThemePreviewBg(this.value)"></div>
-                <div class="theme-form-row"><label>Celachtergrond</label><input type="color" id="tf-cellBg" value="#FFFFFF"></div>
-                <div class="theme-form-row"><label>Celtekst</label><input type="color" id="tf-cellColor" value="#351C75"></div>
-                <div class="theme-form-row"><label>Kop- &amp; labeltekst</label><input type="color" id="tf-headColor" value="#FFFFFF"></div>
+                <div class="theme-form-row"><label>Frameachtergrond</label><input type="color" id="tf-bg" value="#9F1F96" oninput="updateThemePreviewBg(this.value);renderGenPreview()"></div>
+                <div class="theme-form-row"><label>Celachtergrond</label><input type="color" id="tf-cellBg" value="#FFFFFF" oninput="renderGenPreview()"></div>
+                <div class="theme-form-row"><label>Celtekst</label><input type="color" id="tf-cellColor" value="#351C75" oninput="renderGenPreview()"></div>
+                <div class="theme-form-row"><label>Kop- &amp; labeltekst</label><input type="color" id="tf-headColor" value="#FFFFFF" oninput="renderGenPreview()"></div>
 
                 <p class="gen-sec-title" style="margin:14px 0 2px;">Standaard teksten <span class="gen-hint">(worden vooraf ingevuld bij dit thema)</span></p>
                 <input type="text" id="tf-title" placeholder="Koptekst (bijv. Paars Bingo)" style="margin-bottom:6px;" oninput="updateThemePreviewTexts()">
@@ -2824,9 +2824,12 @@
             grid.innerHTML = themes.map(t => buildMiniCard(t)).join('');
             if (empty) empty.style.display = themes.length ? 'none' : '';
 
-            // Voeg "+ Nieuw" knop toe onderaan bij Eigen-tab
+            // Voeg "+ Nieuw" knop toe onderaan bij Eigen-tab (verwijder eerst eventuele oude)
+            const oldAddBtn = document.getElementById('gen-theme-add-btn');
+            if (oldAddBtn) oldAddBtn.remove();
             if (_currentThemeTab === 'eigen') {
                 const addBtn = document.createElement('button');
+                addBtn.id = 'gen-theme-add-btn';
                 addBtn.style.cssText = 'width:100%;margin-top:4px;padding:8px;font-size:.78rem;background:rgba(255,255,255,.08);color:var(--text-muted);border-radius:8px;';
                 addBtn.textContent = '+ Nieuw eigen thema';
                 addBtn.onclick = () => openInlineThemeForm(null);
@@ -4710,6 +4713,13 @@ h1{font-size:13pt;text-align:center;margin-bottom:6mm;}
             document.getElementById('gen-opt-5x5')?.classList.remove('selected');
             document.getElementById('gen-opt-order-no')?.classList.remove('selected');
             document.getElementById('gen-opt-order-yes')?.classList.remove('selected');
+            // Verberg output en foutmeldingen van een vorige sessie
+            const out = document.getElementById('gen-output');
+            if (out) out.style.display = 'none';
+            const err = document.getElementById('gen-error');
+            if (err) err.style.display = 'none';
+            const prog = document.getElementById('gen-progress');
+            if (prog) prog.style.display = 'none';
             showGenStep(1);
         }
 
@@ -4808,11 +4818,30 @@ h1{font-size:13pt;text-align:center;margin-bottom:6mm;}
             counter.style.color = words.length >= min ? 'var(--teal)' : 'var(--text-muted)';
         }
 
+        // Lees thema live uit het formulier als dat open staat (draft, nog niet opgeslagen)
+        function getFormDraftTheme() {
+            const wrap = document.getElementById('gen-theme-form-wrap');
+            if (!wrap || wrap.style.display === 'none' || !wrap.children.length) return null;
+            const bg        = document.getElementById('tf-bg')?.value        || null;
+            const cellBg    = document.getElementById('tf-cellBg')?.value    || null;
+            const cellColor = document.getElementById('tf-cellColor')?.value || null;
+            const headColor = document.getElementById('tf-headColor')?.value || null;
+            if (!bg) return null;
+            return {
+                bg, cellBg, cellColor, headColor,
+                title:       document.getElementById('tf-title')?.value.trim()    || '',
+                subtitle:    document.getElementById('tf-subtitle')?.value.trim() || '',
+                footer:      document.getElementById('tf-footer')?.value.trim()   || '',
+                cardBgImage: _cardBgImage || null,
+                images:      _themeImages || [],
+            };
+        }
+
         // Voorbeeld-kaart in stap 4
         function renderGenPreview() {
             const container = document.getElementById('gen-preview-card');
             if (!container) return;
-            const theme = getActiveTheme();
+            const theme = getFormDraftTheme() || getActiveTheme();
             const words = (document.getElementById('gen-words')?.value || '')
                 .split('\n').map(w => w.trim()).filter(Boolean);
             const n     = genGridSize;
