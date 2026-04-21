@@ -1504,6 +1504,7 @@
                 <p class="gen-step-desc" id="gen-words-hint">Vul minimaal 16 woorden in, één per regel.</p>
                 <textarea id="gen-words" rows="10" placeholder="Bijv:&#10;Immuniteit&#10;Eilandraad&#10;Kampvuur&#10;..." oninput="updateWordCounter()"></textarea>
                 <div id="gen-word-counter" style="font-size:.72rem;color:var(--text-muted);margin-top:4px;text-align:right;"></div>
+                <button onclick="fillTestWords()" style="margin-top:8px;padding:6px 12px;font-size:.75rem;background:#e0e7ff;border:1px solid #a5b4fc;border-radius:6px;cursor:pointer;color:#3730a3;">🧪 Vul testwoorden in</button>
             </div>
 
             <!-- ── STAP 4: Ontwerp ── -->
@@ -1529,16 +1530,17 @@
                 <div class="gen-config-box" id="gen-koptekst-box" style="margin-top:10px;">
                     <p class="gen-sec-title" style="margin:0 0 4px;">Koptekst &amp; voettekst</p>
                     <p style="font-size:.72rem;color:var(--text-muted);margin:0 0 8px;line-height:1.4;">Teksten die op <em>deze</em> kaarten komen te staan. Laat leeg om de standaardteksten uit het thema te gebruiken.</p>
-                    <input type="text" id="gen-design-title" placeholder="Koptekst (bijv. Expeditie Robinson Bingo)" style="margin-bottom:6px;" oninput="renderGenPreview()">
-                    <input type="text" id="gen-design-subtitle" placeholder="Subtitel (optioneel)" style="margin-bottom:6px;" oninput="renderGenPreview()">
-                    <input type="text" id="gen-design-footer" placeholder="Voettekst (optioneel)" style="margin-bottom:0;" oninput="renderGenPreview()">
+                    <input type="text" id="gen-design-title" placeholder="Koptekst (bijv. Expeditie Robinson Bingo)" style="margin-bottom:4px;" oninput="window.renderGenPreview()">
+                    <div id="gen-design-title-warn" style="font-size:.7rem;min-height:1em;margin-bottom:6px;"></div>
+                    <input type="text" id="gen-design-subtitle" placeholder="Subtitel (optioneel)" style="margin-bottom:6px;" oninput="window.renderGenPreview()">
+                    <input type="text" id="gen-design-footer" placeholder="Voettekst (optioneel)" style="margin-bottom:0;" oninput="window.renderGenPreview()">
                 </div>
 
                 <!-- Voorbeeld-kaart -->
                 <div class="gen-config-box" style="margin-top:10px;">
                     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
                         <p class="gen-sec-title" style="margin:0;">Voorbeeld</p>
-                        <button onclick="renderGenPreview(true)" style="width:auto;padding:4px 10px;font-size:.72rem;margin:0;background:rgba(255,255,255,.1);color:var(--text-muted);border-radius:6px;">↻ Andere woorden</button>
+                        <button onclick="window.renderGenPreview(true)" style="width:auto;padding:4px 10px;font-size:.72rem;margin:0;background:rgba(255,255,255,.1);color:var(--text-muted);border-radius:6px;">↻ Refresh voorbeeld</button>
                     </div>
                     <div id="gen-preview-card"></div>
                 </div>
@@ -1697,15 +1699,15 @@
             <div id="theme-form" class="gen-config-box" style="display:none;margin-top:12px;">
                 <p class="gen-sec-title" id="theme-form-title">Nieuw thema</p>
                 <input type="text" id="tf-name" placeholder="Naam" style="margin-bottom:10px;">
-                <div class="theme-form-row"><label>Frameachtergrond</label><input type="color" id="tf-bg" value="#9F1F96" oninput="updateThemePreviewBg(this.value);renderGenPreview()"></div>
-                <div class="theme-form-row"><label>Celachtergrond</label><input type="color" id="tf-cellBg" value="#FFFFFF" oninput="renderGenPreview()"></div>
-                <div class="theme-form-row"><label>Celtekst</label><input type="color" id="tf-cellColor" value="#351C75" oninput="renderGenPreview()"></div>
-                <div class="theme-form-row"><label>Kop- &amp; labeltekst</label><input type="color" id="tf-headColor" value="#FFFFFF" oninput="renderGenPreview()"></div>
+                <div class="theme-form-row"><label>Frameachtergrond</label><input type="color" id="tf-bg" value="#9F1F96" oninput="updateThemePreviewBg(this.value);window.renderGenPreview()"></div>
+                <div class="theme-form-row"><label>Celachtergrond</label><input type="color" id="tf-cellBg" value="#FFFFFF" oninput="window.renderGenPreview()"></div>
+                <div class="theme-form-row"><label>Celtekst</label><input type="color" id="tf-cellColor" value="#351C75" oninput="window.renderGenPreview()"></div>
+                <div class="theme-form-row"><label>Kop- &amp; labeltekst</label><input type="color" id="tf-headColor" value="#FFFFFF" oninput="window.renderGenPreview()"></div>
 
                 <p class="gen-sec-title" style="margin:14px 0 2px;">Standaard teksten <span class="gen-hint">(worden vooraf ingevuld bij dit thema)</span></p>
-                <input type="text" id="tf-title" placeholder="Koptekst (bijv. Paars Bingo)" style="margin-bottom:6px;" oninput="updateThemePreviewTexts();renderGenPreview()">
-                <input type="text" id="tf-subtitle" placeholder="Subtitel (optioneel)" style="margin-bottom:6px;" oninput="updateThemePreviewTexts();renderGenPreview()">
-                <input type="text" id="tf-footer" placeholder="Voettekst (optioneel)" style="margin-bottom:0;" oninput="updateThemePreviewTexts();renderGenPreview()">
+                <input type="text" id="tf-title" placeholder="Koptekst (bijv. Paars Bingo)" style="margin-bottom:6px;" oninput="updateThemePreviewTexts();window.renderGenPreview()">
+                <input type="text" id="tf-subtitle" placeholder="Subtitel (optioneel)" style="margin-bottom:6px;" oninput="updateThemePreviewTexts();window.renderGenPreview()">
+                <input type="text" id="tf-footer" placeholder="Voettekst (optioneel)" style="margin-bottom:0;" oninput="updateThemePreviewTexts();window.renderGenPreview()">
 
                 <p class="gen-sec-title" style="margin:14px 0 6px;">Kaartachtergrond <span class="gen-hint">(optioneel – volledig ontwerp)</span></p>
                 <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
@@ -4735,8 +4737,8 @@ h1{font-size:13pt;text-align:center;margin-bottom:6mm;}
             document.getElementById('gen-opt-online')?.classList.remove('selected');
             document.getElementById('gen-opt-4x4')?.classList.add('selected');
             document.getElementById('gen-opt-5x5')?.classList.remove('selected');
-            document.getElementById('gen-opt-order-no')?.classList.remove('selected');
-            document.getElementById('gen-opt-order-yes')?.classList.remove('selected');
+            // Volgorde default op Nee
+            setOrderKnown(false);
             // Verberg output en foutmeldingen van een vorige sessie
             const out = document.getElementById('gen-output');
             if (out) out.style.display = 'none';
@@ -4805,6 +4807,15 @@ h1{font-size:13pt;text-align:center;margin-bottom:6mm;}
             }
         };
 
+        function showStepWarning(elId, msg, color) {
+            const el = document.getElementById(elId);
+            if (!el) return;
+            el.textContent = msg;
+            el.style.color = color || 'var(--danger)';
+            clearTimeout(el._warnTimer);
+            el._warnTimer = setTimeout(() => { el.textContent = ''; el.style.color = ''; }, 4000);
+        }
+
         function validateGenStep(step) {
             if (step === 3) {
                 const words = (document.getElementById('gen-words')?.value || '')
@@ -4819,6 +4830,22 @@ h1{font-size:13pt;text-align:center;margin-bottom:6mm;}
                     }
                     return false;
                 }
+                // Waarschuwing (niet blokkerend) als je precies het minimum hebt
+                if (words.length === minWords) {
+                    showStepWarning('gen-words-hint',
+                        `⚠️ Je hebt precies het minimum (${minWords} woorden). Meer woorden zorgen voor meer variatie tussen de kaarten.`,
+                        'var(--brand-primary)');
+                }
+            }
+            if (step === 4) {
+                const title = document.getElementById('gen-design-title')?.value.trim() ||
+                              (getFormDraftTheme() || getActiveTheme()).title || '';
+                if (!title) {
+                    showStepWarning('gen-design-title-warn',
+                        '⚠️ Je hebt nog geen koptekst ingevuld. Je kaarten krijgen dan geen titel.',
+                        'var(--brand-primary)');
+                    // Niet blokkerend — gebruiker mag doorgaan
+                }
             }
             return true;
         }
@@ -4830,6 +4857,13 @@ h1{font-size:13pt;text-align:center;margin-bottom:6mm;}
             document.getElementById('gen-opt-order-yes')?.classList.toggle('selected', known);
             onOrderKnownChange();
         };
+
+        // Tijdelijke testknop: vult woordenlijst met Nederlandse steden
+        function fillTestWords() {
+            const words = ['Groningen','Amsterdam','Eindhoven','Assen','Emmen','Emmeloord','Drunen','Vught','Cromvoirt','Arnhem','Nijmegen','Apeldoorn','Ouddorp','Den Haag','Dordrecht','Rotterdam','Venray','Maastricht','Heerlen','Haaren','Werkhoven','Wijk bij Duurstede','Urk','Volendam'];
+            document.getElementById('gen-words').value = words.join('\n');
+            updateWordCounter();
+        }
 
         // Woordteller in stap 3
         function updateWordCounter() {
@@ -4863,8 +4897,8 @@ h1{font-size:13pt;text-align:center;margin-bottom:6mm;}
 
         let _previewShuffleIdx = 0;
 
-        // Voorbeeld-kaart in stap 4 (shuffle=true → andere willekeurige woorden)
-        function renderGenPreview(shuffle = false) {
+        // Voorbeeld-kaart in stap 4 — window.renderGenPreview zodat onclick-attribuut het bereikt
+        window.renderGenPreview = function(shuffle) {
             const container = document.getElementById('gen-preview-card');
             if (!container) return;
             const theme = getFormDraftTheme() || getActiveTheme();
@@ -4880,10 +4914,8 @@ h1{font-size:13pt;text-align:center;margin-bottom:6mm;}
             const cellColor = theme.cellColor || 'var(--text-main)';
             const headColor = theme.headColor || 'var(--text-main)';
 
-            // Shuffle-offset zodat de knop andere woorden laat zien
             if (shuffle) _previewShuffleIdx++;
             const needed = n * n;
-            // Vul aan als er te weinig woorden zijn
             while (words.length > 0 && words.length < needed) words = words.concat(words);
             const offset = words.length >= needed ? (_previewShuffleIdx * needed) % words.length : 0;
             const previewWords = [];
@@ -4891,15 +4923,15 @@ h1{font-size:13pt;text-align:center;margin-bottom:6mm;}
                 previewWords.push(words.length ? words[(offset + i) % words.length] : '–');
             }
 
-            // Afbeeldingen uit thema (willekeurig verdeeld over de eerste cellen)
-            const imgs = (theme.images && theme.images.length) ? [...theme.images] : [];
+            // Afbeeldingen: theme.images zijn objecten {src, x, y, w, deg}
+            const imgs = (theme.images && theme.images.length) ? theme.images : [];
 
             const cells = previewWords.map((w, i) => {
-                const img = imgs[i % imgs.length] || null;
-                const inner = (img && _themeImages && _themeImages[img])
-                    ? `<img src="${_themeImages[img]}" style="max-width:90%;max-height:90%;object-fit:contain;${img.endsWith('png')||img.endsWith('PNG')?'':''}display:block;">`
+                const imgObj = imgs.length ? imgs[i % imgs.length] : null;
+                const inner = (imgObj && imgObj.src)
+                    ? `<img src="${imgObj.src}" style="max-width:90%;max-height:90%;object-fit:contain;display:block;">`
                     : `<span style="word-break:break-word;">${w}</span>`;
-                return `<div style="background:${cellBg};color:${cellColor};border-radius:4px;padding:2px;text-align:center;font-size:.5rem;font-weight:600;line-height:1.2;display:flex;align-items:center;justify-content:center;aspect-ratio:1/1;overflow:hidden;">${inner}</div>`;
+                return `<div style="background:${cellBg};color:${cellColor};border-radius:4px;padding:2px;text-align:center;font-size:.55rem;font-weight:600;line-height:1.2;display:flex;align-items:center;justify-content:center;aspect-ratio:1/1;overflow:hidden;">${inner}</div>`;
             }).join('');
 
             const cardBgStyle = (theme.cardBgImage || _cardBgImage)
@@ -4917,7 +4949,7 @@ h1{font-size:13pt;text-align:center;margin-bottom:6mm;}
                         <span>Voorbeeld</span>${ftr ? `<span>${ftr}</span>` : ''}
                     </div>
                 </div>`;
-        }
+        };
 
         // Override setGenMode om ook de option-cards bij te werken
         const _origSetGenMode = window.setGenMode;
@@ -4943,7 +4975,7 @@ h1{font-size:13pt;text-align:center;margin-bottom:6mm;}
     </script>
 
     <footer style="text-align:center;padding:16px 0 10px;font-size:.68rem;color:rgba(0,0,0,.35);margin-top:auto;">
-        &copy; 2026 Joost van de Ven &nbsp;·&nbsp; versie 1.0.5
+        &copy; 2026 Joost van de Ven &nbsp;·&nbsp; versie 1.0.6
     </footer>
 </body>
 </html>
