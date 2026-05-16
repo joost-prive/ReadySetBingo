@@ -928,8 +928,14 @@
             position: relative; z-index: 1;
             padding: 60px 20px 22px;
         }
+        /* Bovenste actiebalk in de banner — flex, geen absolute meer */
+        .wk-banner-topbar {
+            position: absolute; top: 14px; left: 14px; right: 14px; z-index: 2;
+            display: flex; justify-content: space-between; align-items: center;
+            gap: 10px;
+        }
         .wk-banner-back {
-            position: absolute; top: 14px; left: 14px; z-index: 2;
+            /* Behouden voor backwards compat — geen position meer */
         }
         .wk-banner-badge {
             display: inline-block; background: rgba(255,255,255,.18);
@@ -1193,6 +1199,454 @@
         .wk-btn-shuffle:disabled { opacity:.4; cursor:default; border-color:transparent; }
         .wk-shuffle-count { font-weight:800; color:var(--wk-green-light); }
         body.light .wk-shuffle-count { color:var(--wk-green); }
+
+        /* WK Stats-knop in banner */
+        .wk-banner-stats {
+            background: rgba(255,255,255,.15);
+            border: 1px solid rgba(255,255,255,.3);
+            color: white; padding: 6px 12px; border-radius: 20px;
+            font-size: .72rem; font-weight: 700;
+            cursor: pointer; display: inline-flex; align-items: center; gap: 5px;
+            font-family: 'Poppins', sans-serif;
+            transition: background .15s;
+            white-space: nowrap;
+        }
+        .wk-banner-stats:hover { background: rgba(255,255,255,.28); }
+        .wk-banner-stats:active { transform: scale(.96); }
+
+        /* Naam-onboarding (eerste keer) */
+        .wk-name-prompt {
+            background: linear-gradient(135deg, rgba(34,197,94,.18), rgba(22,163,74,.06));
+            border: 1px solid var(--wk-green-border);
+            border-radius: 14px; padding: 14px 16px; margin-bottom: 14px;
+        }
+        body.light .wk-name-prompt {
+            background: linear-gradient(135deg, rgba(22,163,74,.1), rgba(22,163,74,.02));
+        }
+        .wk-name-prompt-title {
+            font-size: .72rem; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 1px; color: var(--wk-green-light);
+            margin-bottom: 8px;
+        }
+        body.light .wk-name-prompt-title { color: var(--wk-green); }
+        .wk-name-prompt-row {
+            display: flex; gap: 8px; align-items: stretch;
+        }
+        .wk-name-prompt input {
+            flex: 1; min-width: 0;
+            padding: 10px 12px; border-radius: 10px;
+            border: 1px solid var(--glass-border);
+            background: rgba(255,255,255,.08);
+            color: var(--text-main); font-family: 'Poppins', sans-serif;
+            font-size: .9rem;
+        }
+        body.light .wk-name-prompt input {
+            background: white; border-color: rgba(0,0,0,.12);
+        }
+        .wk-name-prompt input:focus {
+            outline: none; border-color: var(--wk-green-light);
+        }
+        .wk-name-prompt button {
+            background: linear-gradient(135deg, #15803d, #22c55e);
+            color: white; border: none; padding: 0 16px;
+            border-radius: 10px; font-weight: 700;
+            font-family: 'Poppins', sans-serif; font-size: .85rem;
+            cursor: pointer; flex-shrink: 0;
+        }
+        .wk-name-prompt button:active { transform: scale(.97); }
+        .wk-name-prompt button:disabled { opacity: .5; cursor: default; }
+
+        /* Naam-chip (na invullen) */
+        .wk-name-chip {
+            display: inline-flex; align-items: center; gap: 6px;
+            background: var(--wk-green-bg);
+            border: 1px solid var(--wk-green-border);
+            border-radius: 20px; padding: 5px 10px 5px 12px;
+            font-size: .78rem; margin-bottom: 14px;
+            color: var(--text-main);
+        }
+        .wk-name-chip-label { color: var(--text-muted); font-size: .7rem; }
+        .wk-name-chip-name  { font-weight: 700; color: var(--wk-green-light); }
+        body.light .wk-name-chip-name { color: var(--wk-green); }
+        .wk-name-chip-edit {
+            background: none; border: none; cursor: pointer;
+            color: var(--text-muted); padding: 2px 4px;
+            font-size: .8rem; line-height: 1;
+        }
+        .wk-name-chip-edit:hover { color: var(--wk-green-light); }
+
+        /* ── Multiplayer-blok (Speel met vrienden) ── */
+        .wk-mp-card {
+            background: linear-gradient(135deg, rgba(255,94,98,.12), rgba(255,153,102,.06));
+            border: 1px solid rgba(255,153,102,.25);
+            border-radius: 14px; padding: 14px 16px; margin-bottom: 16px;
+        }
+        body.light .wk-mp-card {
+            background: linear-gradient(135deg, rgba(255,94,98,.06), rgba(255,153,102,.02));
+        }
+        .wk-mp-title {
+            font-size: .85rem; font-weight: 700; margin-bottom: 4px;
+            display: flex; align-items: center; gap: 6px;
+        }
+        .wk-mp-sub {
+            font-size: .72rem; color: var(--text-muted); margin-bottom: 10px;
+        }
+        .wk-mp-actions {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+        }
+        .wk-mp-btn {
+            padding: 10px 12px; border-radius: 10px;
+            font-family: 'Poppins', sans-serif; font-weight: 700;
+            font-size: .82rem; cursor: pointer; border: none;
+            display: flex; align-items: center; justify-content: center; gap: 6px;
+        }
+        .wk-mp-btn.primary {
+            background: var(--brand-gradient); color: white;
+            box-shadow: 0 4px 12px rgba(255,94,98,.3);
+        }
+        .wk-mp-btn.secondary {
+            background: rgba(255,255,255,.08);
+            border: 1px solid var(--glass-border);
+            color: var(--text-main);
+        }
+        body.light .wk-mp-btn.secondary {
+            background: rgba(255,255,255,.7); border-color: rgba(0,0,0,.1);
+        }
+        .wk-mp-btn:active { transform: scale(.97); }
+        .wk-mp-btn:disabled { opacity: .5; cursor: default; transform: none; }
+        .wk-mp-offline-note {
+            font-size: .7rem; color: #fbbf24; margin-top: 8px;
+            display: none;
+        }
+        .wk-mp-offline-note.show { display: block; }
+
+        /* ── Modal voor kamer maken / joinen ── */
+        .wk-modal-overlay {
+            position: fixed; inset: 0; z-index: 1100;
+            background: rgba(6,40,16,.85); backdrop-filter: blur(8px);
+            display: none; align-items: center; justify-content: center;
+            padding: 20px;
+        }
+        .wk-modal-overlay.show { display: flex; }
+        .wk-modal {
+            background: var(--bg-base);
+            border: 1px solid var(--glass-border);
+            border-radius: 18px; padding: 20px;
+            max-width: 380px; width: 100%;
+            box-shadow: 0 30px 60px rgba(0,0,0,.4);
+        }
+        .wk-modal-title {
+            font-size: 1.1rem; font-weight: 800; margin: 0 0 14px;
+        }
+        .wk-modal-label {
+            font-size: .72rem; font-weight: 600; text-transform: uppercase;
+            letter-spacing: 1px; color: var(--text-muted);
+            margin-bottom: 6px; display: block;
+        }
+        .wk-modal-input, .wk-modal-select {
+            width: 100%; padding: 10px 12px; border-radius: 10px;
+            border: 1px solid var(--glass-border);
+            background: rgba(255,255,255,.06); color: var(--text-main);
+            font-family: 'Poppins', sans-serif; font-size: .9rem;
+            margin-bottom: 12px;
+        }
+        body.light .wk-modal-input, body.light .wk-modal-select {
+            background: white; border-color: rgba(0,0,0,.12);
+        }
+        .wk-modal-input:focus, .wk-modal-select:focus {
+            outline: none; border-color: var(--wk-green-light);
+        }
+        .wk-code-input {
+            font-size: 2rem; font-weight: 800; text-align: center;
+            letter-spacing: 8px; padding: 14px;
+            font-variant-numeric: tabular-nums;
+        }
+        .wk-modal-actions {
+            display: flex; gap: 8px; margin-top: 6px;
+        }
+        .wk-modal-actions button { flex: 1; }
+        .wk-modal-error {
+            color: #fca5a5; font-size: .8rem; margin: -4px 0 8px;
+            min-height: 1em;
+        }
+
+        /* ── Lobby ── */
+        .wk-lobby {
+            background: linear-gradient(135deg, rgba(22,163,74,.18), rgba(34,197,94,.06));
+            border: 1px solid var(--wk-green-border);
+            border-radius: 16px; padding: 18px; margin-bottom: 16px;
+        }
+        body.light .wk-lobby {
+            background: linear-gradient(135deg, rgba(22,163,74,.08), rgba(22,163,74,.02));
+        }
+        .wk-lobby-header {
+            text-align: center; margin-bottom: 14px;
+        }
+        .wk-lobby-label {
+            font-size: .68rem; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 1.5px; color: var(--wk-green-light); margin-bottom: 4px;
+        }
+        body.light .wk-lobby-label { color: var(--wk-green); }
+        .wk-lobby-code {
+            font-size: 2.8rem; font-weight: 800; letter-spacing: 10px;
+            color: var(--wk-green-light);
+            font-variant-numeric: tabular-nums;
+            text-shadow: 0 0 20px rgba(34,197,94,.3);
+            margin: 4px 0 6px;
+        }
+        body.light .wk-lobby-code { color: var(--wk-green); }
+        .wk-lobby-match {
+            font-size: .85rem; font-weight: 700; color: var(--text-main); margin-bottom: 2px;
+        }
+        .wk-lobby-meta {
+            font-size: .72rem; color: var(--text-muted);
+        }
+        .wk-lobby-players-title {
+            font-size: .68rem; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 1px; color: var(--text-muted);
+            margin: 12px 0 6px;
+        }
+        .wk-lobby-players {
+            display: flex; flex-direction: column; gap: 5px;
+        }
+        .wk-lobby-player {
+            background: rgba(255,255,255,.06);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px; padding: 8px 12px;
+            display: flex; justify-content: space-between; align-items: center;
+            font-size: .85rem;
+        }
+        body.light .wk-lobby-player { background: rgba(255,255,255,.7); }
+        .wk-lobby-player.is-me { border-color: var(--wk-green-light); }
+        .wk-lobby-player-name { font-weight: 700; display: flex; gap: 6px; align-items: center; }
+        .wk-lobby-player-tag {
+            font-size: .62rem; padding: 2px 6px; border-radius: 6px;
+            background: rgba(34,197,94,.2); color: var(--wk-green-light);
+            font-weight: 700; text-transform: uppercase; letter-spacing: .5px;
+        }
+        body.light .wk-lobby-player-tag {
+            background: rgba(22,163,74,.15); color: var(--wk-green);
+        }
+        .wk-lobby-buttons {
+            display: flex; gap: 8px; margin-top: 14px;
+        }
+        .wk-lobby-buttons button { flex: 1; }
+        .wk-lobby-waiting {
+            text-align: center; color: var(--text-muted);
+            font-size: .82rem; padding: 12px;
+        }
+
+        /* ── Leaderboard naast/onder de kaart ── */
+        .wk-leaderboard {
+            background: rgba(0,0,0,.25);
+            border: 1px solid var(--wk-green-border);
+            border-radius: 12px; padding: 10px 12px; margin-top: 14px;
+        }
+        body.light .wk-leaderboard {
+            background: rgba(255,255,255,.7);
+        }
+        .wk-leaderboard-title {
+            font-size: .65rem; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 1px; color: var(--wk-green-light); margin-bottom: 8px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        body.light .wk-leaderboard-title { color: var(--wk-green); }
+        .wk-leaderboard-code {
+            font-weight: 700; letter-spacing: 2px;
+            background: var(--wk-green-bg);
+            padding: 2px 8px; border-radius: 8px;
+            border: 1px solid var(--wk-green-border);
+        }
+        .wk-leaderboard-list {
+            display: flex; flex-direction: column; gap: 4px;
+        }
+        .wk-leaderboard-row {
+            display: flex; justify-content: space-between; align-items: center;
+            font-size: .82rem; padding: 4px 6px; border-radius: 8px;
+        }
+        .wk-leaderboard-row.is-me {
+            background: rgba(34,197,94,.15);
+        }
+        .wk-leaderboard-rank {
+            font-weight: 800; color: var(--text-muted);
+            width: 22px; text-align: center; flex-shrink: 0;
+        }
+        .wk-leaderboard-name {
+            flex: 1; min-width: 0; padding: 0 6px;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+            font-weight: 600;
+        }
+        .wk-leaderboard-score {
+            font-weight: 700; color: var(--wk-green-light);
+            font-variant-numeric: tabular-nums;
+        }
+        body.light .wk-leaderboard-score { color: var(--wk-green); }
+        .wk-leaderboard-bingo {
+            font-size: .7rem; margin-left: 4px;
+        }
+
+        /* ── Eindscherm kamer ── */
+        .wk-finish-card {
+            background: linear-gradient(135deg, #052e16, #166534);
+            border-radius: 16px; padding: 20px; text-align: center;
+            color: white; margin-bottom: 16px;
+        }
+        .wk-finish-title {
+            font-size: 1.6rem; font-weight: 800; color: #22c55e;
+            letter-spacing: -1px; margin-bottom: 4px;
+        }
+        .wk-finish-sub { font-size: .85rem; color: rgba(255,255,255,.8); margin-bottom: 16px; }
+        .wk-finish-podium {
+            display: flex; flex-direction: column; gap: 6px;
+            text-align: left;
+        }
+        .wk-finish-row {
+            background: rgba(255,255,255,.08);
+            border-radius: 10px; padding: 10px 12px;
+            display: flex; align-items: center; gap: 10px;
+        }
+        .wk-finish-row.gold   { background: linear-gradient(135deg, rgba(250,204,21,.3), rgba(250,204,21,.1)); border: 1px solid rgba(250,204,21,.4); }
+        .wk-finish-row.silver { background: linear-gradient(135deg, rgba(203,213,225,.25), rgba(203,213,225,.05)); border: 1px solid rgba(203,213,225,.3); }
+        .wk-finish-row.bronze { background: linear-gradient(135deg, rgba(194,124,57,.3), rgba(194,124,57,.1)); border: 1px solid rgba(194,124,57,.4); }
+        .wk-finish-medal { font-size: 1.4rem; width: 30px; text-align: center; }
+        .wk-finish-name  { font-weight: 700; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .wk-finish-time  { font-weight: 700; color: #86efac; font-variant-numeric: tabular-nums; }
+        .wk-finish-nobingo { font-size: .8rem; color: rgba(255,255,255,.5); }
+
+        /* WK Stats-scherm */
+        .wk-stats-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+            margin-bottom: 18px;
+        }
+        .wk-stat-tile {
+            background: linear-gradient(135deg, rgba(22,163,74,.18), rgba(34,197,94,.08));
+            border: 1px solid var(--wk-green-border);
+            border-radius: 14px; padding: 14px 12px;
+            display: flex; flex-direction: column; gap: 4px;
+        }
+        body.light .wk-stat-tile {
+            background: linear-gradient(135deg, rgba(22,163,74,.08), rgba(22,163,74,.02));
+        }
+        .wk-stat-icon { font-size: 1.4rem; line-height: 1; }
+        .wk-stat-value {
+            font-size: 1.6rem; font-weight: 800; color: var(--wk-green-light);
+            line-height: 1.1; letter-spacing: -1px;
+        }
+        body.light .wk-stat-value { color: var(--wk-green); }
+        .wk-stat-label {
+            font-size: .68rem; color: var(--text-muted);
+            text-transform: uppercase; letter-spacing: .8px; font-weight: 600;
+        }
+        .wk-stats-section-title {
+            font-size: .72rem; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 1px; color: var(--wk-green-light);
+            margin: 18px 0 8px;
+        }
+        body.light .wk-stats-section-title { color: var(--wk-green); }
+        .wk-stats-empty {
+            text-align: center; padding: 30px 20px; color: var(--text-muted);
+        }
+        .wk-stats-empty-icon { font-size: 2.5rem; margin-bottom: 10px; }
+        .wk-stats-match-row {
+            background: rgba(255,255,255,.05);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px; padding: 10px 12px; margin-bottom: 6px;
+            display: flex; justify-content: space-between; align-items: center;
+            gap: 8px;
+        }
+        body.light .wk-stats-match-row { background: rgba(255,255,255,.7); }
+        .wk-stats-match-teams { font-size: .85rem; font-weight: 700; }
+        .wk-stats-match-meta { font-size: .68rem; color: var(--text-muted); }
+        .wk-stats-match-numbers {
+            display: flex; gap: 10px; font-size: .72rem; flex-shrink: 0;
+        }
+        .wk-stats-match-numbers span {
+            display: inline-flex; align-items: center; gap: 3px;
+            color: var(--wk-green-light); font-weight: 700;
+        }
+        body.light .wk-stats-match-numbers span { color: var(--wk-green); }
+        .wk-stats-reset {
+            margin-top: 20px; background: rgba(255,255,255,.06);
+            border: 1px solid var(--glass-border); color: var(--text-muted);
+            padding: 8px 14px; border-radius: 10px; font-size: .78rem;
+            cursor: pointer; font-family: 'Poppins', sans-serif;
+        }
+        .wk-stats-reset:hover { background: rgba(220,38,38,.15); color: #fca5a5; border-color: rgba(220,38,38,.3); }
+
+        /* Deel-knop in goal overlay */
+        .wk-goal-actions {
+            display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap;
+            justify-content: center;
+        }
+        .wk-share-btn {
+            background: rgba(255,255,255,.15);
+            border: 1px solid rgba(255,255,255,.3);
+            color: white; padding: 10px 18px; border-radius: 12px;
+            font-family: 'Poppins', sans-serif; font-weight: 700;
+            font-size: .9rem; cursor: pointer;
+            display: inline-flex; align-items: center; gap: 6px;
+            transition: background .15s;
+        }
+        .wk-share-btn:hover { background: rgba(255,255,255,.28); }
+        .wk-share-btn:disabled { opacity: .5; cursor: default; }
+
+        /* Off-screen share-card render-target */
+        .wk-share-render {
+            position: fixed; left: -10000px; top: 0; z-index: -1;
+            width: 540px; padding: 32px; box-sizing: border-box;
+            background: linear-gradient(135deg, #052e16 0%, #14532d 50%, #166534 100%);
+            color: white; font-family: 'Poppins', sans-serif;
+            border-radius: 24px;
+        }
+        .wk-share-render .wk-share-header {
+            text-align: center; margin-bottom: 18px;
+        }
+        .wk-share-render .wk-share-goal {
+            font-size: 3rem; font-weight: 800; color: #22c55e;
+            letter-spacing: -1px; margin: 0;
+            text-shadow: 0 0 30px rgba(34,197,94,.5);
+        }
+        .wk-share-render .wk-share-match {
+            font-size: 1rem; color: rgba(255,255,255,.85);
+            margin-top: 4px; font-weight: 600;
+        }
+        .wk-share-render .wk-share-meta {
+            font-size: .8rem; color: rgba(255,255,255,.65);
+            margin-top: 2px;
+        }
+        .wk-share-render .wk-share-grid {
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px;
+            margin: 16px 0;
+        }
+        .wk-share-render .wk-share-cell {
+            aspect-ratio: 1/1;
+            background: rgba(6,40,16,.7);
+            border: 2px solid rgba(34,197,94,.25);
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            padding: 4px; text-align: center;
+            font-size: .55rem; font-weight: 700;
+            color: #dcfce7; line-height: 1.15;
+            word-break: break-word;
+        }
+        .wk-share-render .wk-share-cell.checked {
+            background: linear-gradient(135deg, #15803d 0%, #22c55e 100%);
+            border-color: #22c55e; color: white;
+            box-shadow: 0 0 8px rgba(34,197,94,.5);
+        }
+        .wk-share-render .wk-share-footer {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-top: 16px; font-size: .75rem;
+            color: rgba(255,255,255,.7);
+            border-top: 1px solid rgba(255,255,255,.15);
+            padding-top: 12px;
+        }
+        .wk-share-render .wk-share-player { font-weight: 700; color: white; }
+        .wk-share-render .wk-share-brand {
+            font-weight: 800; letter-spacing: -.5px;
+            background: linear-gradient(135deg, #ff9966, #ff5e62);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
 
         .theme-mini-card {
             border-radius: 8px; overflow: hidden; cursor: pointer;
@@ -1882,12 +2336,34 @@
             <div class="wk-banner">
                 <div class="wk-banner-photo"></div>
                 <div class="wk-banner-overlay"></div>
-                <button class="btn-back wk-banner-back" onclick="goHome()" style="background:rgba(255,255,255,.15);border-color:rgba(255,255,255,.3);color:white;">← Terug</button>
+                <div class="wk-banner-topbar">
+                    <button class="btn-back" onclick="goHome()" style="background:rgba(255,255,255,.15);border-color:rgba(255,255,255,.3);color:white;">← Terug</button>
+                    <button class="wk-banner-stats" onclick="goTo('screen-wk-stats')">🏆 Mijn stand</button>
+                </div>
                 <div class="wk-banner-content">
                     <div class="wk-banner-badge">FIFA World Cup 2026</div>
                     <h2 class="wk-banner-title">WK <span>Bingo</span> 2026</h2>
                     <p class="wk-banner-sub">Verenigde Staten &nbsp;·&nbsp; Canada &nbsp;·&nbsp; Mexico &nbsp;·&nbsp; Juni – Juli 2026</p>
                 </div>
+            </div>
+
+            <!-- Naam-onboarding (verschijnt alleen bij eerste keer) -->
+            <div id="wk-name-prompt" class="wk-name-prompt" style="display:none;">
+                <div class="wk-name-prompt-title">👋 Wie speelt er mee?</div>
+                <div class="wk-name-prompt-row">
+                    <input type="text" id="wk-name-input" maxlength="20" placeholder="Je naam" autocomplete="given-name">
+                    <button onclick="wkSavePlayerName()">Opslaan</button>
+                </div>
+                <div style="font-size:.7rem;color:var(--text-muted);margin-top:6px;">
+                    Je naam komt op je gedeelde bingokaart te staan.
+                </div>
+            </div>
+
+            <!-- Naam-chip (verschijnt na invullen) -->
+            <div id="wk-name-chip" class="wk-name-chip" style="display:none;">
+                <span class="wk-name-chip-label">Speel mee als</span>
+                <span class="wk-name-chip-name" id="wk-name-chip-name">–</span>
+                <button class="wk-name-chip-edit" onclick="wkEditPlayerName()" title="Naam wijzigen">✏️</button>
             </div>
 
             <!-- Intro -->
@@ -1899,6 +2375,22 @@
                     <li>Geef je niks om voetbal, maar staat het toch het héle WK aan? Dan maak je er op deze manier wél iets leuks van</li>
                 </ul>
             </div>
+
+            <!-- Multiplayer-blok -->
+            <div id="wk-mp-card" class="wk-mp-card">
+                <div class="wk-mp-title">🎉 Speel met vrienden</div>
+                <div class="wk-mp-sub">Maak samen een kamer en strijd om de eerste bingo.</div>
+                <div class="wk-mp-actions">
+                    <button class="wk-mp-btn primary"   id="wk-mp-create-btn" onclick="wkOpenCreateModal()">➕ Maak kamer</button>
+                    <button class="wk-mp-btn secondary" id="wk-mp-join-btn"   onclick="wkOpenJoinModal()">🔑 Doe mee</button>
+                </div>
+                <div class="wk-mp-offline-note" id="wk-mp-offline-note">
+                    ⚠ Multiplayer vereist een internetverbinding.
+                </div>
+            </div>
+
+            <!-- Lobby view (verschijnt als je in een kamer zit) -->
+            <div id="wk-lobby" style="display:none;"></div>
 
             <!-- Match selector view -->
             <div id="wk-selector">
@@ -1936,7 +2428,97 @@
                     <div class="bingo-grid" id="wk-bingo-grid"></div>
                     <div id="wk-bingo-lines"></div>
                 </div>
-                <button class="btn-secondary" style="margin-top:16px;" onclick="wkBackToSelector()">Andere wedstrijd</button>
+
+                <!-- Live leaderboard (alleen in kamer-modus zichtbaar) -->
+                <div id="wk-leaderboard" class="wk-leaderboard" style="display:none;">
+                    <div class="wk-leaderboard-title">
+                        <span>👥 Live stand</span>
+                        <span class="wk-leaderboard-code" id="wk-leaderboard-code">––––</span>
+                    </div>
+                    <div class="wk-leaderboard-list" id="wk-leaderboard-list"></div>
+                    <button id="wk-host-finish-btn" class="wk-mp-btn primary"
+                            style="display:none;width:100%;margin-top:10px;font-size:.78rem;padding:8px;"
+                            onclick="wkHostFinish()">🏁 Beëindig wedstrijd</button>
+                </div>
+
+                <button class="btn-secondary" id="wk-game-back-btn" style="margin-top:16px;" onclick="wkBackToSelector()">Andere wedstrijd</button>
+            </div>
+        </div>
+
+        <!-- Modals voor multiplayer -->
+        <div id="wk-create-modal" class="wk-modal-overlay">
+            <div class="wk-modal">
+                <h3 class="wk-modal-title">➕ Maak een kamer</h3>
+
+                <label class="wk-modal-label">Wedstrijd</label>
+                <select id="wk-create-match-select" class="wk-modal-select"></select>
+
+                <div class="wk-modal-error" id="wk-create-error"></div>
+
+                <div class="wk-modal-actions">
+                    <button class="wk-mp-btn secondary" onclick="wkCloseCreateModal()">Annuleren</button>
+                    <button class="wk-mp-btn primary"   id="wk-create-confirm-btn" onclick="wkConfirmCreateRoom()">Maak kamer</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="wk-join-modal" class="wk-modal-overlay">
+            <div class="wk-modal">
+                <h3 class="wk-modal-title">🔑 Doe mee aan een kamer</h3>
+
+                <label class="wk-modal-label">Kamercode (4 cijfers)</label>
+                <input type="tel" inputmode="numeric" maxlength="4" pattern="[0-9]*"
+                       id="wk-join-code-input" class="wk-modal-input wk-code-input" placeholder="0000">
+
+                <div class="wk-modal-error" id="wk-join-error"></div>
+
+                <div class="wk-modal-actions">
+                    <button class="wk-mp-btn secondary" onclick="wkCloseJoinModal()">Annuleren</button>
+                    <button class="wk-mp-btn primary"   id="wk-join-confirm-btn" onclick="wkConfirmJoinRoom()">Doe mee</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ══════════════════════════ WK STATS ══════════════════════════════════ -->
+        <div id="screen-wk-stats" class="screen">
+            <div class="screen-header">
+                <button class="btn-back" onclick="goTo('screen-wk')">← Terug</button>
+                <h2>🏆 Mijn WK-stand</h2>
+            </div>
+
+            <div class="wk-stats-grid">
+                <div class="wk-stat-tile">
+                    <div class="wk-stat-icon">🎯</div>
+                    <div class="wk-stat-value" id="wkst-total-lines">0</div>
+                    <div class="wk-stat-label">Lijnen vol</div>
+                </div>
+                <div class="wk-stat-tile">
+                    <div class="wk-stat-icon">⚽</div>
+                    <div class="wk-stat-value" id="wkst-matches-with-bingo">0</div>
+                    <div class="wk-stat-label">Wedstrijden met bingo</div>
+                </div>
+                <div class="wk-stat-tile">
+                    <div class="wk-stat-icon">⚡</div>
+                    <div class="wk-stat-value" id="wkst-fastest">–</div>
+                    <div class="wk-stat-label">Snelste bingo</div>
+                </div>
+                <div class="wk-stat-tile">
+                    <div class="wk-stat-icon">📊</div>
+                    <div class="wk-stat-value" id="wkst-matches-played">0</div>
+                    <div class="wk-stat-label">Gespeelde wedstrijden</div>
+                </div>
+            </div>
+
+            <div id="wkst-empty" class="wk-stats-empty" style="display:none;">
+                <div class="wk-stats-empty-icon">⚽</div>
+                <p>Nog geen WK-bingo gespeeld.</p>
+                <p style="font-size:.78rem;">Start een wedstrijd en zet 'm vol om je eerste streep te scoren.</p>
+            </div>
+
+            <div id="wkst-matches-section" style="display:none;">
+                <div class="wk-stats-section-title">Per wedstrijd</div>
+                <div id="wkst-matches-list"></div>
+                <button class="wk-stats-reset" onclick="wkResetStats()">🗑️ Reset mijn WK-stand</button>
             </div>
         </div>
 
@@ -1963,7 +2545,24 @@
             <div class="wk-goal-text">GOAAAAL!</div>
             <div class="wk-goal-sub" id="wk-goal-sub">Lijn vol!</div>
             <div class="wk-goal-confetti" id="wk-goal-confetti"></div>
-            <button class="btn-primary" onclick="closeWkGoal()" style="max-width:200px;margin-top:16px;background:linear-gradient(135deg,#15803d,#22c55e);">Doorgaan ⚽</button>
+            <div class="wk-goal-actions">
+                <button class="wk-share-btn" id="wk-share-btn" onclick="wkShareBingo()">📲 Deel</button>
+                <button class="btn-primary" onclick="closeWkGoal()" style="max-width:200px;background:linear-gradient(135deg,#15803d,#22c55e);">Doorgaan ⚽</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Off-screen render-target voor screenshot -->
+    <div id="wk-share-render" class="wk-share-render" aria-hidden="true">
+        <div class="wk-share-header">
+            <div class="wk-share-goal">GOAAAAL!</div>
+            <div class="wk-share-match" id="wk-share-match-title">–</div>
+            <div class="wk-share-meta" id="wk-share-meta">–</div>
+        </div>
+        <div class="wk-share-grid" id="wk-share-grid"></div>
+        <div class="wk-share-footer">
+            <span class="wk-share-player" id="wk-share-player">–</span>
+            <span class="wk-share-brand">Ready Set Bingoooo!</span>
         </div>
     </div>
 
@@ -2000,7 +2599,7 @@
         import { initializeApp }                                    from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
         import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged }
                                                                     from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js";
-        import { getFirestore, doc, onSnapshot, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
+        import { getFirestore, doc, onSnapshot, setDoc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
 
         // ─── Firebase config ───────────────────────────────────────────────────────
         const manualConfig = {
@@ -4470,6 +5069,827 @@ h1{font-size:13pt;text-align:center;margin-bottom:6mm;}
         let wkCurrentMatchId  = null;
         let wkCurrentPoule    = 'A';
         let wkCurrentTab      = 'groep';
+        let wkMatchStartTs    = 0;       // timestamp van match-start
+        let wkMatchBingosLogged = 0;     // aantal bingo's al gelogd in deze match
+        let _html2canvasPromise = null;  // lazy load cache
+
+        // ─── WK Stats (localStorage) ─────────────────────────────────────────────
+        const WK_STATS_KEY     = 'wkBingoStats';
+        const WK_PLAYER_KEY    = 'wkPlayerName';
+
+        function loadWkStats() {
+            try {
+                const raw = localStorage.getItem(WK_STATS_KEY);
+                if (!raw) return { totalLines: 0, fastestSec: null, perMatch: {} };
+                const p = JSON.parse(raw);
+                return {
+                    totalLines: p.totalLines || 0,
+                    fastestSec: p.fastestSec ?? null,
+                    perMatch:   p.perMatch   || {}
+                };
+            } catch {
+                return { totalLines: 0, fastestSec: null, perMatch: {} };
+            }
+        }
+
+        function saveWkStats(stats) {
+            try { localStorage.setItem(WK_STATS_KEY, JSON.stringify(stats)); } catch {}
+        }
+
+        function getWkPlayerName() {
+            return localStorage.getItem(WK_PLAYER_KEY) || '';
+        }
+
+        function setWkPlayerName(name) {
+            try { localStorage.setItem(WK_PLAYER_KEY, name); } catch {}
+        }
+
+        function ensureWkPlayerName() {
+            // Naam wordt nu inline gevraagd bij openen WK-scherm.
+            // Deze fallback is alleen nog voor het geval iemand op Deel klikt zonder naam.
+            let name = getWkPlayerName();
+            if (name) return name;
+            name = (prompt('Hoe heet je? (verschijnt op je gedeelde kaart)') || '').trim();
+            if (name) {
+                setWkPlayerName(name);
+                renderWkNameUI();
+            }
+            return name;
+        }
+
+        // Toon óf de invul-prompt óf de naam-chip, afhankelijk van of er al een naam is.
+        function renderWkNameUI() {
+            const name      = getWkPlayerName();
+            const promptEl  = document.getElementById('wk-name-prompt');
+            const chipEl    = document.getElementById('wk-name-chip');
+            const chipName  = document.getElementById('wk-name-chip-name');
+            if (!promptEl || !chipEl) return;
+
+            if (name) {
+                promptEl.style.display = 'none';
+                chipEl.style.display   = 'inline-flex';
+                chipName.textContent   = name;
+            } else {
+                promptEl.style.display = 'block';
+                chipEl.style.display   = 'none';
+            }
+        }
+
+        window.wkSavePlayerName = function() {
+            const input = document.getElementById('wk-name-input');
+            const name = (input.value || '').trim();
+            if (!name) {
+                input.focus();
+                return;
+            }
+            setWkPlayerName(name);
+            renderWkNameUI();
+        };
+
+        window.wkEditPlayerName = function() {
+            const input = document.getElementById('wk-name-input');
+            input.value = getWkPlayerName();
+            document.getElementById('wk-name-prompt').style.display = 'block';
+            document.getElementById('wk-name-chip').style.display   = 'none';
+            setTimeout(() => { input.focus(); input.select(); }, 50);
+        };
+
+        // Registreert een nieuwe bingo-lijn in stats
+        function recordWkBingo(matchId, secondsSinceStart) {
+            if (!matchId) return;
+            const stats = loadWkStats();
+            stats.totalLines = (stats.totalLines || 0) + 1;
+
+            const m = stats.perMatch[matchId] || { lines: 0, firstBingoSec: null, lastPlayed: 0, plays: 0 };
+            m.lines = (m.lines || 0) + 1;
+            m.lastPlayed = Date.now();
+            if (m.firstBingoSec == null || secondsSinceStart < m.firstBingoSec) {
+                m.firstBingoSec = secondsSinceStart;
+            }
+            stats.perMatch[matchId] = m;
+
+            if (stats.fastestSec == null || secondsSinceStart < stats.fastestSec) {
+                stats.fastestSec = secondsSinceStart;
+            }
+            saveWkStats(stats);
+        }
+
+        // Markeert een wedstrijd als "gespeeld" zodra een vakje wordt aangetikt
+        function recordWkMatchEngaged(matchId) {
+            if (!matchId) return;
+            const stats = loadWkStats();
+            const m = stats.perMatch[matchId] || { lines: 0, firstBingoSec: null, lastPlayed: 0, plays: 0 };
+            if (!m._engagedThisSession) {
+                m.plays = (m.plays || 0) + 1;
+                m._engagedThisSession = true; // wordt bij reload niet bewaard, dat is ok
+                m.lastPlayed = Date.now();
+                stats.perMatch[matchId] = m;
+                saveWkStats(stats);
+            }
+        }
+
+        function formatWkDuration(sec) {
+            if (sec == null) return '–';
+            if (sec < 60) return sec + 's';
+            const m = Math.floor(sec / 60);
+            const s = sec % 60;
+            return m + 'm ' + (s < 10 ? '0' + s : s) + 's';
+        }
+
+        function wkMatchById(matchId) {
+            return WK_GROEPSWEDSTRIJDEN.find(m => m.id === matchId)
+                || WK_KNOCKOUT_WEDSTRIJDEN.find(m => m.id === matchId);
+        }
+
+        function wkMatchLabel(matchId) {
+            const match = wkMatchById(matchId);
+            if (!match) return matchId;
+            if (match.team1 === 'TBD') return match.fase || matchId;
+            return getTeamLabel(match.team1) + ' – ' + getTeamLabel(match.team2);
+        }
+
+        // ─── WK Stats-scherm render ──────────────────────────────────────────────
+        window.initWkStatsScreen = function() {
+            const stats = loadWkStats();
+            const entries = Object.entries(stats.perMatch);
+            const matchesWithBingo = entries.filter(([, m]) => (m.lines || 0) > 0).length;
+            const matchesPlayed    = entries.filter(([, m]) => (m.plays || 0) > 0).length;
+
+            document.getElementById('wkst-total-lines').textContent        = stats.totalLines || 0;
+            document.getElementById('wkst-matches-with-bingo').textContent = matchesWithBingo;
+            document.getElementById('wkst-fastest').textContent            = formatWkDuration(stats.fastestSec);
+            document.getElementById('wkst-matches-played').textContent     = matchesPlayed;
+
+            const hasAny = entries.some(([, m]) => (m.plays || 0) > 0 || (m.lines || 0) > 0);
+            document.getElementById('wkst-empty').style.display            = hasAny ? 'none'  : 'block';
+            document.getElementById('wkst-matches-section').style.display  = hasAny ? 'block' : 'none';
+
+            if (!hasAny) return;
+
+            const list = document.getElementById('wkst-matches-list');
+            list.innerHTML = '';
+            entries
+                .filter(([, m]) => (m.plays || 0) > 0 || (m.lines || 0) > 0)
+                .sort((a, b) => (b[1].lastPlayed || 0) - (a[1].lastPlayed || 0))
+                .forEach(([matchId, m]) => {
+                    const match = wkMatchById(matchId);
+                    const teams = wkMatchLabel(matchId);
+                    const fase  = match?.fase || '';
+                    const datum = match?.datum || '';
+                    const row = document.createElement('div');
+                    row.className = 'wk-stats-match-row';
+                    row.innerHTML = `
+                        <div style="min-width:0;flex:1;">
+                            <div class="wk-stats-match-teams">${teams}</div>
+                            <div class="wk-stats-match-meta">${[fase, datum].filter(Boolean).join(' · ')}</div>
+                        </div>
+                        <div class="wk-stats-match-numbers">
+                            <span title="Lijnen">🎯 ${m.lines || 0}</span>
+                            <span title="Snelste bingo">⚡ ${formatWkDuration(m.firstBingoSec)}</span>
+                        </div>`;
+                    list.appendChild(row);
+                });
+        };
+
+        window.wkResetStats = function() {
+            if (!confirm('Weet je zeker dat je je WK-stand wilt wissen? Dit kan niet ongedaan worden gemaakt.')) return;
+            localStorage.removeItem(WK_STATS_KEY);
+            initWkStatsScreen();
+        };
+
+        // ─── WK Share screenshot (html2canvas, lazy load) ────────────────────────
+        function loadHtml2Canvas() {
+            if (_html2canvasPromise) return _html2canvasPromise;
+            _html2canvasPromise = new Promise((resolve, reject) => {
+                if (window.html2canvas) return resolve(window.html2canvas);
+                const s = document.createElement('script');
+                s.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+                s.onload  = () => resolve(window.html2canvas);
+                s.onerror = () => reject(new Error('Kon html2canvas niet laden'));
+                document.head.appendChild(s);
+            });
+            return _html2canvasPromise;
+        }
+
+        function buildWkShareCard() {
+            const matchId = wkCurrentMatchId;
+            const match   = wkMatchById(matchId);
+            const player  = getWkPlayerName() || 'Speler';
+
+            document.getElementById('wk-share-match-title').textContent =
+                wkMatchLabel(matchId);
+
+            const metaParts = [];
+            if (match?.fase)  metaParts.push(match.fase);
+            if (match?.datum) metaParts.push(match.datum);
+            document.getElementById('wk-share-meta').textContent = metaParts.join(' · ') || 'WK Bingo 2026';
+
+            document.getElementById('wk-share-player').textContent = '🏆 ' + player;
+
+            const grid = document.getElementById('wk-share-grid');
+            grid.innerHTML = '';
+            const liveCells = document.querySelectorAll('#wk-bingo-grid .bingo-cell');
+            liveCells.forEach(live => {
+                const c = document.createElement('div');
+                c.className = 'wk-share-cell' + (live.classList.contains('checked') ? ' checked' : '');
+                c.textContent = live.textContent;
+                grid.appendChild(c);
+            });
+        }
+
+        window.wkShareBingo = async function() {
+            const btn = document.getElementById('wk-share-btn');
+            btn.disabled = true;
+            const originalText = btn.textContent;
+            btn.textContent = '⏳ Bezig…';
+
+            try {
+                ensureWkPlayerName(); // vraagt 1× om naam
+                buildWkShareCard();
+
+                const html2canvas = await loadHtml2Canvas();
+                const node = document.getElementById('wk-share-render');
+                const canvas = await html2canvas(node, {
+                    backgroundColor: null,
+                    scale: 2,
+                    logging: false,
+                    useCORS: true
+                });
+
+                const matchLabel = wkMatchLabel(wkCurrentMatchId).replace(/[^\w-]+/g, '_');
+                const filename = `WKBingo_${matchLabel}.png`;
+
+                canvas.toBlob(async (blob) => {
+                    if (!blob) {
+                        btn.textContent = '❌ Mislukt';
+                        setTimeout(() => { btn.textContent = originalText; btn.disabled = false; }, 1500);
+                        return;
+                    }
+                    const file = new File([blob], filename, { type: 'image/png' });
+
+                    // Probeer Web Share API met bestand
+                    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                        try {
+                            await navigator.share({
+                                files: [file],
+                                title: 'WK Bingo!',
+                                text: 'GOAAAL! Bingo bij ' + wkMatchLabel(wkCurrentMatchId) + ' 🏆'
+                            });
+                            btn.textContent = '✅ Gedeeld';
+                        } catch (e) {
+                            // User cancel of fout → fallback naar download
+                            triggerDownload(blob, filename);
+                            btn.textContent = '⬇️ Opgeslagen';
+                        }
+                    } else {
+                        triggerDownload(blob, filename);
+                        btn.textContent = '⬇️ Opgeslagen';
+                    }
+                    setTimeout(() => { btn.textContent = originalText; btn.disabled = false; }, 1800);
+                }, 'image/png');
+            } catch (err) {
+                console.error('Share fout:', err);
+                btn.textContent = '❌ Mislukt';
+                setTimeout(() => { btn.textContent = originalText; btn.disabled = false; }, 1500);
+            }
+        };
+
+        function triggerDownload(blob, filename) {
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url; a.download = filename;
+            document.body.appendChild(a); a.click();
+            document.body.removeChild(a);
+            setTimeout(() => URL.revokeObjectURL(url), 1000);
+        }
+
+        // ═══════════════════════════════════════════════════════════════════════
+        // ─── WK MULTIPLAYER (kamer + live leaderboard) ─────────────────────────
+        // ═══════════════════════════════════════════════════════════════════════
+
+        // ─── State ──
+        let wkRoomCode      = null;     // huidige kamer-code (null = solo)
+        let wkRoomData      = null;     // laatste snapshot
+        let wkRoomUnsub     = null;     // onSnapshot unsubscribe
+        let wkRoomMyUid     = null;     // cached uid binnen deze kamer
+        let wkRoomLastStatus = null;    // om transitions te detecteren
+        let _wkScoreWriteTimer = null;  // debounce timer voor score-writes
+
+        // ─── Helpers ──
+        function wkRoomDocRef(code) {
+            return doc(db, 'artifacts', myAppId, 'public', 'data', 'wkRooms', code);
+        }
+
+        function wkGenerateRoomCode() {
+            return String(Math.floor(1000 + Math.random() * 9000));
+        }
+
+        function wkShuffleArray(arr) {
+            const a = arr.slice();
+            for (let i = a.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [a[i], a[j]] = [a[j], a[i]];
+            }
+            return a;
+        }
+
+        function wkCanMultiplayer() {
+            return !!(db && auth && auth.currentUser);
+        }
+
+        function wkUpdateMpOfflineNote() {
+            const note   = document.getElementById('wk-mp-offline-note');
+            const create = document.getElementById('wk-mp-create-btn');
+            const join   = document.getElementById('wk-mp-join-btn');
+            if (!note || !create || !join) return;
+            const can = wkCanMultiplayer();
+            note.classList.toggle('show', !can);
+            create.disabled = !can;
+            join.disabled   = !can;
+        }
+
+        // ─── Modals ──
+        window.wkOpenCreateModal = function() {
+            if (!wkCanMultiplayer()) return;
+            const name = getWkPlayerName();
+            if (!name) {
+                alert('Vul eerst je naam in bovenaan dit scherm.');
+                document.getElementById('wk-name-input')?.focus();
+                return;
+            }
+            // Vul wedstrijd-dropdown
+            const sel = document.getElementById('wk-create-match-select');
+            sel.innerHTML = '';
+            const optGroep = document.createElement('optgroup');
+            optGroep.label = 'Groepsfase';
+            WK_GROEPSWEDSTRIJDEN.forEach(m => {
+                const o = document.createElement('option');
+                o.value = m.id;
+                o.textContent = `${getTeamLabel(m.team1)} – ${getTeamLabel(m.team2)} (${m.datum})`;
+                optGroep.appendChild(o);
+            });
+            sel.appendChild(optGroep);
+            const optKO = document.createElement('optgroup');
+            optKO.label = 'Knock-out';
+            WK_KNOCKOUT_WEDSTRIJDEN.forEach(m => {
+                const o = document.createElement('option');
+                o.value = m.id;
+                o.textContent = `${m.fase}${m.datum ? ' — ' + m.datum : ''}`;
+                optKO.appendChild(o);
+            });
+            sel.appendChild(optKO);
+
+            document.getElementById('wk-create-error').textContent = '';
+            document.getElementById('wk-create-confirm-btn').disabled = false;
+            document.getElementById('wk-create-modal').classList.add('show');
+        };
+
+        window.wkCloseCreateModal = function() {
+            document.getElementById('wk-create-modal').classList.remove('show');
+        };
+
+        window.wkOpenJoinModal = function() {
+            if (!wkCanMultiplayer()) return;
+            const name = getWkPlayerName();
+            if (!name) {
+                alert('Vul eerst je naam in bovenaan dit scherm.');
+                document.getElementById('wk-name-input')?.focus();
+                return;
+            }
+            document.getElementById('wk-join-code-input').value = '';
+            document.getElementById('wk-join-error').textContent = '';
+            document.getElementById('wk-join-confirm-btn').disabled = false;
+            document.getElementById('wk-join-modal').classList.add('show');
+            setTimeout(() => document.getElementById('wk-join-code-input').focus(), 50);
+        };
+
+        window.wkCloseJoinModal = function() {
+            document.getElementById('wk-join-modal').classList.remove('show');
+        };
+
+        // ─── Kamer maken ──
+        window.wkConfirmCreateRoom = async function() {
+            const btn   = document.getElementById('wk-create-confirm-btn');
+            const errEl = document.getElementById('wk-create-error');
+            errEl.textContent = '';
+            btn.disabled = true;
+
+            try {
+                const matchId = document.getElementById('wk-create-match-select').value;
+                const myName  = getWkPlayerName() || 'Speler';
+                const myUid   = auth.currentUser.uid;
+
+                // Kies 16 unieke woorden uit de pool
+                const pool = getWordPool(matchId);
+                if (pool.length < 16) {
+                    errEl.textContent = 'Onvoldoende woorden voor deze wedstrijd.';
+                    btn.disabled = false;
+                    return;
+                }
+                const words = pickRandom(pool, 16);
+                const myOrder = wkShuffleArray([0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]);
+
+                // Vind een unieke code (max 6 pogingen)
+                let code = null;
+                for (let i = 0; i < 6; i++) {
+                    const c = wkGenerateRoomCode();
+                    const snap = await getDoc(wkRoomDocRef(c));
+                    if (!snap.exists()) { code = c; break; }
+                }
+                if (!code) {
+                    errEl.textContent = 'Kan geen vrije code vinden, probeer opnieuw.';
+                    btn.disabled = false;
+                    return;
+                }
+
+                const now = Date.now();
+                const roomData = {
+                    matchId,
+                    hostUid:    myUid,
+                    createdAt:  now,
+                    status:     'lobby',
+                    startedAt:  null,
+                    words,
+                    players: {
+                        [myUid]: {
+                            name:          myName,
+                            joinedAt:      now,
+                            cardOrder:     myOrder,
+                            score:         0,
+                            bingos:        0,
+                            firstBingoSec: null,
+                            lastUpdate:    now
+                        }
+                    }
+                };
+
+                await setDoc(wkRoomDocRef(code), roomData);
+                wkCloseCreateModal();
+                wkEnterRoom(code);
+            } catch (err) {
+                console.error('Kamer maken mislukt:', err);
+                errEl.textContent = 'Kamer maken mislukt. Probeer opnieuw.';
+                btn.disabled = false;
+            }
+        };
+
+        // ─── Kamer joinen ──
+        window.wkConfirmJoinRoom = async function() {
+            const btn   = document.getElementById('wk-join-confirm-btn');
+            const errEl = document.getElementById('wk-join-error');
+            const code  = (document.getElementById('wk-join-code-input').value || '').trim();
+            errEl.textContent = '';
+
+            if (!/^\d{4}$/.test(code)) {
+                errEl.textContent = 'Voer een 4-cijferige code in.';
+                return;
+            }
+            btn.disabled = true;
+
+            try {
+                const ref = wkRoomDocRef(code);
+                const snap = await getDoc(ref);
+                if (!snap.exists()) {
+                    errEl.textContent = 'Kamer niet gevonden.';
+                    btn.disabled = false;
+                    return;
+                }
+                const data = snap.data();
+                if (data.status === 'finished') {
+                    errEl.textContent = 'Deze kamer is al afgesloten.';
+                    btn.disabled = false;
+                    return;
+                }
+
+                const myUid  = auth.currentUser.uid;
+                const myName = getWkPlayerName() || 'Speler';
+
+                // Late join is OK. Als speler al bestaat (rejoin) → behoud voortgang.
+                const existing = data.players?.[myUid];
+                if (!existing) {
+                    const myOrder = wkShuffleArray([0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]);
+                    const now = Date.now();
+                    await updateDoc(ref, {
+                        ['players.' + myUid]: {
+                            name:          myName,
+                            joinedAt:      now,
+                            cardOrder:     myOrder,
+                            score:         0,
+                            bingos:        0,
+                            firstBingoSec: null,
+                            lastUpdate:    now
+                        }
+                    });
+                }
+
+                wkCloseJoinModal();
+                wkEnterRoom(code);
+            } catch (err) {
+                console.error('Joinen mislukt:', err);
+                errEl.textContent = 'Joinen mislukt. Probeer opnieuw.';
+                btn.disabled = false;
+            }
+        };
+
+        // ─── Kamer betreden + live updates ──
+        function wkEnterRoom(code) {
+            wkRoomCode    = code;
+            wkRoomMyUid   = auth.currentUser.uid;
+            wkRoomLastStatus = null;
+
+            // Verberg solo-elementen
+            document.getElementById('wk-selector').style.display = 'none';
+            document.getElementById('wk-mp-card').style.display  = 'none';
+            document.getElementById('wk-lobby').style.display    = 'block';
+
+            // Live abonnement
+            if (wkRoomUnsub) { try { wkRoomUnsub(); } catch {} }
+            wkRoomUnsub = onSnapshot(wkRoomDocRef(code), snap => {
+                if (!snap.exists()) {
+                    wkLeaveRoom('Kamer verwijderd.');
+                    return;
+                }
+                wkRoomData = snap.data();
+                wkOnRoomUpdate();
+            }, err => {
+                console.error('Room snapshot fout:', err);
+                wkLeaveRoom('Verbinding met kamer verloren.');
+            });
+        }
+
+        function wkOnRoomUpdate() {
+            const data = wkRoomData;
+            if (!data) return;
+
+            // Status-transitie: lobby → playing → in game
+            if (data.status === 'lobby') {
+                renderWkLobby();
+                // Verberg game-view
+                document.getElementById('wk-game').style.display  = 'none';
+                document.getElementById('wk-lobby').style.display = 'block';
+            } else if (data.status === 'playing') {
+                // Eerste keer dat we 'playing' zien → start game-view
+                if (wkRoomLastStatus !== 'playing') {
+                    wkEnterRoomGame();
+                }
+                renderWkLeaderboard();
+            } else if (data.status === 'finished') {
+                renderWkFinishScreen();
+            }
+
+            wkRoomLastStatus = data.status;
+        }
+
+        // ─── Lobby render ──
+        function renderWkLobby() {
+            const data    = wkRoomData;
+            const match   = wkMatchById(data.matchId);
+            const isHost  = data.hostUid === wkRoomMyUid;
+            const players = Object.entries(data.players || {});
+            const lobby   = document.getElementById('wk-lobby');
+
+            lobby.innerHTML = `
+                <div class="wk-lobby">
+                    <div class="wk-lobby-header">
+                        <div class="wk-lobby-label">Kamercode — deel met vrienden</div>
+                        <div class="wk-lobby-code">${wkRoomCode}</div>
+                        <div class="wk-lobby-match">${wkMatchLabel(data.matchId)}</div>
+                        <div class="wk-lobby-meta">${[match?.fase, match?.datum].filter(Boolean).join(' · ')}</div>
+                    </div>
+
+                    <div class="wk-lobby-players-title">Spelers (${players.length})</div>
+                    <div class="wk-lobby-players">
+                        ${players.map(([uid, p]) => `
+                            <div class="wk-lobby-player ${uid === wkRoomMyUid ? 'is-me' : ''}">
+                                <span class="wk-lobby-player-name">${escapeHtml(p.name)}</span>
+                                ${uid === data.hostUid ? '<span class="wk-lobby-player-tag">Host</span>' : ''}
+                            </div>
+                        `).join('')}
+                    </div>
+
+                    <div class="wk-lobby-buttons">
+                        <button class="wk-mp-btn secondary" onclick="wkLeaveRoomConfirm()">Verlaat kamer</button>
+                        ${isHost
+                            ? `<button class="wk-mp-btn primary" ${players.length < 1 ? 'disabled' : ''} onclick="wkHostStart()">⚽ Start (${players.length})</button>`
+                            : `<div class="wk-lobby-waiting">⏳ Wacht op host…</div>`}
+                    </div>
+                </div>
+            `;
+        }
+
+        function escapeHtml(s) {
+            return String(s ?? '').replace(/[&<>"']/g, ch => ({
+                '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+            })[ch]);
+        }
+
+        window.wkHostStart = async function() {
+            if (!wkRoomCode || !wkRoomData) return;
+            if (wkRoomData.hostUid !== wkRoomMyUid) return;
+            try {
+                await updateDoc(wkRoomDocRef(wkRoomCode), {
+                    status:    'playing',
+                    startedAt: Date.now()
+                });
+            } catch (err) {
+                console.error('Start mislukt:', err);
+                alert('Start mislukt. Probeer opnieuw.');
+            }
+        };
+
+        window.wkLeaveRoomConfirm = function() {
+            if (confirm('Weet je zeker dat je deze kamer wilt verlaten?')) {
+                wkLeaveRoom();
+            }
+        };
+
+        function wkLeaveRoom(reason) {
+            if (wkRoomUnsub) { try { wkRoomUnsub(); } catch {} }
+            wkRoomUnsub = null;
+            wkRoomCode  = null;
+            wkRoomData  = null;
+            wkRoomMyUid = null;
+            wkRoomLastStatus = null;
+            if (_wkScoreWriteTimer) { clearTimeout(_wkScoreWriteTimer); _wkScoreWriteTimer = null; }
+
+            document.getElementById('wk-lobby').style.display    = 'none';
+            document.getElementById('wk-game').style.display     = 'none';
+            document.getElementById('wk-selector').style.display = 'block';
+            document.getElementById('wk-mp-card').style.display  = 'block';
+            document.getElementById('wk-leaderboard').style.display = 'none';
+
+            if (reason) alert(reason);
+        }
+
+        // ─── In-game (kamer-modus) ──
+        function wkEnterRoomGame() {
+            const data  = wkRoomData;
+            const match = wkMatchById(data.matchId);
+            const me    = data.players?.[wkRoomMyUid];
+            if (!me) return;
+
+            wkCurrentMatchId = data.matchId;
+
+            // Bouw mijn kaart uit gedeelde woorden + mijn order
+            wkCurrentWords  = me.cardOrder.map(i => data.words[i]);
+            wkWinningLines.clear();
+            document.getElementById('wk-bingo-lines').innerHTML = '';
+
+            // Match-titel
+            const isTBD = match?.team1 === 'TBD';
+            const title = isTBD ? (match?.fase || data.matchId)
+                                : getTeamLabel(match.team1) + ' vs ' + getTeamLabel(match.team2);
+            document.getElementById('wk-match-title').textContent = title;
+
+            // Refreshes uit zetten in kamer-modus (anders zou je je bingokans 'overhusselen')
+            wkRefreshesLeft = 0;
+            wkUpdateRefreshUI();
+            const shuffleBtn = document.getElementById('wk-btn-shuffle');
+            if (shuffleBtn) shuffleBtn.style.display = 'none';
+
+            // Stats: match-start = room-start (één tijdslijn voor iedereen)
+            wkMatchStartTs = data.startedAt || Date.now();
+            wkMatchBingosLogged = (me.bingos || 0);
+
+            wkRenderGrid();
+
+            // Verberg lobby, toon game + leaderboard
+            document.getElementById('wk-lobby').style.display       = 'none';
+            document.getElementById('wk-selector').style.display    = 'none';
+            document.getElementById('wk-mp-card').style.display     = 'none';
+            document.getElementById('wk-game').style.display        = 'block';
+            document.getElementById('wk-leaderboard').style.display = 'block';
+            document.getElementById('wk-leaderboard-code').textContent = wkRoomCode;
+
+            // Host krijgt "Beëindig wedstrijd"-knop in leaderboard
+            const isHost = data.hostUid === wkRoomMyUid;
+            document.getElementById('wk-host-finish-btn').style.display = isHost ? 'block' : 'none';
+
+            // "Andere wedstrijd"-knop vervangen door "Verlaat kamer"
+            const backBtn = document.getElementById('wk-game-back-btn');
+            backBtn.textContent = '🚪 Verlaat kamer';
+            backBtn.onclick = wkLeaveRoomConfirm;
+        }
+
+        function renderWkLeaderboard() {
+            const data = wkRoomData;
+            const listEl = document.getElementById('wk-leaderboard-list');
+            if (!data || !listEl) return;
+
+            const players = Object.entries(data.players || {}).map(([uid, p]) => ({ uid, ...p }));
+
+            // Sorteer: eerst spelers met bingo (op firstBingoSec asc), daarna op score desc
+            players.sort((a, b) => {
+                const aHas = a.firstBingoSec != null;
+                const bHas = b.firstBingoSec != null;
+                if (aHas && bHas) return a.firstBingoSec - b.firstBingoSec;
+                if (aHas) return -1;
+                if (bHas) return 1;
+                return (b.score || 0) - (a.score || 0);
+            });
+
+            listEl.innerHTML = players.map((p, idx) => `
+                <div class="wk-leaderboard-row ${p.uid === wkRoomMyUid ? 'is-me' : ''}">
+                    <span class="wk-leaderboard-rank">${idx + 1}</span>
+                    <span class="wk-leaderboard-name">${escapeHtml(p.name)}</span>
+                    <span class="wk-leaderboard-score">${p.score || 0}/16${p.bingos > 0 ? ` <span class="wk-leaderboard-bingo">⚽${p.bingos}</span>` : ''}</span>
+                </div>
+            `).join('');
+        }
+
+        // ─── Score schrijven (gedebouncet) ──
+        function scheduleWkScoreWrite() {
+            if (!wkRoomCode || !wkRoomMyUid) return;
+            if (_wkScoreWriteTimer) clearTimeout(_wkScoreWriteTimer);
+            _wkScoreWriteTimer = setTimeout(flushWkScore, 1500);
+        }
+
+        async function flushWkScore() {
+            _wkScoreWriteTimer = null;
+            if (!wkRoomCode || !wkRoomMyUid) return;
+            const cells = document.querySelectorAll('#wk-bingo-grid .bingo-cell.checked');
+            const score = cells.length;
+            try {
+                await updateDoc(wkRoomDocRef(wkRoomCode), {
+                    ['players.' + wkRoomMyUid + '.score']:      score,
+                    ['players.' + wkRoomMyUid + '.lastUpdate']: Date.now()
+                });
+            } catch (err) {
+                console.warn('Score write mislukt:', err);
+            }
+        }
+
+        // Schrijf bingo direct (geen debounce — moment is belangrijk voor leaderboard)
+        async function writeWkBingoToRoom(totalBingos, firstBingoSec) {
+            if (!wkRoomCode || !wkRoomMyUid) return;
+            try {
+                const patch = {
+                    ['players.' + wkRoomMyUid + '.bingos']:     totalBingos,
+                    ['players.' + wkRoomMyUid + '.lastUpdate']: Date.now()
+                };
+                // Alleen firstBingoSec schrijven als dit de eerste is
+                const me = wkRoomData?.players?.[wkRoomMyUid];
+                if (firstBingoSec != null && (!me || me.firstBingoSec == null)) {
+                    patch['players.' + wkRoomMyUid + '.firstBingoSec'] = firstBingoSec;
+                }
+                await updateDoc(wkRoomDocRef(wkRoomCode), patch);
+            } catch (err) {
+                console.warn('Bingo write mislukt:', err);
+            }
+        }
+
+        // ─── Eindscherm ──
+        function renderWkFinishScreen() {
+            const data    = wkRoomData;
+            const match   = wkMatchById(data.matchId);
+            const players = Object.entries(data.players || {}).map(([uid, p]) => ({ uid, ...p }));
+            players.sort((a, b) => {
+                const aHas = a.firstBingoSec != null;
+                const bHas = b.firstBingoSec != null;
+                if (aHas && bHas) return a.firstBingoSec - b.firstBingoSec;
+                if (aHas) return -1;
+                if (bHas) return 1;
+                return (b.score || 0) - (a.score || 0);
+            });
+
+            const lobby = document.getElementById('wk-lobby');
+            const medals = ['🥇', '🥈', '🥉'];
+            const cls    = ['gold', 'silver', 'bronze'];
+
+            lobby.innerHTML = `
+                <div class="wk-finish-card">
+                    <div class="wk-finish-title">🏁 Eindstand</div>
+                    <div class="wk-finish-sub">${wkMatchLabel(data.matchId)}</div>
+                    <div class="wk-finish-podium">
+                        ${players.map((p, idx) => `
+                            <div class="wk-finish-row ${idx < 3 ? cls[idx] : ''}">
+                                <span class="wk-finish-medal">${idx < 3 ? medals[idx] : (idx + 1) + '.'}</span>
+                                <span class="wk-finish-name">${escapeHtml(p.name)}${p.uid === wkRoomMyUid ? ' (jij)' : ''}</span>
+                                <span class="wk-finish-time">
+                                    ${p.firstBingoSec != null
+                                        ? '⚽ ' + formatWkDuration(p.firstBingoSec)
+                                        : '<span class="wk-finish-nobingo">' + (p.score || 0) + '/16</span>'}
+                                </span>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+                <button class="wk-mp-btn primary" style="width:100%;" onclick="wkLeaveRoom()">Sluiten</button>
+            `;
+            lobby.style.display = 'block';
+            document.getElementById('wk-game').style.display        = 'none';
+            document.getElementById('wk-leaderboard').style.display = 'none';
+        }
+
+        window.wkHostFinish = async function() {
+            if (!wkRoomCode || !wkRoomData) return;
+            if (wkRoomData.hostUid !== wkRoomMyUid) return;
+            try {
+                await updateDoc(wkRoomDocRef(wkRoomCode), { status: 'finished' });
+            } catch (err) {
+                console.error('Afsluiten mislukt:', err);
+            }
+        };
 
         // ─── WK functies ─────────────────────────────────────────────────────────
 
@@ -4495,6 +5915,36 @@ h1{font-size:13pt;text-align:center;margin-bottom:6mm;}
         }
 
         window.initWkScreen = function() {
+            // Naam-UI tonen (prompt of chip)
+            renderWkNameUI();
+            // Enter in naam-input = opslaan
+            const nameInput = document.getElementById('wk-name-input');
+            if (nameInput && !nameInput._wkBound) {
+                nameInput.addEventListener('keydown', e => {
+                    if (e.key === 'Enter') { e.preventDefault(); wkSavePlayerName(); }
+                });
+                nameInput._wkBound = true;
+            }
+
+            // Multiplayer beschikbaarheid checken
+            wkUpdateMpOfflineNote();
+
+            // Enter-toets bindings voor modals
+            const joinInput = document.getElementById('wk-join-code-input');
+            if (joinInput && !joinInput._wkBound) {
+                joinInput.addEventListener('keydown', e => {
+                    if (e.key === 'Enter') { e.preventDefault(); wkConfirmJoinRoom(); }
+                });
+                // Klik op overlay-achtergrond sluit modal
+                document.getElementById('wk-join-modal').addEventListener('click', e => {
+                    if (e.target.id === 'wk-join-modal') wkCloseJoinModal();
+                });
+                document.getElementById('wk-create-modal').addEventListener('click', e => {
+                    if (e.target.id === 'wk-create-modal') wkCloseCreateModal();
+                });
+                joinInput._wkBound = true;
+            }
+
             // Render poule-tabs
             const tabsEl = document.getElementById('wk-poule-tabs');
             tabsEl.innerHTML = '';
@@ -4614,6 +6064,26 @@ h1{font-size:13pt;text-align:center;margin-bottom:6mm;}
             wkWinningLines.clear();
             document.getElementById('wk-bingo-lines').innerHTML = '';
 
+            // Solo-modus: zorg dat kamer-elementen verborgen zijn (kan blijven hangen na exit)
+            document.getElementById('wk-leaderboard').style.display = 'none';
+            const shuffleBtn = document.getElementById('wk-btn-shuffle');
+            if (shuffleBtn) shuffleBtn.style.display = '';
+            const backBtn = document.getElementById('wk-game-back-btn');
+            if (backBtn) {
+                backBtn.textContent = 'Andere wedstrijd';
+                backBtn.onclick = wkBackToSelector;
+            }
+
+            // Stats: nieuwe match-sessie
+            wkMatchStartTs = Date.now();
+            wkMatchBingosLogged = 0;
+            // Reset _engagedThisSession flag voor deze match in stats
+            const _stats = loadWkStats();
+            if (_stats.perMatch[matchId]) {
+                delete _stats.perMatch[matchId]._engagedThisSession;
+                saveWkStats(_stats);
+            }
+
             wkRenderGrid();
 
             document.getElementById('wk-selector').style.display = 'none';
@@ -4623,7 +6093,19 @@ h1{font-size:13pt;text-align:center;margin-bottom:6mm;}
         window.wkBackToSelector = function() {
             document.getElementById('wk-game').style.display     = 'none';
             document.getElementById('wk-selector').style.display = 'block';
+            document.getElementById('wk-mp-card').style.display  = 'block';
+            document.getElementById('wk-leaderboard').style.display = 'none';
             wkCurrentMatchId = null;
+
+            // Reset game-back-knop (kan zijn overgenomen door kamer-modus)
+            const backBtn = document.getElementById('wk-game-back-btn');
+            if (backBtn) {
+                backBtn.textContent = 'Andere wedstrijd';
+                backBtn.onclick = wkBackToSelector;
+            }
+            // Shuffle-knop weer zichtbaar
+            const shuffleBtn = document.getElementById('wk-btn-shuffle');
+            if (shuffleBtn) shuffleBtn.style.display = '';
         };
 
         window.wkRefreshCard = function() {
@@ -4660,7 +6142,10 @@ h1{font-size:13pt;text-align:center;margin-bottom:6mm;}
         window.toggleWkCell = function(cell) {
             if (navigator.vibrate) navigator.vibrate(20);
             cell.classList.toggle('checked');
+            recordWkMatchEngaged(wkCurrentMatchId);
             checkWkBingo();
+            // In kamer-modus: live score syncen (gedebouncet)
+            if (wkRoomCode) scheduleWkScoreWrite();
         };
 
         function checkWkBingo() {
@@ -4668,11 +6153,13 @@ h1{font-size:13pt;text-align:center;margin-bottom:6mm;}
             const linesEl  = document.getElementById('wk-bingo-lines');
             const size     = 4;
             let newBingo   = false;
+            let newLinesThisCheck = 0;
 
             const check = (indices, id, cls) => {
                 if (indices.every(i => cells[i]?.classList.contains('checked')) && !wkWinningLines.has(id)) {
                     wkWinningLines.add(id);
                     newBingo = true;
+                    newLinesThisCheck++;
                     const l = document.createElement('div');
                     l.className = `strike-line ${cls}`;
                     linesEl.appendChild(l);
@@ -4688,6 +6175,28 @@ h1{font-size:13pt;text-align:center;margin-bottom:6mm;}
 
             if (newBingo) {
                 if (navigator.vibrate) navigator.vibrate([100,50,100]);
+
+                // Stats: log elke nieuwe lijn met tijd sinds match-start
+                const secsSinceStart = wkMatchStartTs
+                    ? Math.max(1, Math.round((Date.now() - wkMatchStartTs) / 1000))
+                    : null;
+                const wasFirstBingo = (wkMatchBingosLogged === 0);
+                for (let i = 0; i < newLinesThisCheck; i++) {
+                    recordWkBingo(wkCurrentMatchId, secsSinceStart);
+                    wkMatchBingosLogged++;
+                }
+
+                // Kamer-modus: schrijf bingo direct naar Firestore (geen debounce)
+                if (wkRoomCode) {
+                    // Forceer ook een score-flush zodat 'score' = aantal afgestreepte vakjes klopt
+                    if (_wkScoreWriteTimer) { clearTimeout(_wkScoreWriteTimer); _wkScoreWriteTimer = null; }
+                    flushWkScore();
+                    writeWkBingoToRoom(
+                        wkMatchBingosLogged,
+                        wasFirstBingo ? secsSinceStart : null
+                    );
+                }
+
                 // Show WK goal overlay instead of generic bingo overlay
                 const goalMessages = [
                     'De lijn zit erop! 🏆',
@@ -4712,7 +6221,8 @@ h1{font-size:13pt;text-align:center;margin-bottom:6mm;}
         // ─── Hook initWkScreen in goTo ───────────────────────────────────────────
         const _prevGoTo = window.goTo;
         window.goTo = function(id) {
-            if (id === 'screen-wk') initWkScreen();
+            if (id === 'screen-wk')       initWkScreen();
+            if (id === 'screen-wk-stats') initWkStatsScreen();
             _prevGoTo(id);
         };
         window.goHome = () => { window.goTo('screen-home'); };
