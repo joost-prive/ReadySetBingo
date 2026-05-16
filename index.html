@@ -313,6 +313,7 @@
         .menu-tile:nth-child(4) { transform: rotate(1.6deg);  }
         .menu-tile:nth-child(5) { transform: rotate(-1.3deg); }
         .menu-tile:nth-child(6) { transform: rotate(0.9deg);  }
+        .menu-tile:nth-child(7) { transform: rotate(-1.1deg); }
         .menu-tile:hover  {
             transform: rotate(0) scale(1.04);
             box-shadow: 0 8px 22px rgba(61,41,20,.5), inset 0 0 0 1px rgba(254,249,231,.7);
@@ -2188,6 +2189,176 @@
             font-size: .75rem; margin-left: 4px;
         }
 
+        /* ══════════════════════════ BORRELBINGO ═════════════════════════════ */
+        /* Hergebruikt grotendeels wk-lobby-player / wk-mp-card / wk-modal / wk-leaderboard.
+           Hieronder alleen aanvullingen specifiek voor borrelmodus.                       */
+
+        /* Speler-rij in lobby/spel met term-tag + strafpunten-tag */
+        .bb-player-row {
+            background: linear-gradient(180deg, #fef9e7 0%, #f3e9d2 100%);
+            border: 2px solid #d4af37;
+            border-radius: 4px; padding: 8px 12px;
+            display: flex; justify-content: space-between; align-items: center;
+            gap: 8px;
+            font-family: 'Poppins', sans-serif;
+            font-size: .85rem;
+            color: #3d2914;
+            box-shadow: 0 2px 4px rgba(61,41,20,.25), inset 0 0 0 1px rgba(254,249,231,.5);
+            transition: transform .12s, box-shadow .15s, border-color .15s;
+        }
+        .bb-player-row:nth-child(odd)  { transform: rotate(-0.5deg); }
+        .bb-player-row:nth-child(even) { transform: rotate(0.5deg); }
+        .bb-player-row.is-me {
+            border-color: #c8102e;
+            box-shadow: 0 3px 6px rgba(200,16,46,.3), inset 0 0 0 1px rgba(254,249,231,.6);
+        }
+        .bb-player-row-left {
+            display: flex; align-items: center; gap: 6px;
+            min-width: 0; flex: 1;
+        }
+        .bb-player-row-name {
+            font-family: 'Anton', 'Bebas Neue', sans-serif;
+            font-weight: 400; letter-spacing: .5px;
+            font-size: .95rem;
+            text-transform: uppercase;
+            color: #3d2914;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+            min-width: 0;
+        }
+        .bb-player-row-right {
+            display: flex; align-items: center; gap: 6px;
+            flex-shrink: 0;
+        }
+        .bb-tag-term {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: .8rem; padding: 3px 9px; border-radius: 3px;
+            background: linear-gradient(135deg, #c8102e 0%, #8b0a1f 100%);
+            color: #fef9e7;
+            font-weight: 400;
+            text-transform: uppercase; letter-spacing: 1px;
+            border: 1px solid #fef9e7;
+            box-shadow: 0 1px 3px rgba(0,0,0,.3), 0 0 0 1px #d4af37;
+            white-space: nowrap;
+            max-width: 160px; overflow: hidden; text-overflow: ellipsis;
+        }
+        .bb-tag-term.pending {
+            background: linear-gradient(135deg, #8b6914 0%, #5a4514 100%);
+            font-family: 'Playfair Display', serif;
+            font-style: italic; text-transform: none; letter-spacing: 0;
+            font-size: .72rem;
+        }
+        .bb-tag-penalty {
+            font-family: 'Anton', sans-serif;
+            font-size: .9rem; padding: 2px 8px; border-radius: 3px;
+            background: linear-gradient(135deg, #fbbf24 0%, #d4af37 100%);
+            color: #3d2914;
+            border: 1px solid #8b6914;
+            box-shadow: 0 1px 3px rgba(0,0,0,.3);
+            font-variant-numeric: tabular-nums;
+            min-width: 28px; text-align: center;
+        }
+        .bb-tag-host {
+            font-size: .85rem;
+        }
+
+        /* Game-mode: spelers tikbaar */
+        .bb-player-row.is-tappable {
+            cursor: pointer;
+        }
+        .bb-player-row.is-tappable:hover:not(.is-me) {
+            transform: rotate(0) scale(1.02);
+            border-color: #c8102e;
+            box-shadow: 0 4px 10px rgba(200,16,46,.35), inset 0 0 0 1px rgba(254,249,231,.6);
+        }
+        .bb-player-row.is-tappable:active:not(.is-me) {
+            transform: scale(.97);
+        }
+        .bb-player-row.is-tappable.is-me {
+            cursor: not-allowed; opacity: .65;
+        }
+        @keyframes bbClaimPulse {
+            0%   { box-shadow: 0 0 0 0 rgba(200,16,46,.7), 0 2px 4px rgba(61,41,20,.25); }
+            70%  { box-shadow: 0 0 0 14px rgba(200,16,46,0), 0 2px 4px rgba(61,41,20,.25); }
+            100% { box-shadow: 0 0 0 0 rgba(200,16,46,0), 0 2px 4px rgba(61,41,20,.25); }
+        }
+        .bb-player-row.claim-flash { animation: bbClaimPulse .6s ease-out; }
+
+        /* Eigen term-kaartje (groot, prominent in spel) */
+        .bb-my-card {
+            background:
+                linear-gradient(135deg, rgba(255,255,255,.5) 0%, transparent 45%),
+                linear-gradient(180deg, #fef9e7 0%, #f3e9d2 100%);
+            border: 3px solid;
+            border-image: linear-gradient(135deg, #d4af37 0%, #fbbf24 50%, #8b6914 100%) 1;
+            border-radius: 8px;
+            padding: 14px 18px 12px;
+            margin-bottom: 16px;
+            text-align: center;
+            color: #3d2914;
+            box-shadow: 0 4px 14px rgba(61,41,20,.35), inset 0 0 0 1px rgba(254,249,231,.6);
+            transform: rotate(-0.6deg);
+        }
+        .bb-my-card-label {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: .72rem; letter-spacing: 2px;
+            color: #8b6914; text-transform: uppercase;
+            margin-bottom: 2px;
+        }
+        .bb-my-card-value {
+            font-family: 'Anton', 'Bebas Neue', sans-serif;
+            font-size: 1.9rem; line-height: 1.05;
+            color: #c8102e;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-shadow: 0 2px 0 rgba(254,249,231,.6);
+            margin-bottom: 8px;
+            word-break: break-word;
+        }
+        .bb-my-card-value.pending {
+            font-family: 'Playfair Display', serif; font-style: italic;
+            font-size: 1.2rem; text-transform: none; letter-spacing: 0;
+            color: #8b6914;
+        }
+        .bb-my-card-penalty {
+            display: inline-block;
+            font-family: 'Anton', sans-serif;
+            background: linear-gradient(180deg, #c8102e 0%, #8b0a1f 100%);
+            color: #fef9e7;
+            padding: 4px 14px;
+            border-radius: 4px;
+            font-size: 1.1rem;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            border: 2px solid #d4af37;
+            box-shadow: 0 2px 6px rgba(61,41,20,.4);
+            font-variant-numeric: tabular-nums;
+        }
+
+        /* Sectie-titel binnen borrelbingo */
+        .bb-section-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: .82rem; font-weight: 400;
+            text-transform: uppercase; letter-spacing: 1.5px;
+            color: #c8102e; margin: 14px 0 8px;
+            padding-bottom: 4px;
+            border-bottom: 1px dashed rgba(139,105,20,.4);
+        }
+
+        /* Naam-invoer modal */
+        .bb-modal-name-input { margin-bottom: 12px; }
+
+        /* "Pak m'n term" knop met flair */
+        .bb-claim-term-btn {
+            width: 100%;
+            margin-top: 4px;
+            background: linear-gradient(180deg, #fbbf24 0%, #d4af37 100%) !important;
+            color: #3d2914 !important;
+        }
+        .bb-claim-term-btn:hover {
+            background: linear-gradient(180deg, #d4af37 0%, #c8102e 100%) !important;
+            color: #fef9e7 !important;
+        }
+
         /* ── Eindscherm kamer - PANINI WINNAARS-KAFT ── */
         .wk-finish-card {
             background:
@@ -2656,6 +2827,13 @@
                     <div class="tile-title">WK Bingo</div>
                     <div class="tile-desc">Bingo tijdens het WK</div>
                     <div class="tile-badge">2026</div>
+                </div>
+
+                <div class="menu-tile" onclick="goTo('screen-borrel')">
+                    <div class="tile-icon">🍻</div>
+                    <div class="tile-title">BorrelBingo</div>
+                    <div class="tile-desc">Term-roulette met je vrienden</div>
+                    <div class="tile-badge">NIEUW</div>
                 </div>
 
             </div>
@@ -3388,6 +3566,80 @@
             </div>
         </div>
 
+        <!-- ══════════════════════════ BORRELBINGO ═════════════════════════════ -->
+        <div id="screen-borrel" class="screen">
+            <div class="screen-header">
+                <button class="btn-back" onclick="goHome()">← Terug</button>
+                <h2 style="margin:0;">🍻 BorrelBingo</h2>
+            </div>
+
+            <!-- Multiplayer-blok: maak/join (zelfde Panini-styling als WK) -->
+            <div id="bb-mp-card" class="wk-mp-card" style="margin-top:8px;">
+                <div class="wk-mp-title">🍻 Term-roulette met vrienden</div>
+                <div class="wk-mp-sub">Iedere speler krijgt random een term. Wordt 'ie genoemd op tv? Strafpunt!</div>
+                <div class="wk-mp-actions">
+                    <button class="wk-mp-btn primary"   id="bb-mp-create-btn" onclick="bbOpenCreateModal()">➕ Maak kamer</button>
+                    <button class="wk-mp-btn secondary" id="bb-mp-join-btn"   onclick="bbOpenJoinModal()">🔑 Doe mee</button>
+                </div>
+                <div class="wk-mp-offline-note" id="bb-mp-offline-note">
+                    ⚠ BorrelBingo vereist een internetverbinding.
+                </div>
+            </div>
+
+            <!-- Lobby (verschijnt als je in een kamer zit en spel nog niet gestart is) -->
+            <div id="bb-lobby" style="display:none;"></div>
+
+            <!-- Spel-view (status === 'playing') -->
+            <div id="bb-game" style="display:none;">
+                <!-- Hier komen: bb-my-card, spelerslijst (tikbaar), de stand -->
+            </div>
+
+            <!-- Eindscherm (status === 'finished') -->
+            <div id="bb-finish" style="display:none;"></div>
+        </div>
+
+        <!-- Modals voor BorrelBingo -->
+        <div id="bb-create-modal" class="wk-modal-overlay">
+            <div class="wk-modal">
+                <h3 class="wk-modal-title">➕ Maak een BorrelBingo-kamer</h3>
+
+                <label class="wk-modal-label">Jouw naam</label>
+                <input type="text" id="bb-create-name-input" class="wk-modal-input bb-modal-name-input"
+                       placeholder="Bijv. Joost" maxlength="20">
+
+                <label class="wk-modal-label">Wedstrijd</label>
+                <select id="bb-create-match-select" class="wk-modal-select"></select>
+
+                <div class="wk-modal-error" id="bb-create-error"></div>
+
+                <div class="wk-modal-actions">
+                    <button class="wk-mp-btn secondary" onclick="bbCloseCreateModal()">Annuleren</button>
+                    <button class="wk-mp-btn primary"   id="bb-create-confirm-btn" onclick="bbConfirmCreateRoom()">Maak kamer</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="bb-join-modal" class="wk-modal-overlay">
+            <div class="wk-modal">
+                <h3 class="wk-modal-title">🔑 Doe mee aan een kamer</h3>
+
+                <label class="wk-modal-label">Jouw naam</label>
+                <input type="text" id="bb-join-name-input" class="wk-modal-input bb-modal-name-input"
+                       placeholder="Bijv. Joost" maxlength="20">
+
+                <label class="wk-modal-label">Kamercode (4 cijfers)</label>
+                <input type="tel" inputmode="numeric" maxlength="4" pattern="[0-9]*"
+                       id="bb-join-code-input" class="wk-modal-input wk-code-input" placeholder="0000">
+
+                <div class="wk-modal-error" id="bb-join-error"></div>
+
+                <div class="wk-modal-actions">
+                    <button class="wk-mp-btn secondary" onclick="bbCloseJoinModal()">Annuleren</button>
+                    <button class="wk-mp-btn primary"   id="bb-join-confirm-btn" onclick="bbConfirmJoinRoom()">Doe mee</button>
+                </div>
+            </div>
+        </div>
+
         <!-- ══════════════════════════ INGEZONDEN KAARTEN ════════════════════════ -->
         <div id="screen-ingezonden" class="screen">
             <div class="screen-header">
@@ -3476,7 +3728,7 @@
         import { initializeApp }                                    from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
         import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged }
                                                                     from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js";
-        import { getFirestore, doc, onSnapshot, setDoc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
+        import { getFirestore, doc, onSnapshot, setDoc, getDoc, updateDoc, runTransaction, arrayUnion } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
 
         // ─── Firebase config ───────────────────────────────────────────────────────
         const manualConfig = {
@@ -7518,6 +7770,537 @@ h1{font-size:13pt;text-align:center;margin-bottom:6mm;}
             document.getElementById('gen-opt-4x4')?.classList.toggle('selected', size === 4);
             document.getElementById('gen-opt-5x5')?.classList.toggle('selected', size === 5);
         };
+
+        // ═══════════════════════════════ BORRELBINGO ═══════════════════════════════
+        // Term-roulette met strafpunten. Werkende multiplayer via Firestore.
+        // Datapad: artifacts/{appId}/public/data/borrelRooms/{4-cijferige-code}
+        // Datamodel: { matchId, hostUid, status, words, players:{uid:{name,term,joinedAt,...}}, claimEvents:[{uid,term,ts}] }
+        // Strafpunt-regel: ≥2 niet-eigen claims op zelfde term binnen 5 sec → eigenaar +1.
+
+        let bbRoomCode = null;
+        let bbRoomData = null;
+        let bbRoomUnsub = null;
+        let bbRoomMyUid = null;
+
+        function bbRoomDocRef(code) {
+            return doc(db, 'artifacts', myAppId, 'public', 'data', 'borrelRooms', code);
+        }
+        function bbGenerateRoomCode() {
+            return String(Math.floor(1000 + Math.random() * 9000));
+        }
+        function bbCanMultiplayer() {
+            return !!(db && auth && auth.currentUser);
+        }
+        function bbSetPlayerName(name) {
+            try { localStorage.setItem('wkPlayerName', name); } catch {}
+        }
+        function bbGetPlayerName() {
+            // Hergebruik bestaande WK naam-helper als die er is, anders localStorage
+            if (typeof getWkPlayerName === 'function') {
+                const n = getWkPlayerName();
+                if (n) return n;
+            }
+            try { return localStorage.getItem('wkPlayerName') || ''; } catch { return ''; }
+        }
+
+        function bbFillMatchSelect() {
+            const sel = document.getElementById('bb-create-match-select');
+            if (!sel) return;
+            sel.innerHTML = '';
+            const matches = [];
+            if (typeof WK_GROEPSWEDSTRIJDEN !== 'undefined') matches.push(...WK_GROEPSWEDSTRIJDEN);
+            if (typeof WK_KNOCKOUT_WEDSTRIJDEN !== 'undefined') matches.push(...WK_KNOCKOUT_WEDSTRIJDEN);
+            matches.forEach(m => {
+                if (m.team1 === 'TBD') return;
+                const t1 = (typeof WK_TEAMS !== 'undefined' && WK_TEAMS[m.team1]) || null;
+                const t2 = (typeof WK_TEAMS !== 'undefined' && WK_TEAMS[m.team2]) || null;
+                const label = `${t1 ? t1.vlag : ''} ${t1 ? t1.naam : m.team1} – ${t2 ? t2.naam : m.team2} ${t2 ? t2.vlag : ''}`;
+                const opt = document.createElement('option');
+                opt.value = m.id;
+                opt.textContent = label.trim();
+                sel.appendChild(opt);
+            });
+        }
+
+        function bbMatchLabel(matchId) {
+            const m = (typeof WK_GROEPSWEDSTRIJDEN !== 'undefined' && WK_GROEPSWEDSTRIJDEN.find(x => x.id === matchId))
+                   || (typeof WK_KNOCKOUT_WEDSTRIJDEN !== 'undefined' && WK_KNOCKOUT_WEDSTRIJDEN.find(x => x.id === matchId));
+            if (!m) return matchId || '';
+            const t1 = (typeof WK_TEAMS !== 'undefined' && WK_TEAMS[m.team1]) || null;
+            const t2 = (typeof WK_TEAMS !== 'undefined' && WK_TEAMS[m.team2]) || null;
+            return `${t1 ? t1.vlag : ''} ${t1 ? t1.naam : m.team1} vs ${t2 ? t2.naam : m.team2} ${t2 ? t2.vlag : ''}`.trim();
+        }
+
+        // ─── Modals openen/sluiten ───
+        window.bbOpenCreateModal = function() {
+            if (!bbCanMultiplayer()) {
+                document.getElementById('bb-mp-offline-note').classList.add('show');
+                return;
+            }
+            bbFillMatchSelect();
+            document.getElementById('bb-create-name-input').value = bbGetPlayerName();
+            document.getElementById('bb-create-error').textContent = '';
+            document.getElementById('bb-create-confirm-btn').disabled = false;
+            document.getElementById('bb-create-modal').classList.add('show');
+        };
+        window.bbCloseCreateModal = function() {
+            document.getElementById('bb-create-modal').classList.remove('show');
+        };
+        window.bbOpenJoinModal = function() {
+            if (!bbCanMultiplayer()) {
+                document.getElementById('bb-mp-offline-note').classList.add('show');
+                return;
+            }
+            document.getElementById('bb-join-name-input').value = bbGetPlayerName();
+            document.getElementById('bb-join-code-input').value = '';
+            document.getElementById('bb-join-error').textContent = '';
+            document.getElementById('bb-join-confirm-btn').disabled = false;
+            document.getElementById('bb-join-modal').classList.add('show');
+        };
+        window.bbCloseJoinModal = function() {
+            document.getElementById('bb-join-modal').classList.remove('show');
+        };
+
+        // ─── Kamer maken ───
+        window.bbConfirmCreateRoom = async function() {
+            const btn   = document.getElementById('bb-create-confirm-btn');
+            const errEl = document.getElementById('bb-create-error');
+            errEl.textContent = '';
+            btn.disabled = true;
+            try {
+                const myName = (document.getElementById('bb-create-name-input').value || '').trim();
+                if (!myName) { errEl.textContent = 'Vul je naam in.'; btn.disabled = false; return; }
+                bbSetPlayerName(myName);
+                const matchId = document.getElementById('bb-create-match-select').value;
+                if (!matchId) { errEl.textContent = 'Kies een wedstrijd.'; btn.disabled = false; return; }
+                const myUid = auth.currentUser.uid;
+                const pool  = (typeof getWordPool === 'function') ? getWordPool(matchId) : [];
+                if (!pool || pool.length < 4) {
+                    errEl.textContent = 'Onvoldoende termen voor deze wedstrijd.'; btn.disabled = false; return;
+                }
+                let code = null;
+                for (let i = 0; i < 8; i++) {
+                    const c = bbGenerateRoomCode();
+                    const snap = await getDoc(bbRoomDocRef(c));
+                    if (!snap.exists()) { code = c; break; }
+                }
+                if (!code) { errEl.textContent = 'Kan geen vrije code vinden.'; btn.disabled = false; return; }
+                const now = Date.now();
+                const roomData = {
+                    matchId,
+                    hostUid:   myUid,
+                    createdAt: now,
+                    status:    'lobby',
+                    startedAt: null,
+                    endedAt:   null,
+                    words:     pool.slice(),
+                    players: {
+                        [myUid]: { name: myName, term: null, joinedAt: now, lastUpdate: now }
+                    },
+                    claimEvents: []
+                };
+                await setDoc(bbRoomDocRef(code), roomData);
+                bbCloseCreateModal();
+                bbEnterRoom(code);
+            } catch (err) {
+                console.error('BB kamer maken mislukt:', err);
+                errEl.textContent = 'Kamer maken mislukt.';
+                btn.disabled = false;
+            }
+        };
+
+        // ─── Kamer joinen ───
+        window.bbConfirmJoinRoom = async function() {
+            const btn   = document.getElementById('bb-join-confirm-btn');
+            const errEl = document.getElementById('bb-join-error');
+            errEl.textContent = '';
+            const code = (document.getElementById('bb-join-code-input').value || '').trim();
+            if (!/^\d{4}$/.test(code)) { errEl.textContent = 'Voer een 4-cijferige code in.'; return; }
+            const myName = (document.getElementById('bb-join-name-input').value || '').trim();
+            if (!myName) { errEl.textContent = 'Vul je naam in.'; return; }
+            bbSetPlayerName(myName);
+            btn.disabled = true;
+            try {
+                const ref = bbRoomDocRef(code);
+                const snap = await getDoc(ref);
+                if (!snap.exists()) { errEl.textContent = 'Kamer niet gevonden.'; btn.disabled = false; return; }
+                const data = snap.data();
+                if (data.status === 'finished') { errEl.textContent = 'Deze kamer is al afgesloten.'; btn.disabled = false; return; }
+                const myUid = auth.currentUser.uid;
+                const now = Date.now();
+                if (!data.players?.[myUid]) {
+                    await updateDoc(ref, {
+                        ['players.' + myUid]: { name: myName, term: null, joinedAt: now, lastUpdate: now }
+                    });
+                } else {
+                    await updateDoc(ref, {
+                        ['players.' + myUid + '.name']: myName,
+                        ['players.' + myUid + '.lastUpdate']: now
+                    });
+                }
+                bbCloseJoinModal();
+                bbEnterRoom(code);
+            } catch (err) {
+                console.error('BB joinen mislukt:', err);
+                errEl.textContent = 'Joinen mislukt.';
+                btn.disabled = false;
+            }
+        };
+
+        // ─── Kamer betreden + live updates ───
+        function bbEnterRoom(code) {
+            bbRoomCode  = code;
+            bbRoomMyUid = auth.currentUser.uid;
+            document.getElementById('bb-mp-card').style.display = 'none';
+            document.getElementById('bb-lobby').style.display   = 'block';
+            if (bbRoomUnsub) { try { bbRoomUnsub(); } catch {} }
+            bbRoomUnsub = onSnapshot(bbRoomDocRef(code), snap => {
+                if (!snap.exists()) { bbLeaveRoom('Kamer verwijderd.'); return; }
+                bbRoomData = snap.data();
+                bbOnRoomUpdate();
+            }, err => {
+                console.error('BB snapshot fout:', err);
+                bbLeaveRoom('Verbinding met kamer verloren.');
+            });
+        }
+
+        function bbOnRoomUpdate() {
+            const data = bbRoomData;
+            if (!data) return;
+            const lob = document.getElementById('bb-lobby');
+            const gam = document.getElementById('bb-game');
+            const fin = document.getElementById('bb-finish');
+            if (data.status === 'lobby') {
+                bbRenderLobby(); lob.style.display='block'; gam.style.display='none'; fin.style.display='none';
+            } else if (data.status === 'playing') {
+                bbRenderGame();  lob.style.display='none';  gam.style.display='block'; fin.style.display='none';
+            } else if (data.status === 'finished') {
+                bbRenderFinish(); lob.style.display='none'; gam.style.display='none'; fin.style.display='block';
+            }
+        }
+
+        function bbLeaveRoom(reason) {
+            if (bbRoomUnsub) { try { bbRoomUnsub(); } catch {} }
+            bbRoomUnsub = null;
+            bbRoomCode  = null;
+            bbRoomData  = null;
+            bbRoomMyUid = null;
+            const lob = document.getElementById('bb-lobby');
+            const gam = document.getElementById('bb-game');
+            const fin = document.getElementById('bb-finish');
+            if (lob) lob.style.display = 'none';
+            if (gam) gam.style.display = 'none';
+            if (fin) fin.style.display = 'none';
+            const mp = document.getElementById('bb-mp-card');
+            if (mp) mp.style.display = '';
+            if (reason) alert(reason);
+        }
+        window.bbLeaveRoom = function() { bbLeaveRoom(); };
+
+        // ─── Speler-rij HTML helper ───
+        function bbPlayerRowHtml(uid, p, hostUid, myUid, opts) {
+            opts = opts || {};
+            const isMe   = uid === myUid;
+            const isHost = uid === hostUid;
+            const termHtml = p.term
+                ? `<span class="bb-tag-term">"${p.term}"</span>`
+                : `<span class="bb-tag-term pending">nog geen term</span>`;
+            const penaltyHtml = opts.showPenalty
+                ? `<span class="bb-tag-penalty">${opts.penalty || 0}</span>`
+                : '';
+            const cls = [
+                'bb-player-row',
+                isMe ? 'is-me' : '',
+                opts.tappable ? 'is-tappable' : ''
+            ].filter(Boolean).join(' ');
+            const dataAttrs = opts.tappable
+                ? `data-uid="${uid}" onclick="bbOnClaimClick(this)"`
+                : '';
+            return `
+                <div class="${cls}" ${dataAttrs}>
+                    <div class="bb-player-row-left">
+                        ${isHost ? '<span class="bb-tag-host">👑</span>' : ''}
+                        <span class="bb-player-row-name">${p.name}${isMe ? ' (jij)' : ''}</span>
+                    </div>
+                    <div class="bb-player-row-right">
+                        ${termHtml}
+                        ${penaltyHtml}
+                    </div>
+                </div>`;
+        }
+
+        // ─── Lobby renderen ───
+        function bbRenderLobby() {
+            const data = bbRoomData;
+            const myUid = bbRoomMyUid;
+            const isHost = data.hostUid === myUid;
+            const me = data.players?.[myUid];
+            const hasTerm = !!me?.term;
+            const playersArr = Object.entries(data.players || {});
+            const usedTerms = new Set(playersArr.map(([,p]) => p.term).filter(Boolean));
+            const freeTerms = (data.words || []).filter(w => !usedTerms.has(w));
+
+            document.getElementById('bb-lobby').innerHTML = `
+                <div class="wk-lobby">
+                    <div class="wk-lobby-header">
+                        <div class="wk-lobby-label">Kamercode</div>
+                        <div class="wk-lobby-code">${bbRoomCode}</div>
+                        <div class="wk-lobby-match">${bbMatchLabel(data.matchId)}</div>
+                        <div class="wk-lobby-meta">${isHost ? 'Jij bent de host' : 'Wachten op host'}</div>
+                    </div>
+
+                    <div class="bb-section-title">Spelers (${playersArr.length})</div>
+                    <div class="wk-lobby-players">
+                        ${playersArr.map(([uid, p]) => bbPlayerRowHtml(uid, p, data.hostUid, myUid)).join('')}
+                    </div>
+
+                    ${!hasTerm ? `
+                        <button class="wk-mp-btn primary bb-claim-term-btn" id="bb-claim-mine-btn"
+                                onclick="bbClaimMyTerm()"
+                                ${freeTerms.length === 0 ? 'disabled' : ''}>
+                            🎯 Pak m'n term${freeTerms.length === 0 ? ' (geen vrije term)' : ''}
+                        </button>
+                    ` : `
+                        <div class="bb-section-title" style="margin-top:14px;">Jouw term</div>
+                        <div class="bb-my-card">
+                            <div class="bb-my-card-label">Toegewezen aan jou</div>
+                            <div class="bb-my-card-value">"${me.term}"</div>
+                        </div>
+                    `}
+
+                    ${isHost ? `
+                        <div class="wk-lobby-buttons">
+                            <button class="wk-mp-btn primary" id="bb-start-btn"
+                                    onclick="bbStartGame()"
+                                    ${playersArr.length < 2 ? 'disabled' : ''}>
+                                ▶ Start spel
+                            </button>
+                            <button class="wk-mp-btn secondary" onclick="bbLeaveRoom()">Verlaat</button>
+                        </div>
+                        ${playersArr.length < 2 ? `<div class="wk-lobby-waiting">Wachten tot ten minste 2 spelers in de kamer zijn…</div>` : ''}
+                    ` : `
+                        <div class="wk-lobby-buttons">
+                            <button class="wk-mp-btn secondary" onclick="bbLeaveRoom()">Verlaat</button>
+                        </div>
+                        <div class="wk-lobby-waiting">Wachten op host om het spel te starten…</div>
+                    `}
+                </div>
+            `;
+        }
+
+        // ─── "Pak m'n term" via atomic transaction ───
+        window.bbClaimMyTerm = async function() {
+            if (!bbRoomCode || !bbRoomData) return;
+            const ref = bbRoomDocRef(bbRoomCode);
+            const myUid = bbRoomMyUid;
+            const btn = document.getElementById('bb-claim-mine-btn');
+            if (btn) btn.disabled = true;
+            try {
+                await runTransaction(db, async (txn) => {
+                    const snap = await txn.get(ref);
+                    if (!snap.exists()) throw new Error('Kamer bestaat niet meer');
+                    const data = snap.data();
+                    if (data.players?.[myUid]?.term) return;
+                    const used = new Set(Object.values(data.players || {}).map(p => p.term).filter(Boolean));
+                    const free = (data.words || []).filter(w => !used.has(w));
+                    if (free.length === 0) throw new Error('Geen vrije term meer');
+                    const chosen = free[Math.floor(Math.random() * free.length)];
+                    txn.update(ref, {
+                        ['players.' + myUid + '.term']: chosen,
+                        ['players.' + myUid + '.lastUpdate']: Date.now()
+                    });
+                });
+            } catch (err) {
+                console.error('BB pak term mislukt:', err);
+                alert(err.message || 'Term toewijzen mislukt');
+                if (btn) btn.disabled = false;
+            }
+        };
+
+        // ─── Start spel (alleen host) ───
+        window.bbStartGame = async function() {
+            if (!bbRoomCode || !bbRoomData) return;
+            if (bbRoomData.hostUid !== bbRoomMyUid) return;
+            const playersCount = Object.keys(bbRoomData.players || {}).length;
+            if (playersCount < 2) return;
+            try {
+                await updateDoc(bbRoomDocRef(bbRoomCode), {
+                    status: 'playing',
+                    startedAt: Date.now()
+                });
+            } catch (err) {
+                console.error('BB start mislukt:', err);
+                alert('Spel starten mislukt');
+            }
+        };
+
+        // ─── Strafpunten-calculator (deterministisch, op basis van events) ───
+        function bbCalculatePenalties(data) {
+            const WINDOW_MS = 5000;
+            const penalties = {};
+            // Wie heeft welke term?
+            const termOwner = {};
+            for (const [uid, p] of Object.entries(data.players || {})) {
+                penalties[uid] = 0;
+                if (p.term) termOwner[p.term] = uid;
+            }
+            const events = data.claimEvents || [];
+            // Groepeer per term
+            const byTerm = {};
+            for (const ev of events) {
+                if (!byTerm[ev.term]) byTerm[ev.term] = [];
+                byTerm[ev.term].push(ev);
+            }
+            // Per term: cluster claims binnen 5s, ≥2 unieke niet-eigen claimers = +1
+            for (const term in byTerm) {
+                const owner = termOwner[term];
+                if (!owner) continue;
+                const evs = byTerm[term].slice().sort((a,b) => a.ts - b.ts);
+                let i = 0;
+                while (i < evs.length) {
+                    const start = evs[i].ts;
+                    const cluster = [evs[i]];
+                    let j = i + 1;
+                    while (j < evs.length && evs[j].ts - start <= WINDOW_MS) {
+                        cluster.push(evs[j]); j++;
+                    }
+                    const validClaimers = new Set(cluster.filter(e => e.uid !== owner).map(e => e.uid));
+                    if (validClaimers.size >= 2) penalties[owner]++;
+                    i = j;
+                }
+            }
+            return penalties;
+        }
+
+        // ─── Spel renderen ───
+        function bbRenderGame() {
+            const data = bbRoomData;
+            const myUid = bbRoomMyUid;
+            const isHost = data.hostUid === myUid;
+            const me = data.players?.[myUid];
+            const penalties = bbCalculatePenalties(data);
+            const playersArr = Object.entries(data.players || {});
+
+            document.getElementById('bb-game').innerHTML = `
+                <div class="wk-lobby" style="padding:12px 14px;margin-bottom:12px;">
+                    <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;">
+                        <div>
+                            <div class="wk-lobby-label" style="margin:0;">Kamer</div>
+                            <div style="font-family:'Anton',sans-serif;font-size:1.4rem;letter-spacing:4px;color:#c8102e;">${bbRoomCode}</div>
+                        </div>
+                        <div style="font-family:'Bebas Neue',sans-serif;font-size:.78rem;color:#3d2914;text-align:right;letter-spacing:1px;line-height:1.2;">${bbMatchLabel(data.matchId)}</div>
+                    </div>
+                </div>
+
+                <div class="bb-my-card">
+                    <div class="bb-my-card-label">Jouw term</div>
+                    ${me?.term
+                        ? `<div class="bb-my-card-value">"${me.term}"</div>`
+                        : `<div class="bb-my-card-value pending">Geen term — pak er een via "Verlaat" → opnieuw joinen</div>`}
+                    <span class="bb-my-card-penalty">${penalties[myUid] || 0} strafpunten</span>
+                </div>
+
+                <div class="bb-section-title">Tik op de term die de commentator noemt</div>
+                <div class="wk-lobby-players">
+                    ${playersArr.map(([uid, p]) => bbPlayerRowHtml(uid, p, data.hostUid, myUid, {
+                        showPenalty: true,
+                        penalty: penalties[uid] || 0,
+                        tappable: !!p.term && uid !== myUid
+                    })).join('')}
+                </div>
+
+                <div class="wk-leaderboard" style="margin-top:14px;">
+                    <div class="wk-leaderboard-title">
+                        <span>🏆 De stand</span>
+                        <span class="wk-leaderboard-code">${bbRoomCode}</span>
+                    </div>
+                    <div class="wk-leaderboard-list">
+                        ${bbStandHtml(playersArr, penalties, myUid)}
+                    </div>
+                </div>
+
+                ${isHost ? `
+                    <button class="wk-mp-btn primary" style="width:100%;margin-top:14px;padding:10px;font-size:.85rem;"
+                            onclick="bbHostFinish()">🏁 Beëindig spel</button>
+                ` : ''}
+                <button class="wk-mp-btn secondary" style="width:100%;margin-top:8px;padding:10px;font-size:.85rem;"
+                        onclick="bbLeaveRoom()">Verlaat kamer</button>
+            `;
+        }
+
+        function bbStandHtml(playersArr, penalties, myUid) {
+            const ranked = playersArr
+                .map(([uid, p]) => ({ uid, name: p.name, term: p.term, score: penalties[uid] || 0 }))
+                .filter(x => x.term)
+                .sort((a, b) => b.score - a.score);
+            if (ranked.length === 0) {
+                return `<div style="font-family:'Playfair Display',serif;font-style:italic;color:#8b6914;padding:6px;">Nog geen termen toegewezen.</div>`;
+            }
+            const rankEmojis = ['🥇','🥈','🥉'];
+            return ranked.map((r, i) => `
+                <div class="wk-leaderboard-row ${r.uid === myUid ? 'is-me' : ''}">
+                    <span class="wk-leaderboard-rank">${rankEmojis[i] || (i+1)}</span>
+                    <span class="wk-leaderboard-name">${r.name}${r.uid === myUid ? ' (jij)' : ''}</span>
+                    <span class="wk-leaderboard-score">${r.score}</span>
+                </div>
+            `).join('');
+        }
+
+        // ─── Speler tikt op iemand → claim event wegschrijven ───
+        window.bbOnClaimClick = async function(el) {
+            if (!bbRoomCode || !bbRoomData) return;
+            const uid = el.getAttribute('data-uid');
+            const term = bbRoomData.players?.[uid]?.term;
+            if (!term) return;
+            if (uid === bbRoomMyUid) return; // eigen claim telt niet
+            el.classList.remove('claim-flash'); void el.offsetWidth; el.classList.add('claim-flash');
+            try {
+                await updateDoc(bbRoomDocRef(bbRoomCode), {
+                    claimEvents: arrayUnion({ uid: bbRoomMyUid, term, ts: Date.now() })
+                });
+            } catch (err) {
+                console.error('BB claim wegschrijven mislukt:', err);
+            }
+        };
+
+        // ─── Host beëindigt spel ───
+        window.bbHostFinish = async function() {
+            if (!bbRoomCode || !bbRoomData) return;
+            if (bbRoomData.hostUid !== bbRoomMyUid) return;
+            if (!confirm('Spel beëindigen voor iedereen?')) return;
+            try {
+                await updateDoc(bbRoomDocRef(bbRoomCode), {
+                    status: 'finished',
+                    endedAt: Date.now()
+                });
+            } catch (err) {
+                console.error('BB finish mislukt:', err);
+            }
+        };
+
+        // ─── Eindscherm ───
+        function bbRenderFinish() {
+            const data = bbRoomData;
+            const penalties = bbCalculatePenalties(data);
+            const playersArr = Object.entries(data.players || {});
+            document.getElementById('bb-finish').innerHTML = `
+                <div class="wk-finish-card">
+                    <div style="font-family:'Anton',sans-serif;font-size:1.8rem;color:#fbbf24;letter-spacing:2px;text-transform:uppercase;margin-bottom:6px;">🍻 Eindstand</div>
+                    <div style="font-family:'Playfair Display',serif;font-style:italic;color:#fef9e7;font-size:.9rem;">Wie kreeg de meeste strafpunten?</div>
+                </div>
+                <div class="wk-leaderboard" style="margin-top:0;">
+                    <div class="wk-leaderboard-title">
+                        <span>🏆 Eindstand</span>
+                        <span class="wk-leaderboard-code">${bbRoomCode}</span>
+                    </div>
+                    <div class="wk-leaderboard-list">
+                        ${bbStandHtml(playersArr, penalties, bbRoomMyUid)}
+                    </div>
+                </div>
+                <button class="wk-mp-btn primary" style="width:100%;margin-top:14px;padding:10px;font-size:.85rem;"
+                        onclick="bbLeaveRoom()">Sluit kamer</button>
+            `;
+        }
 
         // ─── Start ────────────────────────────────────────────────────────────────
         initFromLocal();   // direct home tonen vanuit localStorage
