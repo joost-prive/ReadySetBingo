@@ -1268,6 +1268,53 @@
             position: relative;
             box-shadow: 0 4px 12px rgba(61,41,20,.4), inset 0 0 0 1px #d4af37;
         }
+
+        /* Actie-knoppen (gebruikt binnen de match-action-modal) */
+        .wk-match-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 4px;
+        }
+        .wk-match-action-btn {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1rem;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            padding: 16px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            border: 2px solid #d4af37;
+            transition: transform .12s ease, box-shadow .15s ease, filter .15s ease;
+            color: #3d2914;
+            box-shadow: 0 3px 8px rgba(61,41,20,.4), inset 0 0 0 1px rgba(254,249,231,.6);
+            display: flex; flex-direction: column; align-items: center; gap: 4px;
+            line-height: 1.1;
+        }
+        .wk-match-action-btn .wk-action-icon {
+            font-size: 1.6rem; line-height: 1;
+            filter: drop-shadow(0 1px 2px rgba(61,41,20,.4));
+        }
+        .wk-match-action-btn.solo {
+            background: linear-gradient(180deg, #fef9e7 0%, #f3e9d2 100%);
+        }
+        .wk-match-action-btn.multi {
+            background: linear-gradient(180deg, #fbbf24 0%, #d4af37 100%);
+        }
+        .wk-match-action-btn:hover { transform: translateY(-1px); filter: brightness(1.05); }
+        .wk-match-action-btn:active { transform: scale(.97); }
+        .wk-match-action-btn:disabled {
+            opacity: .55; cursor: not-allowed; filter: none;
+        }
+
+        /* Subtitel boven de knoppen in de keuze-modal */
+        .wk-match-action-sub {
+            font-size: .8rem;
+            color: #5d4427;
+            text-align: center;
+            margin: 2px 0 14px;
+            font-style: italic;
+        }
         .wk-match-item::before {
             content: '';
             position: absolute; inset: 0;
@@ -2747,9 +2794,108 @@
             .gen-card-cell { font-size: .82rem; padding: 5px 3px; }
             .mycard-item { padding: 16px 18px; }
         }
+
+        /* Vooraf-gekozen wedstrijd-info in create-modal (vervangt dropdown) */
+        .wk-create-match-info {
+            background: linear-gradient(180deg, #fef9e7 0%, #f3e9d2 100%);
+            border: 2px solid #d4af37;
+            border-radius: 6px;
+            padding: 10px 12px;
+            margin-bottom: 12px;
+            color: #3d2914;
+            font-size: .9rem;
+            box-shadow: inset 0 0 0 1px rgba(254,249,231,.6);
+        }
+        .wk-create-match-info .wk-create-match-label {
+            font-family: 'Bebas Neue', sans-serif;
+            letter-spacing: 1.2px;
+            font-size: .78rem;
+            color: #c8102e;
+            margin-right: 4px;
+            text-transform: uppercase;
+        }
+        .wk-create-match-info .wk-create-match-datum {
+            display: inline-block;
+            margin-left: 8px;
+            font-size: .78rem;
+            color: #5d4427;
+        }
+
+        /* ── WC-MODE (worldcupbingo2026.nl) ── */
+        /* Hero-banner + intro zijn standaard verborgen; alleen in wc-mode tonen */
+        .wc-banner-hero { display: none; }
+        .wc-intro { display: none; }
+
+        body.wc-mode > header { display: none; }
+
+        /* Op screen-home: alleen WK + BorrelBingo tonen */
+        body.wc-mode #screen-home .menu-tile:not(.wc-tile) { display: none; }
+
+        /* Hero-banner op homepage in wc-mode: hergebruikt wk-banner stijl,
+           maar zonder topbar dus minder padding-top nodig */
+        body.wc-mode .wc-banner-hero {
+            display: flex;
+        }
+        body.wc-mode .wc-banner-hero .wk-banner-content {
+            padding: 36px 28px 28px;
+        }
+
+        /* Intro-blok in wc-mode: Panini-stijl (hergebruikt wk-intro look) */
+        body.wc-mode .wc-intro {
+            display: block;
+            background:
+                linear-gradient(135deg, rgba(255,255,255,.5) 0%, transparent 45%),
+                linear-gradient(180deg, #fef9e7 0%, #f3e9d2 100%);
+            border: 3px solid;
+            border-image: linear-gradient(135deg, #d4af37 0%, #fbbf24 50%, #8b6914 100%) 1;
+            border-radius: 8px;
+            padding: 18px 20px 16px;
+            margin-bottom: 18px;
+            color: #3d2914;
+            box-shadow: 0 4px 12px rgba(61,41,20,.3), inset 0 0 0 1px rgba(254,249,231,.6);
+            transform: rotate(-0.4deg);
+            position: relative;
+        }
+        body.wc-mode .wc-intro-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.6rem;
+            font-weight: 400;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: #c8102e;
+            line-height: 1.05;
+            margin-bottom: 4px;
+        }
+        body.wc-mode .wc-intro-list {
+            list-style: none; margin: 0; padding: 0;
+            display: flex; flex-direction: column; gap: 7px;
+        }
+        body.wc-mode .wc-intro-list li {
+            font-size: .85rem; color: #3d2914;
+            display: flex; gap: 8px; align-items: flex-start; line-height: 1.4;
+        }
+        body.wc-mode .wc-intro-list li::before {
+            content: '⚽'; font-size: .85rem; flex-shrink: 0; margin-top: 1px;
+            filter: drop-shadow(0 1px 1px rgba(61,41,20,.4));
+        }
     </style>
 </head>
 <body class="light">
+
+    <script>
+        // ─── Site-mode detectie (worldcupbingo2026.nl) ────────────────────
+        // Onder dit domein tonen we een afgeslankte homepage met alleen
+        // WK Bingo en BorrelBingo, en verbergen we de globale Ready-Set-Bingo
+        // header. Lokaal testen kan via ?wc=1 in de URL.
+        (function() {
+            try {
+                const h = (location.hostname || '').toLowerCase();
+                const isWC = h.endsWith('worldcupbingo2026.nl')
+                          || new URLSearchParams(location.search).has('wc');
+                if (isWC) document.body.classList.add('wc-mode');
+            } catch (e) { /* geen DOM/URL → niets doen */ }
+        })();
+    </script>
 
     <div class="background-shapes">
         <div class="blob blob-1"></div>
@@ -2792,6 +2938,28 @@
 
         <!-- ════════════════════════════════ HOME ════════════════════════════════ -->
         <div id="screen-home" class="screen">
+
+            <!-- Hero-banner op worldcupbingo2026.nl (alleen zichtbaar in wc-mode) -->
+            <div class="wk-banner wc-banner-hero">
+                <div class="wk-banner-photo"></div>
+                <div class="wk-banner-overlay"></div>
+                <div class="wk-banner-content">
+                    <div class="wk-banner-badge">FIFA World Cup 2026</div>
+                    <h2 class="wk-banner-title">WK <span>Bingo</span> 2026</h2>
+                    <p class="wk-banner-sub">Verenigde Staten &nbsp;·&nbsp; Canada &nbsp;·&nbsp; Mexico &nbsp;·&nbsp; Juni – Juli 2026</p>
+                </div>
+            </div>
+
+            <!-- Intro op worldcupbingo2026.nl (alleen zichtbaar in wc-mode) -->
+            <div class="wc-intro">
+                <div class="wc-intro-title">🎯 Zo werkt het</div>
+                <ul class="wc-intro-list">
+                    <li>Extra spanningselement om nóg verder op het puntje van je stoel te zitten</li>
+                    <li>Maak de wedstrijden nóg leuker om met een groep te volgen</li>
+                    <li>Geef je niks om voetbal, maar staat het toch het héle WK aan? Dan maak je er op deze manier wél iets leuks van</li>
+                </ul>
+            </div>
+
             <div class="menu-grid">
 
                 <div class="menu-tile" onclick="goTo('screen-generate')">
@@ -2824,14 +2992,14 @@
                     <div class="tile-desc">Bingo met jouw afspeellijst</div>
                 </div>
 
-                <div class="menu-tile" onclick="goTo('screen-wk')">
+                <div class="menu-tile wc-tile" onclick="goTo('screen-wk')">
                     <div class="tile-icon">⚽</div>
                     <div class="tile-title">WK Bingo</div>
                     <div class="tile-desc">Bingo tijdens het WK</div>
                     <div class="tile-badge">2026</div>
                 </div>
 
-                <div class="menu-tile" onclick="goTo('screen-borrel')">
+                <div class="menu-tile wc-tile" onclick="goTo('screen-borrel')">
                     <div class="tile-icon">🍻</div>
                     <div class="tile-title">BorrelBingo</div>
                     <div class="tile-desc">Term-roulette met je vrienden</div>
@@ -3422,13 +3590,13 @@
                 </ul>
             </div>
 
-            <!-- Multiplayer-blok -->
+            <!-- Multiplayer-blok: doe mee aan een bestaande kamer.
+                 Een eigen kamer maken doe je via de "👥 Met vrienden"-knop bij een wedstrijd hieronder. -->
             <div id="wk-mp-card" class="wk-mp-card">
                 <div class="wk-mp-title">🎉 Speel met vrienden</div>
-                <div class="wk-mp-sub">Maak samen een kamer en strijd om de eerste bingo.</div>
+                <div class="wk-mp-sub">Heb je al een kamercode? Doe direct mee. Of kies hieronder een wedstrijd om zélf een kamer te starten.</div>
                 <div class="wk-mp-actions">
-                    <button class="wk-mp-btn primary"   id="wk-mp-create-btn" onclick="wkOpenCreateModal()">➕ Maak kamer</button>
-                    <button class="wk-mp-btn secondary" id="wk-mp-join-btn"   onclick="wkOpenJoinModal()">🔑 Doe mee</button>
+                    <button class="wk-mp-btn secondary" id="wk-mp-join-btn"   onclick="wkOpenJoinModal()">🔑 Doe mee met code</button>
                 </div>
                 <div class="wk-mp-offline-note" id="wk-mp-offline-note">
                     ⚠ Multiplayer vereist een internetverbinding.
@@ -3491,13 +3659,36 @@
             </div>
         </div>
 
+        <!-- Keuze-modal: klik op een wedstrijd → Solo of Met vrienden? -->
+        <div id="wk-match-action-modal" class="wk-modal-overlay">
+            <div class="wk-modal">
+                <h3 class="wk-modal-title" id="wk-match-action-title">Wedstrijd</h3>
+                <div class="wk-match-action-sub" id="wk-match-action-sub"></div>
+                <div class="wk-match-actions">
+                    <button class="wk-match-action-btn solo" type="button" id="wk-match-action-solo">
+                        <span class="wk-action-icon">🎯</span><span>Solo</span>
+                    </button>
+                    <button class="wk-match-action-btn multi" type="button" id="wk-match-action-multi">
+                        <span class="wk-action-icon">👥</span><span>Met vrienden</span>
+                    </button>
+                </div>
+                <div class="wk-modal-actions" style="margin-top:14px;">
+                    <button class="wk-mp-btn secondary" onclick="wkCloseMatchActionModal()">Annuleren</button>
+                </div>
+            </div>
+        </div>
+
         <!-- Modals voor multiplayer -->
         <div id="wk-create-modal" class="wk-modal-overlay">
             <div class="wk-modal">
                 <h3 class="wk-modal-title">➕ Maak een kamer</h3>
 
-                <label class="wk-modal-label">Wedstrijd</label>
-                <select id="wk-create-match-select" class="wk-modal-select"></select>
+                <!-- Verborgen value-holder: krijgt de matchId als <option> ingespoten,
+                     wkConfirmCreateRoom leest .value uit. -->
+                <select id="wk-create-match-select" class="wk-modal-select" style="display:none;"></select>
+
+                <!-- Toont de vooraf-gekozen wedstrijd -->
+                <div id="wk-create-match-info" class="wk-create-match-info" style="display:none;"></div>
 
                 <div class="wk-modal-error" id="wk-create-error"></div>
 
@@ -3575,13 +3766,13 @@
                 <h2 style="margin:0;">🍻 BorrelBingo</h2>
             </div>
 
-            <!-- Multiplayer-blok: maak/join (zelfde Panini-styling als WK) -->
+            <!-- Multiplayer-blok: doe mee aan een bestaande kamer.
+                 Een eigen kamer maken doe je via een wedstrijd hieronder. -->
             <div id="bb-mp-card" class="wk-mp-card" style="margin-top:8px;">
                 <div class="wk-mp-title">🍻 Term-roulette met vrienden</div>
-                <div class="wk-mp-sub">Iedere speler krijgt random een term. Wordt 'ie genoemd op tv? Strafpunt!</div>
+                <div class="wk-mp-sub">Iedere speler krijgt random een term. Wordt 'ie genoemd op tv? Strafpunt! Heb je al een kamercode? Doe mee. Of kies hieronder een wedstrijd om zélf een kamer te starten.</div>
                 <div class="wk-mp-actions">
-                    <button class="wk-mp-btn primary"   id="bb-mp-create-btn" onclick="bbOpenCreateModal()">➕ Maak kamer</button>
-                    <button class="wk-mp-btn secondary" id="bb-mp-join-btn"   onclick="bbOpenJoinModal()">🔑 Doe mee</button>
+                    <button class="wk-mp-btn secondary" id="bb-mp-join-btn"   onclick="bbOpenJoinModal()">🔑 Doe mee met code</button>
                 </div>
                 <div class="wk-mp-offline-note" id="bb-mp-offline-note">
                     ⚠ BorrelBingo vereist een internetverbinding.
@@ -3590,6 +3781,24 @@
 
             <!-- Lobby (verschijnt als je in een kamer zit en spel nog niet gestart is) -->
             <div id="bb-lobby" style="display:none;"></div>
+
+            <!-- Wedstrijdselector (zoals WK Bingo): klik op wedstrijd → kamer maken -->
+            <div id="bb-selector">
+                <div class="wk-tabs">
+                    <button class="wk-tab active" onclick="setBbTab('groep')">Groepsfase</button>
+                    <button class="wk-tab" onclick="setBbTab('knockout')">Knock-out</button>
+                </div>
+
+                <div id="bb-groep-view">
+                    <div class="wk-poule-tabs" id="bb-poule-tabs"></div>
+                    <div class="wk-poule-title" id="bb-poule-title"></div>
+                    <div id="bb-poule-matches"></div>
+                </div>
+
+                <div id="bb-knockout-view" style="display:none;">
+                    <div id="bb-knockout-matches"></div>
+                </div>
+            </div>
 
             <!-- Spel-view (status === 'playing') -->
             <div id="bb-game" style="display:none;">
@@ -3609,8 +3818,12 @@
                 <input type="text" id="bb-create-name-input" class="wk-modal-input bb-modal-name-input"
                        placeholder="Bijv. Joost" maxlength="20">
 
-                <label class="wk-modal-label">Wedstrijd</label>
-                <select id="bb-create-match-select" class="wk-modal-select"></select>
+                <!-- Verborgen value-holder: krijgt de matchId als <option> ingespoten,
+                     bbConfirmCreateRoom leest .value uit. -->
+                <select id="bb-create-match-select" class="wk-modal-select" style="display:none;"></select>
+
+                <!-- Toont de vooraf-gekozen wedstrijd -->
+                <div id="bb-create-match-info" class="wk-create-match-info" style="display:none;"></div>
 
                 <div class="wk-modal-error" id="bb-create-error"></div>
 
@@ -6676,18 +6889,62 @@ h1{font-size:13pt;text-align:center;margin-bottom:6mm;}
         }
 
         function wkUpdateMpOfflineNote() {
-            const note   = document.getElementById('wk-mp-offline-note');
-            const create = document.getElementById('wk-mp-create-btn');
-            const join   = document.getElementById('wk-mp-join-btn');
-            if (!note || !create || !join) return;
+            const note = document.getElementById('wk-mp-offline-note');
+            const join = document.getElementById('wk-mp-join-btn');
+            if (!note || !join) return;
             const can = wkCanMultiplayer();
             note.classList.toggle('show', !can);
-            create.disabled = !can;
-            join.disabled   = !can;
+            join.disabled = !can;
+            // Per-wedstrijd "Met vrienden"-knoppen worden binnen wkOpenCreateModal afgevangen
+            // (wkCanMultiplayer()-check), dus die hoeven hier niet apart geblokkeerd te worden.
         }
 
         // ─── Modals ──
-        window.wkOpenCreateModal = function() {
+        // Keuze-modal: opent na klik op een wedstrijd, vraagt Solo of Met vrienden
+        window.wkOpenMatchActionModal = function(matchId) {
+            const m = wkMatchById(matchId);
+            if (!m) return;
+
+            const titleEl = document.getElementById('wk-match-action-title');
+            const subEl   = document.getElementById('wk-match-action-sub');
+            const btnSolo = document.getElementById('wk-match-action-solo');
+            const btnMP   = document.getElementById('wk-match-action-multi');
+
+            const isTBD = m.team1 === 'TBD';
+            titleEl.textContent = isTBD
+                ? m.fase
+                : `${getTeamLabel(m.team1)}  vs  ${getTeamLabel(m.team2)}`;
+            const subParts = [];
+            if (m.datum) subParts.push(`📅 ${m.datum}`);
+            if (m.stad)  subParts.push(`📍 ${m.stad}`);
+            subEl.textContent = subParts.join('   ·   ');
+
+            // Multi-knop alleen actief als multiplayer kan
+            const canMP = wkCanMultiplayer();
+            btnMP.disabled = !canMP;
+            btnMP.title = canMP ? '' : 'Multiplayer vereist een internetverbinding';
+
+            btnSolo.onclick = () => {
+                wkCloseMatchActionModal();
+                startWkGame(matchId);
+            };
+            btnMP.onclick = () => {
+                if (!canMP) return;
+                wkCloseMatchActionModal();
+                wkOpenCreateModal(matchId);
+            };
+
+            document.getElementById('wk-match-action-modal').classList.add('show');
+        };
+
+        window.wkCloseMatchActionModal = function() {
+            document.getElementById('wk-match-action-modal').classList.remove('show');
+        };
+
+        // Opent de create-kamer modal voor een vooraf-gekozen wedstrijd.
+        // De select #wk-create-match-select is een verborgen value-holder die
+        // wkConfirmCreateRoom later uitleest.
+        window.wkOpenCreateModal = function(matchId) {
             if (!wkCanMultiplayer()) return;
             const name = getWkPlayerName();
             if (!name) {
@@ -6695,27 +6952,21 @@ h1{font-size:13pt;text-align:center;margin-bottom:6mm;}
                 document.getElementById('wk-name-input')?.focus();
                 return;
             }
-            // Vul wedstrijd-dropdown
-            const sel = document.getElementById('wk-create-match-select');
-            sel.innerHTML = '';
-            const optGroep = document.createElement('optgroup');
-            optGroep.label = 'Groepsfase';
-            WK_GROEPSWEDSTRIJDEN.forEach(m => {
-                const o = document.createElement('option');
-                o.value = m.id;
-                o.textContent = `${getTeamLabel(m.team1)} – ${getTeamLabel(m.team2)} (${m.datum})`;
-                optGroep.appendChild(o);
-            });
-            sel.appendChild(optGroep);
-            const optKO = document.createElement('optgroup');
-            optKO.label = 'Knock-out';
-            WK_KNOCKOUT_WEDSTRIJDEN.forEach(m => {
-                const o = document.createElement('option');
-                o.value = m.id;
-                o.textContent = `${m.fase}${m.datum ? ' — ' + m.datum : ''}`;
-                optKO.appendChild(o);
-            });
-            sel.appendChild(optKO);
+
+            const sel       = document.getElementById('wk-create-match-select');
+            const matchInfo = document.getElementById('wk-create-match-info');
+
+            sel.innerHTML = `<option value="${matchId}" selected></option>`;
+
+            if (matchInfo) {
+                const m = wkMatchById(matchId);
+                const label = m
+                    ? (m.team1 === 'TBD' ? m.fase : `${getTeamLabel(m.team1)} – ${getTeamLabel(m.team2)}`)
+                    : matchId;
+                const datum = m && m.datum ? ` <span class="wk-create-match-datum">📅 ${m.datum}</span>` : '';
+                matchInfo.innerHTML = `<span class="wk-create-match-label">Wedstrijd:</span> <strong>${label}</strong>${datum}`;
+                matchInfo.style.display = '';
+            }
 
             document.getElementById('wk-create-error').textContent = '';
             document.getElementById('wk-create-confirm-btn').disabled = false;
@@ -7220,6 +7471,9 @@ h1{font-size:13pt;text-align:center;margin-bottom:6mm;}
                 document.getElementById('wk-create-modal').addEventListener('click', e => {
                     if (e.target.id === 'wk-create-modal') wkCloseCreateModal();
                 });
+                document.getElementById('wk-match-action-modal').addEventListener('click', e => {
+                    if (e.target.id === 'wk-match-action-modal') wkCloseMatchActionModal();
+                });
                 joinInput._wkBound = true;
             }
 
@@ -7300,7 +7554,8 @@ h1{font-size:13pt;text-align:center;margin-bottom:6mm;}
             return t.naam;
         }
 
-        function buildMatchItem(match) {
+        // options.onClick: (matchId) => void, override default wk-keuze-modal flow
+        function buildMatchItem(match, options) {
             const isTBD = match.team1 === 'TBD';
             const t1 = WK_TEAMS[match.team1];
             const t2 = WK_TEAMS[match.team2];
@@ -7311,9 +7566,11 @@ h1{font-size:13pt;text-align:center;margin-bottom:6mm;}
             const t1Code = isTBD ? '?' : match.team1;
             const t2Code = isTBD ? '?' : match.team2;
 
+            const onClick = (options && options.onClick) || ((id) => wkOpenMatchActionModal(id));
+
             const item = document.createElement('div');
             item.className = 'wk-match-item';
-            item.onclick = () => startWkGame(match.id);
+            item.onclick = () => onClick(match.id);
             item.innerHTML =
                 `<div class="wk-team-sticker t1${isTBD ? ' tbd' : ''}">
                     ${isTBD ? '' : `<span class="wk-team-code-badge">${t1Code}</span>`}
@@ -7513,6 +7770,7 @@ h1{font-size:13pt;text-align:center;margin-bottom:6mm;}
         window.goTo = function(id) {
             if (id === 'screen-wk')       initWkScreen();
             if (id === 'screen-wk-stats') initWkStatsScreen();
+            if (id === 'screen-borrel')   initBbSelector();
             _prevGoTo(id);
         };
         window.goHome = () => { window.goTo('screen-home'); };
@@ -7805,25 +8063,6 @@ h1{font-size:13pt;text-align:center;margin-bottom:6mm;}
             try { return localStorage.getItem('wkPlayerName') || ''; } catch { return ''; }
         }
 
-        function bbFillMatchSelect() {
-            const sel = document.getElementById('bb-create-match-select');
-            if (!sel) return;
-            sel.innerHTML = '';
-            const matches = [];
-            if (typeof WK_GROEPSWEDSTRIJDEN !== 'undefined') matches.push(...WK_GROEPSWEDSTRIJDEN);
-            if (typeof WK_KNOCKOUT_WEDSTRIJDEN !== 'undefined') matches.push(...WK_KNOCKOUT_WEDSTRIJDEN);
-            matches.forEach(m => {
-                if (m.team1 === 'TBD') return;
-                const t1 = (typeof WK_TEAMS !== 'undefined' && WK_TEAMS[m.team1]) || null;
-                const t2 = (typeof WK_TEAMS !== 'undefined' && WK_TEAMS[m.team2]) || null;
-                const label = `${t1 ? t1.vlag : ''} ${t1 ? t1.naam : m.team1} – ${t2 ? t2.naam : m.team2} ${t2 ? t2.vlag : ''}`;
-                const opt = document.createElement('option');
-                opt.value = m.id;
-                opt.textContent = label.trim();
-                sel.appendChild(opt);
-            });
-        }
-
         function bbMatchLabel(matchId) {
             const m = (typeof WK_GROEPSWEDSTRIJDEN !== 'undefined' && WK_GROEPSWEDSTRIJDEN.find(x => x.id === matchId))
                    || (typeof WK_KNOCKOUT_WEDSTRIJDEN !== 'undefined' && WK_KNOCKOUT_WEDSTRIJDEN.find(x => x.id === matchId));
@@ -7833,13 +8072,113 @@ h1{font-size:13pt;text-align:center;margin-bottom:6mm;}
             return `${t1 ? t1.vlag : ''} ${t1 ? t1.naam : m.team1} vs ${t2 ? t2.naam : m.team2} ${t2 ? t2.vlag : ''}`.trim();
         }
 
+        // ─── Wedstrijdselector op screen-borrel ───
+        let bbCurrentTab   = 'groep';
+        let bbCurrentPoule = 'A';
+
+        function initBbSelector() {
+            const tabsEl = document.getElementById('bb-poule-tabs');
+            if (!tabsEl) return;
+            // Reset tab-state visueel
+            tabsEl.innerHTML = '';
+            'ABCDEFGHIJKL'.split('').forEach(letter => {
+                const btn = document.createElement('button');
+                btn.className = 'wk-poule-tab' + (letter === bbCurrentPoule ? ' active' : '');
+                btn.textContent = letter;
+                btn.onclick = () => setBbPoule(letter);
+                tabsEl.appendChild(btn);
+            });
+            renderBbPouleMatches(bbCurrentPoule);
+            renderBbKnockoutMatches();
+        }
+
+        window.setBbTab = function(tab) {
+            bbCurrentTab = tab;
+            // Update alleen de tabs in screen-borrel
+            document.querySelectorAll('#screen-borrel .wk-tab').forEach((b, i) => {
+                b.classList.toggle('active', (i === 0 && tab === 'groep') || (i === 1 && tab === 'knockout'));
+            });
+            document.getElementById('bb-groep-view').style.display    = tab === 'groep'    ? 'block' : 'none';
+            document.getElementById('bb-knockout-view').style.display = tab === 'knockout' ? 'block' : 'none';
+        };
+
+        window.setBbPoule = function(poule) {
+            bbCurrentPoule = poule;
+            document.querySelectorAll('#bb-poule-tabs .wk-poule-tab').forEach(b => {
+                b.classList.toggle('active', b.textContent === poule);
+            });
+            renderBbPouleMatches(poule);
+        };
+
+        function renderBbPouleMatches(poule) {
+            const container = document.getElementById('bb-poule-matches');
+            const titleEl   = document.getElementById('bb-poule-title');
+            const groep = WK_GROEPEN[poule];
+            if (!container || !groep) return;
+
+            const teamNames = groep.teams.map(t => WK_TEAMS[t]?.naam || t).join(' · ');
+            titleEl.textContent = 'Poule ' + poule + ' — ' + teamNames;
+
+            container.innerHTML = '';
+            WK_GROEPSWEDSTRIJDEN
+                .filter(m => m.poule === poule)
+                .forEach(match => {
+                    container.appendChild(buildMatchItem(match, { onClick: (id) => bbOpenCreateModal(id) }));
+                });
+        }
+
+        function renderBbKnockoutMatches() {
+            const container = document.getElementById('bb-knockout-matches');
+            if (!container) return;
+            container.innerHTML = '';
+
+            const rounds = [
+                { label: 'Ronde van 32',  fase: 'Ronde van 32' },
+                { label: 'Achtste finale', fase: 'Achtste finale' },
+                { label: 'Kwartfinale',   fase: 'Kwartfinale' },
+                { label: 'Halve finale',  fase: 'Halve finale' },
+                { label: '3e / 4e plaats',fase: '3e/4e plaats' },
+                { label: 'Finale',        fase: 'Finale' },
+            ];
+            rounds.forEach(round => {
+                // BorrelBingo had TBD-wedstrijden bewust uitgesloten in de oude dropdown
+                // (term-roulette werkt minder lekker zonder bekende teams). Consistent gehouden.
+                const matches = WK_KNOCKOUT_WEDSTRIJDEN.filter(m => m.fase === round.fase && m.team1 !== 'TBD');
+                if (!matches.length) return;
+                const heading = document.createElement('div');
+                heading.className = 'wk-round-heading';
+                heading.textContent = round.label;
+                container.appendChild(heading);
+                matches.forEach(match => {
+                    container.appendChild(buildMatchItem(match, { onClick: (id) => bbOpenCreateModal(id) }));
+                });
+            });
+        }
+
         // ─── Modals openen/sluiten ───
-        window.bbOpenCreateModal = function() {
+        // Opent de create-kamer modal voor een vooraf-gekozen wedstrijd.
+        // De select #bb-create-match-select is een verborgen value-holder die
+        // bbConfirmCreateRoom later uitleest.
+        window.bbOpenCreateModal = function(matchId) {
             if (!bbCanMultiplayer()) {
                 document.getElementById('bb-mp-offline-note').classList.add('show');
                 return;
             }
-            bbFillMatchSelect();
+
+            const sel       = document.getElementById('bb-create-match-select');
+            const matchInfo = document.getElementById('bb-create-match-info');
+
+            sel.innerHTML = `<option value="${matchId}" selected></option>`;
+
+            if (matchInfo) {
+                const label = bbMatchLabel(matchId);
+                const m = (WK_GROEPSWEDSTRIJDEN.find(x => x.id === matchId))
+                       || (WK_KNOCKOUT_WEDSTRIJDEN.find(x => x.id === matchId));
+                const datum = m && m.datum ? ` <span class="wk-create-match-datum">📅 ${m.datum}</span>` : '';
+                matchInfo.innerHTML = `<span class="wk-create-match-label">Wedstrijd:</span> <strong>${label}</strong>${datum}`;
+                matchInfo.style.display = '';
+            }
+
             document.getElementById('bb-create-name-input').value = bbGetPlayerName();
             document.getElementById('bb-create-error').textContent = '';
             document.getElementById('bb-create-confirm-btn').disabled = false;
@@ -7954,6 +8293,8 @@ h1{font-size:13pt;text-align:center;margin-bottom:6mm;}
             bbRoomCode  = code;
             bbRoomMyUid = auth.currentUser.uid;
             document.getElementById('bb-mp-card').style.display = 'none';
+            const sel = document.getElementById('bb-selector');
+            if (sel) sel.style.display = 'none';
             document.getElementById('bb-lobby').style.display   = 'block';
             if (bbRoomUnsub) { try { bbRoomUnsub(); } catch {} }
             bbRoomUnsub = onSnapshot(bbRoomDocRef(code), snap => {
@@ -7995,6 +8336,8 @@ h1{font-size:13pt;text-align:center;margin-bottom:6mm;}
             if (fin) fin.style.display = 'none';
             const mp = document.getElementById('bb-mp-card');
             if (mp) mp.style.display = '';
+            const sel = document.getElementById('bb-selector');
+            if (sel) sel.style.display = '';
             if (reason) alert(reason);
         }
         window.bbLeaveRoom = function() { bbLeaveRoom(); };
