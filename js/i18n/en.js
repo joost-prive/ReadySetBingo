@@ -43,7 +43,7 @@ export default {
             scenario:  { title: "Scenario Bingo",         desc: "Festivals, fairs and more" },
             spotify:   { title: "Spotify Bingo",          desc: "Bingo with your playlist" },
             wk:        { title: "World Cup Bingo",        desc: "Bingo during the World Cup", badge: "2026" },
-            borrel:    { title: "DrinkBingo",             desc: "Term-roulette with your friends", badge: "NEW" },
+            borrel:    { title: "BingeBingo",             desc: "Term-roulette with your friends", badge: "NEW" },
         },
     },
 
@@ -59,11 +59,11 @@ export default {
     },
 
     borrel: {
-        header:              "🍻 DrinkBingo",
+        header:              "🍻 BingeBingo",
         mpTitle:             "🍻 Term roulette with friends",
         mpSub:               "Each player gets a random term. If it's mentioned on TV? Penalty point! Got a room code already? Join. Or pick a match below to start your own room.",
-        mpOffline:           "⚠ DrinkBingo requires an internet connection.",
-        createModalTitle:    "➕ Create a DrinkBingo room",
+        mpOffline:           "⚠ BingeBingo requires an internet connection.",
+        createModalTitle:    "➕ Create a BingeBingo room",
         yourName:            "Your name",
         namePlaceholder:     "E.g. Joost",
     },
