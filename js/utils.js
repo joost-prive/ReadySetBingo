@@ -34,6 +34,13 @@ export function escapeHtml(s) {
     })[ch]);
 }
 
+// Veilig een waarde inbedden in een inline JS-aanroep binnen een HTML-attribuut,
+// bv. onclick="fn(${jsAttr(id)})". Combineert JSON-encoding (sluit JS-string
+// netjes af) met HTML-escape (sluit attribuut niet voortijdig).
+export function jsAttr(v) {
+    return escapeHtml(JSON.stringify(String(v ?? '')));
+}
+
 export function hexToRgba(hex, opacity) {
     const r = parseInt(hex.slice(1,3),16), g = parseInt(hex.slice(3,5),16), b = parseInt(hex.slice(5,7),16);
     return `rgba(${r},${g},${b},${opacity})`;

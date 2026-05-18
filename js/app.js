@@ -2,7 +2,7 @@
         import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged }
                                                                     from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js";
         import { getFirestore, doc, onSnapshot, setDoc, getDoc, updateDoc, runTransaction, arrayUnion } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
-        import { mulberry32, seededShuffle, strHash, escapeHtml, hexToRgba, compressImage } from "./utils.js";
+        import { mulberry32, seededShuffle, strHash, escapeHtml, jsAttr, hexToRgba, compressImage } from "./utils.js";
         import "./dialog.js";  // side-effects: registreert window.bingoAlert/Confirm/Prompt
         import { defaultData, winMessages } from "./data/default-data.js";
         import { FIFA_TO_ISO, flagSpan, WK_TEAMS, WK_GROEPEN, WK_GROEPSWEDSTRIJDEN, WK_KNOCKOUT_WEDSTRIJDEN, teamName, teamWoorden, teamNickname, formatMatchDate, matchFase, translateWord, isVoetbalTerm } from "./data/wk-data.js";
@@ -803,7 +803,7 @@
 
             return `<div class="theme-mini-card${isActive ? ' selected' : ''}"
                          style="background:${bg};"
-                         onclick="selectThemeFromPicker('${theme.id}')">
+                         onclick="selectThemeFromPicker(${jsAttr(theme.id)})">
                         <div class="theme-mini-card-header" style="background:${bg};color:${headColor};">
                             <div class="theme-mini-card-title">${title}</div>
                             ${subtitle ? `<div class="theme-mini-card-sub">${subtitle}</div>` : ''}
@@ -814,9 +814,9 @@
                             <span>${theme.name}</span>
                             <div style="display:flex;gap:3px;">
                                 ${theme.builtIn
-                                    ? `<button onclick="event.stopPropagation();openInlineThemeForm('${theme.id}',true)" style="width:auto;padding:2px 6px;font-size:.6rem;margin:0;border-radius:4px;">✏️ Aanpassen</button>`
-                                    : `<button onclick="event.stopPropagation();openInlineThemeForm('${theme.id}',false)" style="width:auto;padding:2px 6px;font-size:.6rem;margin:0;border-radius:4px;">✏️</button>
-                                       <button onclick="event.stopPropagation();deleteTheme('${theme.id}')" style="width:auto;padding:2px 6px;font-size:.6rem;margin:0;background:rgba(255,51,51,.15);color:#e05555;border-radius:4px;">🗑</button>`
+                                    ? `<button onclick="event.stopPropagation();openInlineThemeForm(${jsAttr(theme.id)},true)" style="width:auto;padding:2px 6px;font-size:.6rem;margin:0;border-radius:4px;">✏️ Aanpassen</button>`
+                                    : `<button onclick="event.stopPropagation();openInlineThemeForm(${jsAttr(theme.id)},false)" style="width:auto;padding:2px 6px;font-size:.6rem;margin:0;border-radius:4px;">✏️</button>
+                                       <button onclick="event.stopPropagation();deleteTheme(${jsAttr(theme.id)})" style="width:auto;padding:2px 6px;font-size:.6rem;margin:0;background:rgba(255,51,51,.15);color:#e05555;border-radius:4px;">🗑</button>`
                                 }
                             </div>
                         </div>
@@ -931,8 +931,8 @@
                     <div class="theme-item-swatch" style="background:${theme.bg || 'rgba(255,255,255,.08)'};"></div>
                     <span class="theme-item-name">${theme.name}</span>
                     ${!theme.builtIn
-                        ? `<button onclick="openThemeForm('${theme.id}')" style="width:auto;padding:5px 10px;font-size:.72rem;margin:0;background:rgba(255,255,255,.08);color:var(--text-muted);border-radius:6px;">✏️</button>
-                           <button onclick="deleteTheme('${theme.id}')" style="width:auto;padding:5px 10px;font-size:.72rem;margin:0;background:rgba(255,51,51,.15);color:#fca5a5;border-radius:6px;">🗑</button>`
+                        ? `<button onclick="openThemeForm(${jsAttr(theme.id)})" style="width:auto;padding:5px 10px;font-size:.72rem;margin:0;background:rgba(255,255,255,.08);color:var(--text-muted);border-radius:6px;">✏️</button>
+                           <button onclick="deleteTheme(${jsAttr(theme.id)})" style="width:auto;padding:5px 10px;font-size:.72rem;margin:0;background:rgba(255,51,51,.15);color:#fca5a5;border-radius:6px;">🗑</button>`
                         : `<span style="font-size:.6rem;color:var(--text-muted);padding:3px 7px;background:rgba(255,255,255,.06);border-radius:4px;">Ingebouwd</span>`
                     }`;
                 list.appendChild(item);
@@ -1116,7 +1116,7 @@
                                oninput="rotateThemeImage('${img.id}',this.value)"
                                style="width:100%;margin:0;padding:0;height:16px;">
                     </div>
-                    <button onclick="removeThemeImage('${img.id}')" style="width:auto;padding:5px 8px;font-size:.72rem;margin:0;background:rgba(255,51,51,.15);color:#fca5a5;border-radius:6px;">🗑</button>`;
+                    <button onclick="removeThemeImage(${jsAttr(img.id)})" style="width:auto;padding:5px 8px;font-size:.72rem;margin:0;background:rgba(255,51,51,.15);color:#fca5a5;border-radius:6px;">🗑</button>`;
                 list.appendChild(row);
             });
         }
@@ -1473,7 +1473,7 @@ h1{font-size:13pt;text-align:center;margin-bottom:6mm;}
                                  : '';
                 const publiekBadge = cs.publiek ? '<span class="mycard-badge" style="background:rgba(45,212,191,.2);color:#2dd4bf;">🌐</span>' : '';
                 const shareBtn = (cs.words && cs.words.length)
-                    ? `<button class="mycard-btn-share" onclick="shareCardSet('${cs.id}')">🔗</button>`
+                    ? `<button class="mycard-btn-share" onclick="shareCardSet(${jsAttr(cs.id)})">🔗</button>`
                     : '';
                 const div = document.createElement('div');
                 div.className = 'mycard-item';
@@ -1484,9 +1484,9 @@ h1{font-size:13pt;text-align:center;margin-bottom:6mm;}
                         <div class="mycard-meta-text">${cs.count} kaart${cs.count !== 1 ? 'en' : ''} · ${cs.size}×${cs.size} · ${dateStr}</div>
                     </div>
                     <div class="mycard-actions">
-                        <button class="mycard-btn-play" onclick="playCardSet('${cs.id}')">▶ Spelen</button>
+                        <button class="mycard-btn-play" onclick="playCardSet(${jsAttr(cs.id)})">▶ Spelen</button>
                         ${shareBtn}
-                        <button class="mycard-btn-del"  onclick="deleteCardSet('${cs.id}')">🗑</button>
+                        <button class="mycard-btn-del"  onclick="deleteCardSet(${jsAttr(cs.id)})">🗑</button>
                     </div>`;
                 container.appendChild(div);
             });
@@ -2113,8 +2113,8 @@ h1{font-size:13pt;text-align:center;margin-bottom:6mm;}
                         <div class="mycard-meta-text">${cs.count} kaart${cs.count !== 1 ? 'en' : ''} · ${cs.size}×${cs.size} · ${dateStr}</div>
                     </div>
                     <div class="mycard-actions">
-                        <button class="mycard-btn-play" onclick="playCardSet('${cs.id}')">▶ Spelen</button>
-                        ${(cs.words && cs.words.length) ? `<button class="mycard-btn-share" onclick="shareCardSet('${cs.id}')">🔗</button>` : ''}
+                        <button class="mycard-btn-play" onclick="playCardSet(${jsAttr(cs.id)})">▶ Spelen</button>
+                        ${(cs.words && cs.words.length) ? `<button class="mycard-btn-share" onclick="shareCardSet(${jsAttr(cs.id)})">🔗</button>` : ''}
                     </div>`;
                 container.appendChild(div);
             });
