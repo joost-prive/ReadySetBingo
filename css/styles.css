@@ -2833,6 +2833,38 @@
         }
         .wk-share-btn:disabled { opacity: .5; cursor: default; }
 
+        /* Deel-keuze modal: WhatsApp + Kopieer */
+        .wk-share-choice-actions {
+            display: flex; flex-direction: column; gap: 10px; margin-bottom: 10px;
+            position: relative; z-index: 1;
+        }
+        .wk-share-choice-btn {
+            background: linear-gradient(180deg, #fef9e7 0%, #f3e9d2 100%);
+            border: 2px solid #c8102e;
+            color: #3d2914;
+            padding: 14px 18px;
+            border-radius: 6px;
+            font-family: 'Bebas Neue', sans-serif;
+            letter-spacing: 1.5px;
+            font-size: 1rem;
+            cursor: pointer;
+            text-transform: uppercase;
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            transition: background .15s, transform .12s;
+            box-shadow: 0 3px 8px rgba(61,41,20,.4), inset 0 0 0 1px rgba(254,249,231,.6);
+        }
+        .wk-share-choice-btn:hover:not(:disabled) {
+            background: linear-gradient(180deg, #fbbf24 0%, #d4af37 100%);
+            transform: translateY(-1px);
+        }
+        .wk-share-choice-btn:disabled { opacity: .55; cursor: default; }
+        .wk-share-choice-btn .wk-share-choice-icon { font-size: 1.35rem; line-height: 1; }
+        .wk-share-choice-btn.whatsapp { border-color: #25d366; }
+        .wk-share-choice-btn.whatsapp:hover:not(:disabled) {
+            background: linear-gradient(180deg, #25d366 0%, #128c7e 100%);
+            color: #fef9e7;
+        }
+
         /* Off-screen share-card render-target - PANINI VERZAMELKAART */
         .wk-share-render {
             position: fixed; left: -10000px; top: 0; z-index: -1;

@@ -997,6 +997,29 @@
             </div>
         </div>
 
+        <!-- Deel-keuze modal: WhatsApp + Kopieer -->
+        <div id="wk-share-choice-modal" class="wk-modal-overlay">
+            <div class="wk-modal">
+                <h3 class="wk-modal-title" data-i18n="wkShare.modalTitle">📲 Deel je bingo</h3>
+                <div class="wk-share-choice-actions">
+                    <button class="wk-share-choice-btn whatsapp" id="wk-share-choice-whatsapp"
+                            onclick="wkShareDoWhatsApp()">
+                        <span class="wk-share-choice-icon">💬</span>
+                        <span class="wk-share-choice-label" data-i18n="wkShare.whatsapp">Deel op WhatsApp</span>
+                    </button>
+                    <button class="wk-share-choice-btn" id="wk-share-choice-copy"
+                            onclick="wkShareDoCopy()">
+                        <span class="wk-share-choice-icon">📋</span>
+                        <span class="wk-share-choice-label" data-i18n="wkShare.copy">Kopieer</span>
+                    </button>
+                </div>
+                <div class="wk-modal-error" id="wk-share-choice-error"></div>
+                <div class="wk-modal-actions">
+                    <button class="wk-mp-btn secondary" onclick="wkCloseShareChoice()" data-i18n="wkShare.close">Sluiten</button>
+                </div>
+            </div>
+        </div>
+
         <!-- ══════════════════════════ INGEZONDEN KAARTEN ════════════════════════ -->
         <div id="screen-ingezonden" class="screen">
             <div class="screen-header">

@@ -2406,60 +2406,115 @@ h1{font-size:13pt;text-align:center;margin-bottom:6mm;}
             });
         }
 
-        window.wkShareBingo = async function() {
-            const btn = document.getElementById('wk-share-btn');
-            btn.disabled = true;
-            const originalText = btn.textContent;
-            btn.textContent = '⏳ Bezig…';
+        // Bouwt de PNG-blob van de bingo share-card (lazy: html2canvas wordt on-demand geladen).
+        async function wkBuildShareBlob() {
+            await ensureWkPlayerName();
+            buildWkShareCard();
+            const html2canvas = await loadHtml2Canvas();
+            const node = document.getElementById('wk-share-render');
+            const canvas = await html2canvas(node, {
+                backgroundColor: null,
+                scale: 2,
+                logging: false,
+                useCORS: true
+            });
+            return await new Promise((resolve) => canvas.toBlob(b => resolve(b), 'image/png'));
+        }
 
+        // Schrijft de PNG-blob naar het clipboard. Niet alle browsers ondersteunen
+        // ClipboardItem voor afbeeldingen (iOS Safari < 16, oudere Firefox); dan: false.
+        async function wkCopyBlobToClipboard(blob) {
+            if (!navigator.clipboard || typeof ClipboardItem === 'undefined') return false;
             try {
-                await ensureWkPlayerName(); // vraagt 1× om naam
-                buildWkShareCard();
+                await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
+                return true;
+            } catch (e) {
+                console.warn('Clipboard image write mislukt:', e);
+                return false;
+            }
+        }
 
-                const html2canvas = await loadHtml2Canvas();
-                const node = document.getElementById('wk-share-render');
-                const canvas = await html2canvas(node, {
-                    backgroundColor: null,
-                    scale: 2,
-                    logging: false,
-                    useCORS: true
-                });
+        window.wkShareBingo = function() {
+            const errEl = document.getElementById('wk-share-choice-error');
+            if (errEl) errEl.textContent = '';
+            // Reset label-state (kunnen na vorige sessie nog op '✅/⏳' staan)
+            const waLabel = document.querySelector('#wk-share-choice-whatsapp .wk-share-choice-label');
+            const cpLabel = document.querySelector('#wk-share-choice-copy .wk-share-choice-label');
+            if (waLabel) waLabel.textContent = t('wkShare.whatsapp');
+            if (cpLabel) cpLabel.textContent = t('wkShare.copy');
+            document.getElementById('wk-share-choice-whatsapp').disabled = false;
+            document.getElementById('wk-share-choice-copy').disabled = false;
+            document.getElementById('wk-share-choice-modal').classList.add('show');
+        };
 
-                const matchLabel = wkMatchLabel(wkCurrentMatchId).replace(/[^\w-]+/g, '_');
-                const filename = `WKBingo_${matchLabel}.png`;
+        window.wkCloseShareChoice = function() {
+            document.getElementById('wk-share-choice-modal').classList.remove('show');
+        };
 
-                canvas.toBlob(async (blob) => {
-                    if (!blob) {
-                        btn.textContent = '❌ Mislukt';
-                        setTimeout(() => { btn.textContent = originalText; btn.disabled = false; }, 1500);
-                        return;
-                    }
-                    const file = new File([blob], filename, { type: 'image/png' });
+        window.wkShareDoCopy = async function() {
+            const btn   = document.getElementById('wk-share-choice-copy');
+            const label = btn.querySelector('.wk-share-choice-label');
+            const errEl = document.getElementById('wk-share-choice-error');
+            errEl.textContent = '';
+            btn.disabled = true;
+            const original = label.textContent;
+            label.textContent = t('wkShare.busy');
+            try {
+                const blob = await wkBuildShareBlob();
+                if (!blob) throw new Error('Genereren mislukt');
+                const ok = await wkCopyBlobToClipboard(blob);
+                if (ok) {
+                    label.textContent = t('wkShare.copied');
+                } else {
+                    const matchLabel = wkMatchLabel(wkCurrentMatchId).replace(/[^\w-]+/g, '_');
+                    triggerDownload(blob, `WKBingo_${matchLabel}.png`);
+                    label.textContent = t('wkShare.saved');
+                }
+                setTimeout(() => {
+                    label.textContent = original;
+                    btn.disabled = false;
+                    wkCloseShareChoice();
+                }, 1300);
+            } catch (e) {
+                console.error('Share copy fout:', e);
+                errEl.textContent = t('wkShare.copyFailed');
+                label.textContent = original;
+                btn.disabled = false;
+            }
+        };
 
-                    // Probeer Web Share API met bestand
-                    if (navigator.canShare && navigator.canShare({ files: [file] })) {
-                        try {
-                            await navigator.share({
-                                files: [file],
-                                title: 'WK Bingo!',
-                                text: 'GOAAAL! Bingo bij ' + wkMatchLabel(wkCurrentMatchId) + ' 🏆'
-                            });
-                            btn.textContent = '✅ Gedeeld';
-                        } catch (e) {
-                            // User cancel of fout → fallback naar download
-                            triggerDownload(blob, filename);
-                            btn.textContent = '⬇️ Opgeslagen';
-                        }
-                    } else {
-                        triggerDownload(blob, filename);
-                        btn.textContent = '⬇️ Opgeslagen';
-                    }
-                    setTimeout(() => { btn.textContent = originalText; btn.disabled = false; }, 1800);
-                }, 'image/png');
-            } catch (err) {
-                console.error('Share fout:', err);
-                btn.textContent = '❌ Mislukt';
-                setTimeout(() => { btn.textContent = originalText; btn.disabled = false; }, 1500);
+        window.wkShareDoWhatsApp = async function() {
+            const btn   = document.getElementById('wk-share-choice-whatsapp');
+            const label = btn.querySelector('.wk-share-choice-label');
+            const errEl = document.getElementById('wk-share-choice-error');
+            errEl.textContent = '';
+            btn.disabled = true;
+            const original = label.textContent;
+            label.textContent = t('wkShare.busy');
+            try {
+                const blob = await wkBuildShareBlob();
+                if (!blob) throw new Error('Genereren mislukt');
+                // Zet de afbeelding op het clipboard (om in WhatsApp te plakken).
+                // Als clipboard-image niet werkt: download als fallback.
+                const copied = await wkCopyBlobToClipboard(blob);
+                if (!copied) {
+                    const matchLabel = wkMatchLabel(wkCurrentMatchId).replace(/[^\w-]+/g, '_');
+                    triggerDownload(blob, `WKBingo_${matchLabel}.png`);
+                }
+                const tekst = t('wkShare.whatsappText', { match: wkMatchLabel(wkCurrentMatchId) });
+                const url = `https://wa.me/?text=${encodeURIComponent(tekst)}`;
+                window.open(url, '_blank', 'noopener');
+                label.textContent = copied ? t('wkShare.pasteInChat') : t('wkShare.saved');
+                setTimeout(() => {
+                    label.textContent = original;
+                    btn.disabled = false;
+                    wkCloseShareChoice();
+                }, 1600);
+            } catch (e) {
+                console.error('Share WhatsApp fout:', e);
+                errEl.textContent = t('wkShare.shareFailed');
+                label.textContent = original;
+                btn.disabled = false;
             }
         };
 
@@ -3668,13 +3723,15 @@ h1{font-size:13pt;text-align:center;margin-bottom:6mm;}
             try { return localStorage.getItem('wkPlayerName') || ''; } catch { return ''; }
         }
 
+        // NB: retourneert HTML (SVG-vlaggen via flag-icons), niet plain text.
+        // Alle call-sites schrijven dit naar innerHTML.
         function bbMatchLabel(matchId) {
             const m = (typeof WK_GROEPSWEDSTRIJDEN !== 'undefined' && WK_GROEPSWEDSTRIJDEN.find(x => x.id === matchId))
                    || (typeof WK_KNOCKOUT_WEDSTRIJDEN !== 'undefined' && WK_KNOCKOUT_WEDSTRIJDEN.find(x => x.id === matchId));
             if (!m) return matchId || '';
-            const t1 = (typeof WK_TEAMS !== 'undefined' && WK_TEAMS[m.team1]) || null;
-            const t2 = (typeof WK_TEAMS !== 'undefined' && WK_TEAMS[m.team2]) || null;
-            return `${t1 ? t1.vlag : ''} ${teamName(m.team1)} vs ${teamName(m.team2)} ${t2 ? t2.vlag : ''}`.trim();
+            const flag1 = (typeof flagSpan === 'function') ? flagSpan(m.team1) : '';
+            const flag2 = (typeof flagSpan === 'function') ? flagSpan(m.team2) : '';
+            return `${flag1} ${teamName(m.team1)} vs ${teamName(m.team2)} ${flag2}`.trim();
         }
 
         // ─── Wedstrijdselector op screen-borrel ───
@@ -3980,16 +4037,38 @@ h1{font-size:13pt;text-align:center;margin-bottom:6mm;}
                 </div>`;
         }
 
+        // ─── Reset-term-knop (hergebruikt in lobby en spel) ───
+        // Geeft de speler max 3x een nieuwe term, mits er nog een vrije is.
+        const BB_MAX_RESETS = 3;
+        function bbResetTermBtnHtml(me, noOtherFreeTerm) {
+            const used = me?.resetsUsed || 0;
+            const left = Math.max(0, BB_MAX_RESETS - used);
+            const disabled = left === 0 || noOtherFreeTerm;
+            const label = left === 0
+                ? t('borrel.resetNoLeft')
+                : noOtherFreeTerm
+                    ? t('borrel.resetWithNoFree', { left })
+                    : t('borrel.resetWithLeft', { left });
+            return `
+                <button class="wk-mp-btn secondary bb-reset-term-btn" id="bb-reset-mine-btn"
+                        onclick="bbResetMyTerm()"
+                        ${disabled ? 'disabled' : ''}
+                        style="width:100%;margin-top:6px;">
+                    ${label}
+                </button>
+            `;
+        }
+
         // ─── Spelregels-blok (hergebruikt in lobby en spel) ───
         function bbRulesCardHtml() {
             return `
                 <div class="bb-rules-card">
-                    <div class="bb-rules-card-title">📜 Spelregels</div>
+                    <div class="bb-rules-card-title">${t('borrel.rulesTitle')}</div>
                     <ul>
-                        <li>Iedere speler krijgt één term toegewezen.</li>
-                        <li>Tik op de tegel met de term zodra de commentator die uitspreekt.</li>
-                        <li>Tikken <strong>2 of meer spelers binnen 5 seconden</strong> op dezelfde tegel? Dan krijgt de <strong>eigenaar van die term</strong> een strafpunt.</li>
-                        <li>Wie aan het eind de meeste strafpunten heeft, verliest (en drinkt!).</li>
+                        <li>${t('borrel.rule1')}</li>
+                        <li>${t('borrel.rule2')}</li>
+                        <li>${t('borrel.rule3')}</li>
+                        <li>${t('borrel.rule4')}</li>
                     </ul>
                 </div>
             `;
@@ -4037,7 +4116,7 @@ h1{font-size:13pt;text-align:center;margin-bottom:6mm;}
                         <button class="wk-mp-btn primary bb-claim-term-btn" id="bb-claim-mine-btn"
                                 onclick="bbClaimMyTerm()"
                                 ${freeTerms.length === 0 ? 'disabled' : ''}>
-                            🎯 Pak m'n term${freeTerms.length === 0 ? ' (geen vrije term)' : ''}
+                            ${t('borrel.claimTerm')}${freeTerms.length === 0 ? t('borrel.claimTermNoFree') : ''}
                         </button>
                     ` : `
                         <div class="bb-section-title" style="margin-top:14px;">Jouw term</div>
@@ -4045,6 +4124,7 @@ h1{font-size:13pt;text-align:center;margin-bottom:6mm;}
                             <div class="bb-my-card-label">Toegewezen aan jou</div>
                             <div class="bb-my-card-value">"${me.term}"</div>
                         </div>
+                        ${bbResetTermBtnHtml(me, freeTerms.length === 0)}
                     `}
 
                     ${isHost ? `
@@ -4092,6 +4172,46 @@ h1{font-size:13pt;text-align:center;margin-bottom:6mm;}
             } catch (err) {
                 console.error('BB pak term mislukt:', err);
                 alert(err.message || 'Term toewijzen mislukt');
+                if (btn) btn.disabled = false;
+            }
+        };
+
+        // ─── "Andere term" via atomic transaction (max 3× per speler) ───
+        window.bbResetMyTerm = async function() {
+            if (!bbRoomCode || !bbRoomData) return;
+            const ref = bbRoomDocRef(bbRoomCode);
+            const myUid = bbRoomMyUid;
+            const btn = document.getElementById('bb-reset-mine-btn');
+            if (btn) btn.disabled = true;
+            try {
+                await runTransaction(db, async (txn) => {
+                    const snap = await txn.get(ref);
+                    if (!snap.exists()) throw new Error('Kamer bestaat niet meer');
+                    const data = snap.data();
+                    const me = data.players?.[myUid];
+                    if (!me) throw new Error('Je bent niet in deze kamer');
+                    const usedSoFar = me.resetsUsed || 0;
+                    if (usedSoFar >= BB_MAX_RESETS) throw new Error('Geen resets meer beschikbaar');
+                    // Vrije termen, exclusief huidige eigen term (anders kan dezelfde getrokken worden)
+                    const used = new Set(
+                        Object.entries(data.players || {})
+                            .filter(([uid]) => uid !== myUid)
+                            .map(([, p]) => p.term)
+                            .filter(Boolean)
+                    );
+                    if (me.term) used.add(me.term);
+                    const free = (data.words || []).filter(w => !used.has(w));
+                    if (free.length === 0) throw new Error('Geen andere vrije term beschikbaar');
+                    const chosen = free[Math.floor(Math.random() * free.length)];
+                    txn.update(ref, {
+                        ['players.' + myUid + '.term']: chosen,
+                        ['players.' + myUid + '.resetsUsed']: usedSoFar + 1,
+                        ['players.' + myUid + '.lastUpdate']: Date.now()
+                    });
+                });
+            } catch (err) {
+                console.error('BB reset term mislukt:', err);
+                alert(err.message || 'Reset term mislukt');
                 if (btn) btn.disabled = false;
             }
         };
@@ -4221,6 +4341,10 @@ h1{font-size:13pt;text-align:center;margin-bottom:6mm;}
                         : `<div class="bb-my-card-value pending">Geen term — pak er een via "Verlaat" → opnieuw joinen</div>`}
                     <span class="bb-my-card-penalty">${penalties[myUid] || 0} strafpunten</span>
                 </div>
+                ${me?.term ? bbResetTermBtnHtml(me, (() => {
+                    const used = new Set(playersArr.map(([,p]) => p.term).filter(Boolean));
+                    return (data.words || []).filter(w => !used.has(w)).length === 0;
+                })()) : ''}
 
                 <div class="bb-section-title">Tik op de term die de commentator noemt</div>
                 <div class="bb-tile-grid">
