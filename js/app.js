@@ -792,9 +792,11 @@
             const cellBg    = theme.cellBg    || '#ffffff';
             const cellColor = theme.cellColor || '#333';
             const headColor = theme.headColor || '#fff';
-            const title     = theme.title     || theme.name;
-            const subtitle  = theme.subtitle  || '';
-            const footer    = theme.footer    || '';
+            // title/subtitle/footer/name komen uit user-input -> in HTML-context altijd escapen.
+            const title     = escapeHtml(theme.title     || theme.name);
+            const subtitle  = escapeHtml(theme.subtitle  || '');
+            const footer    = escapeHtml(theme.footer    || '');
+            const themeName = escapeHtml(theme.name);
             const isActive  = theme.id === _activeThemeId;
 
             const cells = Array(8).fill(0).map(() =>
@@ -811,7 +813,7 @@
                         <div class="theme-mini-card-grid">${cells}</div>
                         ${footer ? `<div class="theme-mini-card-footer" style="background:${bg};color:${headColor};">${footer}</div>` : ''}
                         <div class="theme-mini-card-name" style="background:rgba(0,0,0,.07);color:${bg === '#f3f0ff' ? '#333' : headColor};display:flex;align-items:center;justify-content:space-between;gap:4px;">
-                            <span>${theme.name}</span>
+                            <span>${themeName}</span>
                             <div style="display:flex;gap:3px;">
                                 ${theme.builtIn
                                     ? `<button onclick="event.stopPropagation();openInlineThemeForm(${jsAttr(theme.id)},true)" style="width:auto;padding:2px 6px;font-size:.6rem;margin:0;border-radius:4px;">✏️ Aanpassen</button>`
@@ -1020,9 +1022,10 @@
         window.updateThemePreviewTexts = function() {
             const hdr = document.querySelector('#theme-img-preview .theme-img-grid-header');
             const ftr = document.querySelector('#theme-img-preview .theme-img-grid-footer');
-            const title    = document.getElementById('tf-title')?.value || '';
-            const subtitle = document.getElementById('tf-subtitle')?.value || '';
-            const footer   = document.getElementById('tf-footer')?.value || '';
+            // Escape direct: belanden via innerHTML in DOM.
+            const title    = escapeHtml(document.getElementById('tf-title')?.value || '');
+            const subtitle = escapeHtml(document.getElementById('tf-subtitle')?.value || '');
+            const footer   = escapeHtml(document.getElementById('tf-footer')?.value || '');
             const headColor = document.getElementById('tf-headColor')?.value || '#ffffff';
             if (hdr) {
                 hdr.style.color = headColor;
@@ -1247,9 +1250,10 @@
             container.innerHTML = '';
             const n        = genGridSize;
             const theme    = getFormDraftTheme() || getActiveTheme();
-            const title    = (document.getElementById('gen-design-title')?.value.trim()    || theme.title    || '').replace(/\n/g,'<br>');
-            const subtitle = (document.getElementById('gen-design-subtitle')?.value.trim() || theme.subtitle || '').replace(/\n/g,'<br>');
-            const footer   = (document.getElementById('gen-design-footer')?.value.trim()   || theme.footer   || '').replace(/\n/g,'<br>');
+            // Eerst escapen tegen XSS, daarna \n -> <br> zodat regelafbrekingen blijven werken.
+            const title    = escapeHtml(document.getElementById('gen-design-title')?.value.trim()    || theme.title    || '').replace(/\n/g,'<br>');
+            const subtitle = escapeHtml(document.getElementById('gen-design-subtitle')?.value.trim() || theme.subtitle || '').replace(/\n/g,'<br>');
+            const footer   = escapeHtml(document.getElementById('gen-design-footer')?.value.trim()   || theme.footer   || '').replace(/\n/g,'<br>');
             const themed   = !!theme.bg;
 
             cards.forEach((card, i) => {
@@ -1339,15 +1343,15 @@
             const n        = genGridSize;
             const fs       = n === 5 ? '9' : '11';
             const theme    = getActiveTheme();
-            const title    = (document.getElementById('gen-design-title')?.value.trim()    || theme.title    || '').replace(/\n/g,'<br>');
-            const subtitle = (document.getElementById('gen-design-subtitle')?.value.trim() || theme.subtitle || '').replace(/\n/g,'<br>');
-            const footer   = (document.getElementById('gen-design-footer')?.value.trim()   || theme.footer   || '').replace(/\n/g,'<br>');
+            const title    = escapeHtml(document.getElementById('gen-design-title')?.value.trim()    || theme.title    || '').replace(/\n/g,'<br>');
+            const subtitle = escapeHtml(document.getElementById('gen-design-subtitle')?.value.trim() || theme.subtitle || '').replace(/\n/g,'<br>');
+            const footer   = escapeHtml(document.getElementById('gen-design-footer')?.value.trim()   || theme.footer   || '').replace(/\n/g,'<br>');
             const themed   = !!theme.bg;
 
             let rows = '';
             cards.forEach((card, i) => {
                 const words = [...card.querySelectorAll('.gen-card-cell')].map(c => c.textContent);
-                const cells = words.map(w => `<div class="c">${w}</div>`).join('');
+                const cells = words.map(w => `<div class="c">${escapeHtml(w)}</div>`).join('');
                 const label = `Kaart ${i+1}`;
 
                 if (themed) {
@@ -1369,7 +1373,7 @@
                     const printCellBg = theme.cardBgImage
                         ? hexToRgba(theme.cellBg, (theme.cellBgOpacity ?? 100) / 100)
                         : theme.cellBg;
-                    const cellsStyled = words.map(w => `<div class="c" style="background:${printCellBg};color:${theme.cellColor};">${w}</div>`).join('');
+                    const cellsStyled = words.map(w => `<div class="c" style="background:${printCellBg};color:${theme.cellColor};">${escapeHtml(w)}</div>`).join('');
                     rows += `<div class="card" style="border-color:${theme.bg};position:relative;${cardBgStyle}">
                                  ${hdr}
                                  <div class="cg" style="grid-template-columns:repeat(${n},1fr);background:${theme.bg};">${cellsStyled}</div>
@@ -1480,7 +1484,7 @@ h1{font-size:13pt;text-align:center;margin-bottom:6mm;}
                 div.innerHTML = `
                     <div class="mycard-icon">${icon}</div>
                     <div class="mycard-info">
-                        <div class="mycard-title-text">${soortBadge}${publiekBadge}${cs.title}</div>
+                        <div class="mycard-title-text">${soortBadge}${publiekBadge}${escapeHtml(cs.title)}</div>
                         <div class="mycard-meta-text">${cs.count} kaart${cs.count !== 1 ? 'en' : ''} · ${cs.size}×${cs.size} · ${dateStr}</div>
                     </div>
                     <div class="mycard-actions">
@@ -1689,8 +1693,8 @@ h1{font-size:13pt;text-align:center;margin-bottom:6mm;}
                 row.className = 'spotify-track-row';
                 row.innerHTML =
                     `<span class="spotify-track-num">${i+1}</span>` +
-                    `<span class="spotify-track-name">${t.name}</span>` +
-                    `<span class="spotify-track-artist">${t.artist}</span>`;
+                    `<span class="spotify-track-name">${escapeHtml(t.name)}</span>` +
+                    `<span class="spotify-track-artist">${escapeHtml(t.artist)}</span>`;
                 preview.appendChild(row);
             });
             if (pl.tracks.length > 50) {
@@ -2109,7 +2113,7 @@ h1{font-size:13pt;text-align:center;margin-bottom:6mm;}
                 div.innerHTML = `
                     <div class="mycard-icon">${icon}</div>
                     <div class="mycard-info">
-                        <div class="mycard-title-text">${cs.title}</div>
+                        <div class="mycard-title-text">${escapeHtml(cs.title)}</div>
                         <div class="mycard-meta-text">${cs.count} kaart${cs.count !== 1 ? 'en' : ''} · ${cs.size}×${cs.size} · ${dateStr}</div>
                     </div>
                     <div class="mycard-actions">
@@ -3620,9 +3624,10 @@ h1{font-size:13pt;text-align:center;margin-bottom:6mm;}
             let words = (document.getElementById('gen-words')?.value || '')
                 .split('\n').map(w => w.trim()).filter(Boolean);
             const n     = genGridSize;
-            const title = document.getElementById('gen-design-title')?.value.trim()    || theme.title    || '';
-            const sub   = document.getElementById('gen-design-subtitle')?.value.trim() || theme.subtitle || '';
-            const ftr   = document.getElementById('gen-design-footer')?.value.trim()   || theme.footer   || '';
+            // Escape direct: title/sub/ftr eindigen via innerHTML in DOM.
+            const title = escapeHtml(document.getElementById('gen-design-title')?.value.trim()    || theme.title    || '');
+            const sub   = escapeHtml(document.getElementById('gen-design-subtitle')?.value.trim() || theme.subtitle || '');
+            const ftr   = escapeHtml(document.getElementById('gen-design-footer')?.value.trim()   || theme.footer   || '');
 
             const bg        = theme.bg        || 'rgba(255,255,255,.07)';
             const cellBg    = theme.cellBg    || 'rgba(255,255,255,.1)';
@@ -3640,7 +3645,7 @@ h1{font-size:13pt;text-align:center;margin-bottom:6mm;}
 
             // Cellen: alleen tekst, geen afbeeldingen in cellen
             const cells = previewWords.map(w =>
-                `<div style="background:${cellBg};color:${cellColor};border-radius:4px;padding:2px;text-align:center;font-size:.55rem;font-weight:600;line-height:1.2;display:flex;align-items:center;justify-content:center;aspect-ratio:1/1;overflow:hidden;"><span style="word-break:break-word;">${w}</span></div>`
+                `<div style="background:${cellBg};color:${cellColor};border-radius:4px;padding:2px;text-align:center;font-size:.55rem;font-weight:600;line-height:1.2;display:flex;align-items:center;justify-content:center;aspect-ratio:1/1;overflow:hidden;"><span style="word-break:break-word;">${escapeHtml(w)}</span></div>`
             ).join('');
 
             // Afbeeldingen als overlay op de kaart (net zoals de echte gegenereerde kaart)
