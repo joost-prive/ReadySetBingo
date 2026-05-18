@@ -4645,15 +4645,39 @@
         };
 
         // Kies n willekeurige woorden uit de pool (met herhaling als pool < n)
-        function pickRandom(words, n) {
-            let pool = [...words];
-            while (pool.length < n) pool = pool.concat(pool);
+        // Optioneel: weightFn(word) → gewicht > 0; trekt dan unieke gewogen items.
+        function pickRandom(words, n, weightFn) {
+            if (!weightFn) {
+                let pool = [...words];
+                while (pool.length < n) pool = pool.concat(pool);
+                const result = [];
+                for (let i = 0; i < n; i++) {
+                    const idx = Math.floor(Math.random() * pool.length);
+                    result.push(pool.splice(idx, 1)[0]);
+                }
+                return result;
+            }
+            // Gewogen, zonder teruglegging
+            const available = words.map(w => ({ value: w, weight: Math.max(0, weightFn(w)) }));
             const result = [];
-            for (let i = 0; i < n; i++) {
-                const idx = Math.floor(Math.random() * pool.length);
-                result.push(pool.splice(idx, 1)[0]);
+            while (result.length < n && available.length > 0) {
+                const total = available.reduce((s, it) => s + it.weight, 0);
+                if (total <= 0) break;
+                let r = Math.random() * total;
+                let idx = 0;
+                for (let i = 0; i < available.length; i++) {
+                    r -= available[i].weight;
+                    if (r <= 0) { idx = i; break; }
+                }
+                result.push(available[idx].value);
+                available.splice(idx, 1);
             }
             return result;
+        }
+
+        // Gewicht voor WK-bingo: algemene voetbaltermen wegen 0,5 t.o.v. wedstrijdrelevante termen
+        function wkTermWeight(word) {
+            return WK_VOETBAL_TERMEN.includes(word) ? 0.5 : 1;
         }
 
         // Valideer een kandidaat-kaart tegen alle constraints
@@ -6289,127 +6313,127 @@ h1{font-size:13pt;text-align:center;margin-bottom:6mm;}
 
         const WK_TEAMS = {
             'USA': { naam:'Verenigde Staten', vlag:'🇺🇸', nickname:'Stars & Stripes',
-                woorden:['Pulisic','McKennie','Musah','Robinson','Turner','Stars & Stripes','Gastheerland'] },
+                woorden:['Pulisic','McKennie','Musah','Robinson','Turner','Stars & Stripes','Gastheerland','Washington','LA Galaxy'] },
             'MEX': { naam:'Mexico', vlag:'🇲🇽', nickname:'El Tri',
-                woorden:['Edson Álvarez','Lozano','Santiago Giménez','Montes','Chavez','El Tri','Azteca'] },
+                woorden:['Edson Álvarez','Lozano','Santiago Giménez','Montes','Chavez','El Tri','Azteca','Mexico-Stad','Club América'] },
             'CAN': { naam:'Canada', vlag:'🇨🇦', nickname:'Les Rouges',
-                woorden:['Davies','David','Buchanan','Eustáquio','Larin','Les Rouges','Gastheerland'] },
+                woorden:['Davies','David','Buchanan','Eustáquio','Larin','Les Rouges','Gastheerland','Ottawa','Toronto FC'] },
             'ARG': { naam:'Argentinië', vlag:'🇦🇷', nickname:'La Albiceleste',
-                woorden:['Messi','De Paul','Julián Álvarez','Mac Allister','Enzo Fernández','La Albiceleste','Wereldkampioen'] },
+                woorden:['Messi','De Paul','Julián Álvarez','Mac Allister','Enzo Fernández','La Albiceleste','Wereldkampioen','Buenos Aires','Boca Juniors'] },
             'BRA': { naam:'Brazilië', vlag:'🇧🇷', nickname:'Seleção',
-                woorden:['Vinicius Jr','Rodrygo','Raphinha','Militão','Bruno Guimarães','Seleção','Copacabana'] },
+                woorden:['Vinicius Jr','Rodrygo','Raphinha','Militão','Bruno Guimarães','Seleção','Copacabana','Brasília','Flamengo'] },
             'URU': { naam:'Uruguay', vlag:'🇺🇾', nickname:'La Celeste',
-                woorden:['Darwin Núñez','Valverde','Bentancur','Ronald Araújo','Olivera','La Celeste','Montevideo'] },
+                woorden:['Darwin Núñez','Valverde','Bentancur','Ronald Araújo','Olivera','La Celeste','Montevideo','Peñarol'] },
             'COL': { naam:'Colombia', vlag:'🇨🇴', nickname:'Los Cafeteros',
-                woorden:['Luis Díaz','James Rodríguez','Daniel Muñoz','Lerma','Jhon Durán','Los Cafeteros','Bogotá'] },
+                woorden:['Luis Díaz','James Rodríguez','Daniel Muñoz','Lerma','Jhon Durán','Los Cafeteros','Bogotá','Atlético Nacional'] },
             'ECU': { naam:'Ecuador', vlag:'🇪🇨', nickname:'La Tri',
-                woorden:['Valencia','Caicedo','Estupiñán','Hincapié','Willian Pacho','La Tri','Quito'] },
+                woorden:['Valencia','Caicedo','Estupiñán','Hincapié','Willian Pacho','La Tri','Quito','LDU Quito'] },
             'CHI': { naam:'Chili', vlag:'🇨🇱', nickname:'La Roja',
-                woorden:['Alexis Sánchez','Vidal','Brereton','La Roja','Medel','Pulgar','Aranguiz'] },
+                woorden:['Alexis Sánchez','Vidal','Brereton','La Roja','Medel','Pulgar','Aranguiz','Santiago','Colo-Colo'] },
             'PAR': { naam:'Paraguay', vlag:'🇵🇾', nickname:'La Albirroja',
-                woorden:['Almirón','Enciso','Gustavo Gómez','Sanabria','Villasanti','La Albirroja','Asunción'] },
+                woorden:['Almirón','Enciso','Gustavo Gómez','Sanabria','Villasanti','La Albirroja','Asunción','Olimpia'] },
             'BOL': { naam:'Bolivia', vlag:'🇧🇴', nickname:'La Verde',
-                woorden:['Marcelo Moreno','Arce','La Verde','Algarañaz','Justiniano','Fernández'] },
+                woorden:['Marcelo Moreno','Arce','La Verde','Algarañaz','Justiniano','Fernández','La Paz','Bolívar'] },
             'PER': { naam:'Peru', vlag:'🇵🇪', nickname:'La Blanquirroja',
-                woorden:['Guerrero','Cueva','Carrillo','La Blanquirroja','Tapia','Peña','Flores'] },
+                woorden:['Guerrero','Cueva','Carrillo','La Blanquirroja','Tapia','Peña','Flores','Lima','Universitario'] },
             'NED': { naam:'Nederland', vlag:'🇳🇱', nickname:'Oranje',
-                woorden:['Van Dijk','Gakpo','Frenkie de Jong','Dumfries','Reijnders','Oranje','Oranjegekte'] },
+                woorden:['Van Dijk','Gakpo','Frenkie de Jong','Dumfries','Reijnders','Oranje','Oranjegekte','Amsterdam','PSV'] },
             'BEL': { naam:'België', vlag:'🇧🇪', nickname:'Rode Duivels',
-                woorden:['De Bruyne','Lukaku','Doku','Amadou Onana','Faes','Rode Duivels','Brussel'] },
+                woorden:['De Bruyne','Lukaku','Doku','Amadou Onana','Faes','Rode Duivels','Brussel','Club Brugge'] },
             'FRA': { naam:'Frankrijk', vlag:'🇫🇷', nickname:'Les Bleus',
-                woorden:['Mbappé','Griezmann','Tchouaméni','Camavinga','Maignan','Les Bleus','Parijs'] },
+                woorden:['Mbappé','Griezmann','Tchouaméni','Camavinga','Maignan','Les Bleus','Parijs','Paris Saint-Germain'] },
             'GER': { naam:'Duitsland', vlag:'🇩🇪', nickname:'Die Mannschaft',
-                woorden:['Musiala','Wirtz','Kimmich','Havertz','Ter Stegen','Die Mannschaft','Berlin'] },
+                woorden:['Musiala','Wirtz','Kimmich','Havertz','Ter Stegen','Die Mannschaft','Berlin','Bayern München'] },
             'ESP': { naam:'Spanje', vlag:'🇪🇸', nickname:'La Roja',
-                woorden:['Rodri','Lamine Yamal','Pedri','Dani Olmo','Nico Williams','La Roja','Madrid'] },
+                woorden:['Rodri','Lamine Yamal','Pedri','Dani Olmo','Nico Williams','La Roja','Madrid','Real Madrid'] },
             'POR': { naam:'Portugal', vlag:'🇵🇹', nickname:'A Seleção das Quinas',
-                woorden:['Bruno Fernandes','Bernardo Silva','Rúben Dias','Leão','Cristiano Ronaldo','Seleção das Quinas','Lissabon'] },
+                woorden:['Bruno Fernandes','Bernardo Silva','Rúben Dias','Leão','Cristiano Ronaldo','Seleção das Quinas','Lissabon','Sporting CP'] },
             'ENG': { naam:'Engeland', vlag:'🏴󠁧󠁢󠁥󠁮󠁧󠁿', nickname:'The Three Lions',
-                woorden:['Bellingham','Kane','Saka','Foden','Declan Rice','Three Lions','Wembley'] },
+                woorden:['Bellingham','Kane','Saka','Foden','Declan Rice','Three Lions','Wembley','Londen','Manchester City'] },
             'ITA': { naam:'Italië', vlag:'🇮🇹', nickname:'Gli Azzurri',
-                woorden:['Barella','Donnarumma','Scamacca','Gli Azzurri','Chiesa','Tonali','Pellegrini'] },
+                woorden:['Barella','Donnarumma','Scamacca','Gli Azzurri','Chiesa','Tonali','Pellegrini','Rome','Inter'] },
             'CRO': { naam:'Kroatië', vlag:'🇭🇷', nickname:'Vatreni',
-                woorden:['Modrić','Kovačić','Gvardiol','Kramarić','Pašalić','Vatreni','Zagreb'] },
+                woorden:['Modrić','Kovačić','Gvardiol','Kramarić','Pašalić','Vatreni','Zagreb','Dinamo Zagreb'] },
             'DEN': { naam:'Denemarken', vlag:'🇩🇰', nickname:'Danish Dynamite',
-                woorden:['Eriksen','Höjbjerg','Dolberg','Danish Dynamite','Schmeichel','Maehle','Wind'] },
+                woorden:['Eriksen','Höjbjerg','Dolberg','Danish Dynamite','Schmeichel','Maehle','Wind','Kopenhagen','FC København'] },
             'SUI': { naam:'Zwitserland', vlag:'🇨🇭', nickname:'Nati',
-                woorden:['Xhaka','Akanji','Freuler','Zakaria','Ndoye','Nati','Alpen'] },
+                woorden:['Xhaka','Akanji','Freuler','Zakaria','Ndoye','Nati','Alpen','Bern','Young Boys'] },
             'AUT': { naam:'Oostenrijk', vlag:'🇦🇹', nickname:'Das Team',
-                woorden:['Sabitzer','Baumgartner','Laimer','Posch','Schlager','Das Team','Wenen'] },
+                woorden:['Sabitzer','Baumgartner','Laimer','Posch','Schlager','Das Team','Wenen','RB Salzburg'] },
             'POL': { naam:'Polen', vlag:'🇵🇱', nickname:'Biało-Czerwoni',
-                woorden:['Lewandowski','Zieliński','Szymański','Biało-Czerwoni','Szczęsny','Zalewski','Milik'] },
+                woorden:['Lewandowski','Zieliński','Szymański','Biało-Czerwoni','Szczęsny','Zalewski','Milik','Warschau','Legia Warschau'] },
             'SCO': { naam:'Schotland', vlag:'🏴󠁧󠁢󠁳󠁣󠁴󠁿', nickname:'The Tartan Army',
-                woorden:['McTominay','Robertson','McGinn','Gilmour','Angus Gunn','Tartan Army','Hampden Park'] },
+                woorden:['McTominay','Robertson','McGinn','Gilmour','Angus Gunn','Tartan Army','Hampden Park','Edinburgh','Celtic'] },
             'TUR': { naam:'Turkije', vlag:'🇹🇷', nickname:'Ay-Yıldızlılar',
-                woorden:['Çalhanoğlu','Arda Güler','Kenan Yıldız','Demiral','Ferdi Kadıoğlu','Ay-Yıldızlılar','Istanbul'] },
+                woorden:['Çalhanoğlu','Arda Güler','Kenan Yıldız','Demiral','Ferdi Kadıoğlu','Ay-Yıldızlılar','Istanbul','Ankara','Galatasaray'] },
             'CZE': { naam:'Tsjechië', vlag:'🇨🇿', nickname:'Lvi',
-                woorden:['Schick','Souček','Coufal','Provod','Staněk','Lvi','Praag'] },
+                woorden:['Schick','Souček','Coufal','Provod','Staněk','Lvi','Praag','Sparta Praag'] },
             'ROU': { naam:'Roemenië', vlag:'🇷🇴', nickname:'Tricolorii',
-                woorden:['Ianis Hagi','Stanciu','Drăguș','Tricolorii','Alibec','Florinel Coman','Rațiu'] },
+                woorden:['Ianis Hagi','Stanciu','Drăguș','Tricolorii','Alibec','Florinel Coman','Rațiu','Boekarest','FCSB'] },
             'SVK': { naam:'Slowakije', vlag:'🇸🇰', nickname:'Sokolíci',
-                woorden:['Lobotka','Haraslin','Duda','Sokolíci','Skriniar','Weiss','Strelec'] },
+                woorden:['Lobotka','Haraslin','Duda','Sokolíci','Skriniar','Weiss','Strelec','Bratislava','Slovan Bratislava'] },
             'ALB': { naam:'Albanië', vlag:'🇦🇱', nickname:'Shqiponjat',
-                woorden:['Broja','Asllani','Bajrami','Shqiponjat','Gjasula','Ramadani','Hysaj'] },
+                woorden:['Broja','Asllani','Bajrami','Shqiponjat','Gjasula','Ramadani','Hysaj','Tirana','KF Tirana'] },
             'SVN': { naam:'Slovenië', vlag:'🇸🇮', nickname:'Zmaji',
-                woorden:['Šeško','Mlakar','Oblak','Zmaji','Stojanović','Elšnik','Verbič'] },
+                woorden:['Šeško','Mlakar','Oblak','Zmaji','Stojanović','Elšnik','Verbič','Ljubljana','NK Maribor'] },
             'HUN': { naam:'Hongarije', vlag:'🇭🇺', nickname:'Aranycsapat',
-                woorden:['Szoboszlai','Sallai','Nikola Milosevic','Aranycsapat','Gulácsi','Kerkez','Varga'] },
+                woorden:['Szoboszlai','Sallai','Nikola Milosevic','Aranycsapat','Gulácsi','Kerkez','Varga','Boedapest','Ferencváros'] },
             'MAR': { naam:'Marokko', vlag:'🇲🇦', nickname:'Atlas Leeuwen',
-                woorden:['Hakimi','Ziyech','En-Nesyri','Ounahi','Amrabat','Atlas Leeuwen','Rabat'] },
+                woorden:['Hakimi','Ziyech','En-Nesyri','Ounahi','Amrabat','Atlas Leeuwen','Rabat','Raja Casablanca'] },
             'SEN': { naam:'Senegal', vlag:'🇸🇳', nickname:'Les Lions de la Téranga',
-                woorden:['Sadio Mané','Koulibaly','Pape Matar Sarr','Jackson','Mendy','Lions de la Téranga','Dakar'] },
+                woorden:['Sadio Mané','Koulibaly','Pape Matar Sarr','Jackson','Mendy','Lions de la Téranga','Dakar','Jaraaf'] },
             'CMR': { naam:'Kameroen', vlag:'🇨🇲', nickname:'Ontembare Leeuwen',
-                woorden:['Anguissa','Choupo-Moting','Toko Ekambi','Ontembare Leeuwen','Mbeumo','Ondoa','Aboubakar'] },
+                woorden:['Anguissa','Choupo-Moting','Toko Ekambi','Ontembare Leeuwen','Mbeumo','Ondoa','Aboubakar','Yaoundé','Coton Sport'] },
             'CIV': { naam:'Ivoorkust', vlag:'🇨🇮', nickname:'Olifanten',
-                woorden:['Haller','Kessié','Sangaré','Simon Adingra','Diomande','Olifanten','Abidjan'] },
+                woorden:['Haller','Kessié','Sangaré','Simon Adingra','Diomande','Olifanten','Abidjan','ASEC Mimosas'] },
             'EGY': { naam:'Egypte', vlag:'🇪🇬', nickname:'Farao\'s',
-                woorden:['Salah','Marmoush','Trezeguet','Mostafa Mohamed','El Shenawy',"Farao's",'Caïro'] },
+                woorden:['Salah','Marmoush','Trezeguet','Mostafa Mohamed','El Shenawy',"Farao's",'Caïro','Al-Ahly'] },
             'NGA': { naam:'Nigeria', vlag:'🇳🇬', nickname:'Super Eagles',
-                woorden:['Osimhen','Lookman','Iheanacho','Super Eagles','Aina','Chukwueze','Ndidi'] },
+                woorden:['Osimhen','Lookman','Iheanacho','Super Eagles','Aina','Chukwueze','Ndidi','Abuja','Enyimba'] },
             'GHA': { naam:'Ghana', vlag:'🇬🇭', nickname:'Black Stars',
-                woorden:['Mohammed Kudus','Thomas Partey','Iñaki Williams','Salisu','Semenyo','Black Stars','Accra'] },
+                woorden:['Mohammed Kudus','Thomas Partey','Iñaki Williams','Salisu','Semenyo','Black Stars','Accra','Asante Kotoko'] },
             'AUS': { naam:'Australië', vlag:'🇦🇺', nickname:'Socceroos',
-                woorden:['Jackson Irvine','Mathew Ryan','Goodwin','Souttar','Rowles','Socceroos','Sydney'] },
+                woorden:['Jackson Irvine','Mathew Ryan','Goodwin','Souttar','Rowles','Socceroos','Sydney','Canberra','Melbourne Victory'] },
             'JPN': { naam:'Japan', vlag:'🇯🇵', nickname:'Samurai Blue',
-                woorden:['Kubo','Doan','Endo','Mitoma','Itakura','Samurai Blue','Tokyo'] },
+                woorden:['Kubo','Doan','Endo','Mitoma','Itakura','Samurai Blue','Tokyo','Vissel Kobe'] },
             'KOR': { naam:'Zuid-Korea', vlag:'🇰🇷', nickname:'Taeguk Warriors',
-                woorden:['Son Heung-min','Lee Kang-in','Kim Min-jae','Hwang Hee-chan','Hwang In-beom','Taeguk Warriors','Seoul'] },
+                woorden:['Son Heung-min','Lee Kang-in','Kim Min-jae','Hwang Hee-chan','Hwang In-beom','Taeguk Warriors','Seoul','Ulsan HD'] },
             'IRN': { naam:'Iran', vlag:'🇮🇷', nickname:'Team Melli',
-                woorden:['Taremi','Azmoun','Jahanbakhsh','Ghoddos','Mohammadi','Team Melli','Teheran'] },
+                woorden:['Taremi','Azmoun','Jahanbakhsh','Ghoddos','Mohammadi','Team Melli','Teheran','Persepolis'] },
             'SAU': { naam:'Saoedi-Arabië', vlag:'🇸🇦', nickname:'Green Falcons',
-                woorden:['Salem Al-Dawsari','Saud Abdulhamid','Al-Shehri','Kanno','Al-Owais','Green Falcons','Riad'] },
+                woorden:['Salem Al-Dawsari','Saud Abdulhamid','Al-Shehri','Kanno','Al-Owais','Green Falcons','Riad','Al-Hilal'] },
             'QAT': { naam:'Qatar', vlag:'🇶🇦', nickname:'Al-Annabi',
-                woorden:['Akram Afif','Almoez Ali','Mendes','Al-Haydos','Barsham','Al-Annabi','Doha'] },
+                woorden:['Akram Afif','Almoez Ali','Mendes','Al-Haydos','Barsham','Al-Annabi','Doha','Al-Sadd'] },
             'NZL': { naam:'Nieuw-Zeeland', vlag:'🇳🇿', nickname:'All Whites',
-                woorden:['Chris Wood','Cacace','Garbett','Stamenic','Paulsen','All Whites','Auckland'] },
+                woorden:['Chris Wood','Cacace','Garbett','Stamenic','Paulsen','All Whites','Auckland','Wellington','Auckland City FC'] },
             'PAN': { naam:'Panama', vlag:'🇵🇦', nickname:'Los Canaleros',
-                woorden:['Carrasquilla','Fajardo','José Córdoba','Murillo','Mosquera','Los Canaleros','Panama-Stad'] },
+                woorden:['Carrasquilla','Fajardo','José Córdoba','Murillo','Mosquera','Los Canaleros','Panama-Stad','Tauro FC'] },
             'ZAF': { naam:'Zuid-Afrika', vlag:'🇿🇦', nickname:'Bafana Bafana',
-                woorden:['Zwane','Tau','Teboho Mokoena','Khuliso Mudau','Williams','Bafana Bafana','Vuvuzela'] },
+                woorden:['Zwane','Tau','Teboho Mokoena','Khuliso Mudau','Williams','Bafana Bafana','Vuvuzela','Pretoria','Mamelodi Sundowns'] },
             'BIH': { naam:'Bosnië-Herzegovina', vlag:'🇧🇦', nickname:'Zmajevi',
-                woorden:['Džeko','Demirović','Dedić','Kolašinac','Hadžikadunić','Zmajevi','Sarajevo'] },
+                woorden:['Džeko','Demirović','Dedić','Kolašinac','Hadžikadunić','Zmajevi','Sarajevo','Zrinjski Mostar'] },
             'HAI': { naam:'Haïti', vlag:'🇭🇹', nickname:'Les Grenadiers',
                 woorden:['Duckens Nazon','Frantzdy Pierrot','Metusala','Arcus','Placide','Les Grenadiers','Port-au-Prince'] },
             'CUW': { naam:'Curaçao', vlag:'🇨🇼', nickname:'Los Matadors',
                 woorden:['Juninho Bacuna','Jearl Margaritha','Anita','Gorré','Room','Los Matadors','Willemstad'] },
             'SWE': { naam:'Zweden', vlag:'🇸🇪', nickname:'Blågult',
-                woorden:['Isak','Kulusevski','Gyökeres','Elanga','Lindelöf','Blågult','Stockholm'] },
+                woorden:['Isak','Kulusevski','Gyökeres','Elanga','Lindelöf','Blågult','Stockholm','Malmö FF'] },
             'TUN': { naam:'Tunesië', vlag:'🇹🇳', nickname:'Arenden van Carthago',
-                woorden:['Laidouni','Skhiri','Talbi','Abdi','Dahmen','Arenden van Carthago','Tunis'] },
+                woorden:['Laidouni','Skhiri','Talbi','Abdi','Dahmen','Arenden van Carthago','Tunis','Espérance Tunis'] },
             'CPV': { naam:'Kaapverdië', vlag:'🇨🇻', nickname:'Tubarões Azuis',
                 woorden:['Ryan Mendes','Logan Costa','Jovane Cabral','Bebé','Vozinha','Tubarões Azuis','Praia'] },
             'IRQ': { naam:'Irak', vlag:'🇮🇶', nickname:'Leeuwen van Mesopotamië',
-                woorden:['Aymen Hussein','Ali Jasim','Amyn','Sulaka','Hassan','Leeuwen van Mesopotamië','Bagdad'] },
+                woorden:['Aymen Hussein','Ali Jasim','Amyn','Sulaka','Hassan','Leeuwen van Mesopotamië','Bagdad','Al-Shorta'] },
             'NOR': { naam:'Noorwegen', vlag:'🇳🇴', nickname:'Viking',
-                woorden:['Haaland','Ødegaard','Sørloth','Berge','Ryerson','Viking','Oslo'] },
+                woorden:['Haaland','Ødegaard','Sørloth','Berge','Ryerson','Viking','Oslo','Bodø/Glimt'] },
             'JOR': { naam:'Jordanië', vlag:'🇯🇴', nickname:'Al-Nashama',
-                woorden:['Musa Al-Taamari','Yazan Al-Naimat','Olwan','Al-Mardi','Abualaila','Al-Nashama','Amman'] },
+                woorden:['Musa Al-Taamari','Yazan Al-Naimat','Olwan','Al-Mardi','Abualaila','Al-Nashama','Amman','Al-Faisaly'] },
             'ALG': { naam:'Algerije', vlag:'🇩🇿', nickname:'Les Fennecs',
-                woorden:['Mahrez','Bennacer','Aït-Nouri','Gouiri','Mandrea','Les Fennecs','Algiers'] },
+                woorden:['Mahrez','Bennacer','Aït-Nouri','Gouiri','Mandrea','Les Fennecs','Algiers','MC Alger'] },
             'COD': { naam:'Congo', vlag:'🇨🇩', nickname:'Leoparden',
-                woorden:['Wissa','Chancel Mbemba','Elia','Moutoussamy','Banza','Leoparden','Kinshasa'] },
+                woorden:['Wissa','Chancel Mbemba','Elia','Moutoussamy','Banza','Leoparden','Kinshasa','TP Mazembe'] },
             'UZB': { naam:'Oezbekistan', vlag:'🇺🇿', nickname:'Oq Burgutlar',
-                woorden:['Shomurodov','Fayzullaev','Masharipov','Ashurmatov','Yusupov','Oq Burgutlar','Tasjkent'] }
+                woorden:['Shomurodov','Fayzullaev','Masharipov','Ashurmatov','Yusupov','Oq Burgutlar','Tasjkent','Pakhtakor'] }
         };
 
         // Definitieve groepsindeling WK 2026 (bron: KPN/FIFA speelschema)
@@ -7015,7 +7039,7 @@ h1{font-size:13pt;text-align:center;margin-bottom:6mm;}
                     btn.disabled = false;
                     return;
                 }
-                const words = pickRandom(pool, 16);
+                const words = pickRandom(pool, 16, wkTermWeight);
                 const myOrder = wkShuffleArray([0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]);
 
                 // Vind een unieke code (max 6 pogingen)
@@ -7607,7 +7631,7 @@ h1{font-size:13pt;text-align:center;margin-bottom:6mm;}
             wkUpdateRefreshUI();
 
             const pool = getWordPool(matchId);
-            wkCurrentWords = pickRandom(pool, 16);
+            wkCurrentWords = pickRandom(pool, 16, wkTermWeight);
             wkWinningLines.clear();
             document.getElementById('wk-bingo-lines').innerHTML = '';
 
@@ -7661,7 +7685,7 @@ h1{font-size:13pt;text-align:center;margin-bottom:6mm;}
             wkUpdateRefreshUI();
             if (wkCurrentMatchId) {
                 const pool = getWordPool(wkCurrentMatchId);
-                wkCurrentWords = pickRandom(pool, 16);
+                wkCurrentWords = pickRandom(pool, 16, wkTermWeight);
             }
             wkWinningLines.clear();
             document.getElementById('wk-bingo-lines').innerHTML = '';
