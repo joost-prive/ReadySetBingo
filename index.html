@@ -2978,6 +2978,9 @@
                 border-radius: 36px;
                 max-height: 88vh;
             }
+            /* wc-mode heeft geen header → container moet passen binnen
+               viewport minus body-padding (80px) + footer (~36px) + buffer */
+            body.wc-mode .container { max-height: calc(100dvh - 140px); }
             h2 { font-size: 1.5rem; margin-bottom: 20px; }
             .screen-header { margin-bottom: 24px; }
             .screen-header h2 { font-size: 1.35rem; }
