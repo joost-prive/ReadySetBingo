@@ -4011,7 +4011,7 @@ h1{font-size:13pt;text-align:center;margin-bottom:6mm;}
             const isMe   = uid === myUid;
             const isHost = uid === hostUid;
             const termHtml = p.term
-                ? `<span class="bb-tag-term">"${p.term}"</span>`
+                ? `<span class="bb-tag-term">"${escapeHtml(p.term)}"</span>`
                 : `<span class="bb-tag-term pending">nog geen term</span>`;
             const penaltyHtml = opts.showPenalty
                 ? `<span class="bb-tag-penalty">${opts.penalty || 0}</span>`
@@ -4028,7 +4028,7 @@ h1{font-size:13pt;text-align:center;margin-bottom:6mm;}
                 <div class="${cls}" ${dataAttrs}>
                     <div class="bb-player-row-left">
                         ${isHost ? '<span class="bb-tag-host">👑</span>' : ''}
-                        <span class="bb-player-row-name">${p.name}${isMe ? ' (jij)' : ''}</span>
+                        <span class="bb-player-row-name">${escapeHtml(p.name)}${isMe ? ' (jij)' : ''}</span>
                     </div>
                     <div class="bb-player-row-right">
                         ${termHtml}
@@ -4122,7 +4122,7 @@ h1{font-size:13pt;text-align:center;margin-bottom:6mm;}
                         <div class="bb-section-title" style="margin-top:14px;">Jouw term</div>
                         <div class="bb-my-card">
                             <div class="bb-my-card-label">Toegewezen aan jou</div>
-                            <div class="bb-my-card-value">"${me.term}"</div>
+                            <div class="bb-my-card-value">"${escapeHtml(me.term)}"</div>
                         </div>
                         ${bbResetTermBtnHtml(me, freeTerms.length === 0)}
                     `}
@@ -4284,7 +4284,7 @@ h1{font-size:13pt;text-align:center;margin-bottom:6mm;}
             // data-uid op alle tegels (ook eigen) zodat hit-flash ze kan selecteren;
             // onclick alleen op niet-eigen tegels.
             const clickAttr = isMine ? '' : `onclick="bbOnClaimClick(this)"`;
-            const ownerLabel = isMine ? 'JIJ' : p.name;
+            const ownerLabel = isMine ? 'JIJ' : escapeHtml(p.name);
             const ownerCls = isMine ? 'bb-tile-owner is-mine-tag' : 'bb-tile-owner';
             const penaltyHtml = penalty > 0
                 ? `<span class="bb-tile-penalty">${penalty}</span>`
@@ -4293,7 +4293,7 @@ h1{font-size:13pt;text-align:center;margin-bottom:6mm;}
                 <div class="${cls}" data-uid="${uid}" ${clickAttr}>
                     <span class="${ownerCls}">${ownerLabel}</span>
                     ${penaltyHtml}
-                    <div class="bb-tile-term">${p.term}</div>
+                    <div class="bb-tile-term">${escapeHtml(p.term)}</div>
                 </div>`;
         }
 
@@ -4337,7 +4337,7 @@ h1{font-size:13pt;text-align:center;margin-bottom:6mm;}
                 <div class="bb-my-card">
                     <div class="bb-my-card-label">Jouw term</div>
                     ${me?.term
-                        ? `<div class="bb-my-card-value">"${me.term}"</div>`
+                        ? `<div class="bb-my-card-value">"${escapeHtml(me.term)}"</div>`
                         : `<div class="bb-my-card-value pending">Geen term — pak er een via "Verlaat" → opnieuw joinen</div>`}
                     <span class="bb-my-card-penalty">${penalties[myUid] || 0} strafpunten</span>
                 </div>
@@ -4400,7 +4400,7 @@ h1{font-size:13pt;text-align:center;margin-bottom:6mm;}
             return ranked.map((r, i) => `
                 <div class="wk-leaderboard-row ${r.uid === myUid ? 'is-me' : ''}">
                     <span class="wk-leaderboard-rank">${rankEmojis[i] || (i+1)}</span>
-                    <span class="wk-leaderboard-name">${r.name}${r.uid === myUid ? ' (jij)' : ''}</span>
+                    <span class="wk-leaderboard-name">${escapeHtml(r.name)}${r.uid === myUid ? ' (jij)' : ''}</span>
                     <span class="wk-leaderboard-score">${r.score}</span>
                 </div>
             `).join('');
