@@ -17,14 +17,15 @@
 <body class="light">
 
     <script>
-        // ─── Site-mode detectie (worldcupbingo2026.nl) ────────────────────
-        // Onder dit domein tonen we een afgeslankte homepage met alleen
+        // ─── Site-mode detectie (worldcupbingo2026.nl / .com) ─────────────
+        // Onder deze domeinen tonen we een afgeslankte homepage met alleen
         // WK Bingo en BorrelBingo, en verbergen we de globale Ready-Set-Bingo
         // header. Lokaal testen kan via ?wc=1 in de URL.
         (function() {
             try {
                 const h = (location.hostname || '').toLowerCase();
                 const isWC = h.endsWith('worldcupbingo2026.nl')
+                          || h.endsWith('worldcupbingo2026.com')
                           || new URLSearchParams(location.search).has('wc');
                 if (isWC) document.body.classList.add('wc-mode');
             } catch (e) { /* geen DOM/URL → niets doen */ }
