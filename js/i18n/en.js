@@ -78,6 +78,7 @@ export default {
         resetNoLeft:         "🎲 No resets left",
         resetWithNoFree:     "🎲 Other term ({{left}} left · no free term)",
         resetWithLeft:       "🎲 Other term ({{left}} left)",
+        resetWaitPlayers:    "🎲 Other term (from 3 players in the room)",
     },
 
     wkShare: {

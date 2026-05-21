@@ -79,6 +79,7 @@ export default {
         resetNoLeft:         "🎲 Geen resets meer",
         resetWithNoFree:     "🎲 Andere term ({{left}} over · geen vrije term)",
         resetWithLeft:       "🎲 Andere term ({{left}} over)",
+        resetWaitPlayers:    "🎲 Andere term (vanaf 3 spelers in de kamer)",
     },
 
     wkShare: {

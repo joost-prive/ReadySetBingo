@@ -4044,16 +4044,21 @@ h1{font-size:13pt;text-align:center;margin-bottom:6mm;}
 
         // ─── Reset-term-knop (hergebruikt in lobby en spel) ───
         // Geeft de speler max 3x een nieuwe term, mits er nog een vrije is.
+        // In de lobby is rerollen pas toegestaan bij ≥3 spelers (anders zou je
+        // jezelf in z'n eentje een gunstige term kunnen geven).
         const BB_MAX_RESETS = 3;
-        function bbResetTermBtnHtml(me, noOtherFreeTerm) {
+        const BB_MIN_PLAYERS_FOR_RESET = 3;
+        function bbResetTermBtnHtml(me, noOtherFreeTerm, tooFewPlayers) {
             const used = me?.resetsUsed || 0;
             const left = Math.max(0, BB_MAX_RESETS - used);
-            const disabled = left === 0 || noOtherFreeTerm;
-            const label = left === 0
-                ? t('borrel.resetNoLeft')
-                : noOtherFreeTerm
-                    ? t('borrel.resetWithNoFree', { left })
-                    : t('borrel.resetWithLeft', { left });
+            const disabled = left === 0 || noOtherFreeTerm || tooFewPlayers;
+            const label = tooFewPlayers
+                ? t('borrel.resetWaitPlayers')
+                : left === 0
+                    ? t('borrel.resetNoLeft')
+                    : noOtherFreeTerm
+                        ? t('borrel.resetWithNoFree', { left })
+                        : t('borrel.resetWithLeft', { left });
             return `
                 <button class="wk-mp-btn secondary bb-reset-term-btn" id="bb-reset-mine-btn"
                         onclick="bbResetMyTerm()"
@@ -4129,7 +4134,7 @@ h1{font-size:13pt;text-align:center;margin-bottom:6mm;}
                             <div class="bb-my-card-label">Toegewezen aan jou</div>
                             <div class="bb-my-card-value">"${escapeHtml(me.term)}"</div>
                         </div>
-                        ${bbResetTermBtnHtml(me, freeTerms.length === 0)}
+                        ${bbResetTermBtnHtml(me, freeTerms.length === 0, playersArr.length < BB_MIN_PLAYERS_FOR_RESET)}
                     `}
 
                     ${isHost ? `
@@ -4197,6 +4202,12 @@ h1{font-size:13pt;text-align:center;margin-bottom:6mm;}
                     if (!me) throw new Error('Je bent niet in deze kamer');
                     const usedSoFar = me.resetsUsed || 0;
                     if (usedSoFar >= BB_MAX_RESETS) throw new Error('Geen resets meer beschikbaar');
+                    // In de lobby pas rerollen vanaf 3 spelers (anders kan iemand
+                    // zichzelf in z'n eentje een gunstige term geven).
+                    const playerCount = Object.keys(data.players || {}).length;
+                    if (data.status === 'lobby' && playerCount < BB_MIN_PLAYERS_FOR_RESET) {
+                        throw new Error('Wacht tot er minimaal 3 spelers in de kamer zijn');
+                    }
                     // Vrije termen, exclusief huidige eigen term (anders kan dezelfde getrokken worden)
                     const used = new Set(
                         Object.entries(data.players || {})
