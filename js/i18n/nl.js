@@ -61,8 +61,10 @@ export default {
 
     borrel: {
         header:              "🍻 BorrelBingo",
-        mpTitle:             "🍻 Term-roulette met vrienden",
-        mpSub:               "Iedere speler krijgt random een term. Wordt 'ie genoemd op tv? Strafpunt! Heb je al een kamercode? Doe mee. Of kies hieronder een wedstrijd om zélf een kamer te starten.",
+        howToPlay:           "🍻 Zo speel je BorrelBingo",
+        howToPlayText:       "Iedere speler krijgt random een term. Wordt 'ie genoemd op tv? Strafpunt!",
+        mpTitle:             "🎉 Speel met vrienden",
+        joinSub:             "Heb je al een kamercode? Doe mee. Of kies hieronder een wedstrijd om zélf een kamer te starten.",
         mpOffline:           "⚠ BorrelBingo vereist een internetverbinding.",
         createModalTitle:    "➕ Maak een BorrelBingo-kamer",
         yourName:            "Jouw naam",

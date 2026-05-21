@@ -60,8 +60,10 @@ export default {
 
     borrel: {
         header:              "🍻 BingeBingo",
-        mpTitle:             "🍻 Term roulette with friends",
-        mpSub:               "Each player gets a random term. If it's mentioned on TV? Penalty point! Got a room code already? Join. Or pick a match below to start your own room.",
+        howToPlay:           "🍻 How to play BingeBingo",
+        howToPlayText:       "Each player gets a random term. If it's mentioned on TV? Penalty point!",
+        mpTitle:             "🎉 Play with friends",
+        joinSub:             "Got a room code already? Join. Or pick a match below to start your own room.",
         mpOffline:           "⚠ BingeBingo requires an internet connection.",
         createModalTitle:    "➕ Create a BingeBingo room",
         yourName:            "Your name",
