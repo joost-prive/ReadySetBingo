@@ -2995,9 +2995,10 @@
                 border-radius: 36px;
                 max-height: 88vh;
             }
-            /* wc-mode heeft geen header → container moet passen binnen
-               viewport minus body-padding (80px) + footer (~36px) + buffer */
-            body.wc-mode .container { max-height: calc(100dvh - 140px); }
+            /* wc-mode heeft geen header → container mag bijna tot aan de
+               footer doorlopen zodat alle content (hero + intro + tegels)
+               binnen viewport past zonder interne scrollbar */
+            body.wc-mode .container { max-height: calc(100dvh - 100px); }
             h2 { font-size: 1.5rem; margin-bottom: 20px; }
             .screen-header { margin-bottom: 24px; }
             .screen-header h2 { font-size: 1.35rem; }
@@ -3079,8 +3080,8 @@
             border: 3px solid;
             border-image: linear-gradient(135deg, #d4af37 0%, #fbbf24 50%, #8b6914 100%) 1;
             border-radius: 8px;
-            padding: 18px 20px 16px;
-            margin-bottom: 18px;
+            padding: 12px 18px 12px;
+            margin-bottom: 12px;
             color: #3d2914;
             box-shadow: 0 4px 12px rgba(61,41,20,.3), inset 0 0 0 1px rgba(254,249,231,.6);
             transform: rotate(-0.4deg);
@@ -3088,7 +3089,7 @@
         }
         body.wc-mode .wc-intro-title {
             font-family: 'Bebas Neue', sans-serif;
-            font-size: 1.6rem;
+            font-size: 1.3rem;
             font-weight: 400;
             letter-spacing: 2px;
             text-transform: uppercase;
@@ -3098,15 +3099,27 @@
         }
         body.wc-mode .wc-intro-list {
             list-style: none; margin: 0; padding: 0;
-            display: flex; flex-direction: column; gap: 7px;
+            display: flex; flex-direction: column; gap: 5px;
         }
         body.wc-mode .wc-intro-list li {
-            font-size: .85rem; color: #3d2914;
-            display: flex; gap: 8px; align-items: flex-start; line-height: 1.4;
+            font-size: .82rem; color: #3d2914;
+            display: flex; gap: 8px; align-items: flex-start; line-height: 1.35;
         }
         body.wc-mode .wc-intro-list li::before {
             content: '⚽'; font-size: .85rem; flex-shrink: 0; margin-top: 1px;
             filter: drop-shadow(0 1px 1px rgba(61,41,20,.4));
+        }
+
+        /* Compactere hero in wc-mode op desktop: WK Bingo en BorrelBingo
+           tegels blijven daardoor zonder scrollen in beeld. */
+        @media (min-width: 768px) {
+            body.wc-mode .wc-banner-hero { min-height: 180px; }
+            body.wc-mode .wc-banner-hero .wk-banner-content {
+                padding: 26px 36px 22px;
+            }
+            body.wc-mode .wc-banner-hero .wk-banner-title {
+                font-size: 3rem; letter-spacing: 3px;
+            }
         }
 
         /* ── Taalswitcher (vast rechtsboven, ook in wc-mode zichtbaar) ─────────
