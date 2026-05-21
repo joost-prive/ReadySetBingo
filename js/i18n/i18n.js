@@ -26,12 +26,21 @@ let currentLang = FALLBACK;
 let dict = nl;
 
 function detectInitialLang() {
-    // Default = Nederlands. Browser-taal wordt NIET meer gebruikt zodat
-    // ook bezoekers met een EN-browser standaard NL te zien krijgen.
-    // Alleen een eerdere expliciete keuze (in localStorage) overschrijft dit.
+    // Volgorde:
+    //   1. Expliciete eerdere keuze in localStorage (gebruiker wint altijd)
+    //   2. Domein: .nl → nl, .com → en
+    //   3. Browser-taal (nl of en)
+    //   4. Fallback NL
     try {
         const stored = localStorage.getItem(STORAGE_KEY);
         if (stored && SUPPORTED.includes(stored)) return stored;
+
+        const host = (location.hostname || '').toLowerCase();
+        if (host.endsWith('worldcupbingo2026.nl')) return 'nl';
+        if (host.endsWith('worldcupbingo2026.com')) return 'en';
+
+        const browserLang = (navigator.language || '').toLowerCase().slice(0, 2);
+        if (SUPPORTED.includes(browserLang)) return browserLang;
     } catch (e) { /* ignore */ }
     return FALLBACK;
 }
