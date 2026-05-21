@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Ready Set Bingooooo!</title>
+    <link rel="icon" id="site-favicon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='46' fill='%23ff5e62'/%3E%3Ccircle cx='50' cy='50' r='30' fill='%23fef9e7'/%3E%3Ctext x='50' y='66' font-family='Arial Black,sans-serif' font-size='42' font-weight='900' text-anchor='middle' fill='%233d2914'%3E7%3C/text%3E%3C/svg%3E">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -20,14 +21,23 @@
         // ─── Site-mode detectie (worldcupbingo2026.nl / .com) ─────────────
         // Onder deze domeinen tonen we een afgeslankte homepage met alleen
         // WK Bingo en BorrelBingo, en verbergen we de globale Ready-Set-Bingo
-        // header. Lokaal testen kan via ?wc=1 in de URL.
+        // header. In WC-mode wisselen we ook tab-titel en favicon naar de
+        // WK-variant. Lokaal testen kan via ?wc=1 in de URL.
         (function() {
             try {
                 const h = (location.hostname || '').toLowerCase();
                 const isWC = h.endsWith('worldcupbingo2026.nl')
                           || h.endsWith('worldcupbingo2026.com')
                           || new URLSearchParams(location.search).has('wc');
-                if (isWC) document.body.classList.add('wc-mode');
+                if (isWC) {
+                    document.body.classList.add('wc-mode');
+                    document.title = 'WK Bingo 2026';
+                    const fav = document.getElementById('site-favicon');
+                    if (fav) {
+                        const svg = "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚽</text></svg>";
+                        fav.href = 'data:image/svg+xml,' + encodeURIComponent(svg);
+                    }
+                }
             } catch (e) { /* geen DOM/URL → niets doen */ }
         })();
     </script>
