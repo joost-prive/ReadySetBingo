@@ -41,7 +41,13 @@
                           || new URLSearchParams(location.search).has('wc');
                 if (isWC) {
                     document.body.classList.add('wc-mode');
-                    document.title = 'WK Bingo 2026';
+                    // Alleen overschrijven als de SSR-titel niet al gezet is door
+                    // de Pages Function (functions/_middleware.js). Op productie-
+                    // domeinen krijgen we daar een rijkere SEO-titel; bij lokaal
+                    // testen via ?wc=1 valt de korte titel hier in.
+                    if (document.title === 'Ready Set Bingooooo!') {
+                        document.title = 'WK Bingo 2026';
+                    }
                     const fav = document.getElementById('site-favicon');
                     if (fav) {
                         const svg = "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚽</text></svg>";
@@ -107,7 +113,7 @@
                 <div class="wk-banner-overlay"></div>
                 <div class="wk-banner-content">
                     <div class="wk-banner-badge" data-i18n="home.wc.badge">FIFA World Cup 2026</div>
-                    <h2 class="wk-banner-title" data-i18n="home.wc.title">WK Bingo 2026</h2>
+                    <h1 class="wk-banner-title" data-i18n="home.wc.title">WK Bingo 2026</h1>
                     <p class="wk-banner-sub" data-i18n="home.wc.sub">Verenigde Staten &nbsp;·&nbsp; Canada &nbsp;·&nbsp; Mexico &nbsp;·&nbsp; Juni – Juli 2026</p>
                 </div>
             </div>
