@@ -2,3 +2,10 @@
 .env
 keys/
 .wrangler/
+
+# Live: pre-WK cron-script (Node)
+node_modules/
+*.log
+# Service-account JSONs mogen NOOIT in de repo — altijd via GitHub Secrets
+firebase-adminsdk-*.json
+serviceAccount*.json

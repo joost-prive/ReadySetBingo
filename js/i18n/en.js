@@ -44,8 +44,29 @@ export default {
             spotify:   { title: "Spotify Bingo",          desc: "Bingo with your playlist" },
             wk:        { title: "World Cup Bingo",        desc: "Bingo during the World Cup", badge: "2026" },
             borrel:    { title: "BingeBingo",             desc: "Term-roulette with your friends", badge: "NEW" },
+            // ═══ LIVE-FEATURE START ═══
+            live:      { title: "Live: pre-WC",           desc: "Play with today's matches", badge: "LIVE" },
+            // ═══ LIVE-FEATURE END ═══
         },
     },
+
+    // ═══ LIVE-FEATURE START ═══
+    live: {
+        header:         "⚡ Live: pre-WC",
+        introTitle:     "⚡ Play now, with real football",
+        introText:      "Pick an international match from today or the coming days, and play Bingo or BingeBingo with the players and terms of both countries.",
+        currentMatches: "Current matches",
+        loading:        "Loading matches…",
+        noneNow:        "No internationals within 48 hours. Check back later!",
+        error:          "Failed to load matches. Please try again later.",
+        offline:        "⚠ Matches are only available online.",
+        lastUpdate:     "Updated:",
+        bingoSolo:      "Bingo (Solo)",
+        bingoMp:        "Bingo (With friends)",
+        borrel:         "BingeBingo",
+        mpOffline:      "Multiplayer requires an internet connection",
+    },
+    // ═══ LIVE-FEATURE END ═══
 
     mycards: {
         header:           "🃏 My Bingo cards",
