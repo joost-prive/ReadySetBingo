@@ -174,6 +174,17 @@
                     <div class="tile-badge" data-i18n="home.tile.borrel.badge">NIEUW</div>
                 </div>
 
+                <!-- ═══════════════════════════ LIVE-FEATURE START ═══════════════════════════ -->
+                <!-- Tegel is verborgen tot kill-switch in Firestore (liveConfig.enabled) op true staat.
+                     Bij rollback: dit blok + de andere LIVE-FEATURE-blokken weggooien, klaar. -->
+                <div class="menu-tile wc-tile live-tile" id="live-tile" onclick="goTo('screen-live')" style="display:none;">
+                    <div class="tile-icon">⚡</div>
+                    <div class="tile-title" data-i18n="home.tile.live.title">Live: pre-WK</div>
+                    <div class="tile-desc" data-i18n="home.tile.live.desc">Speel met wedstrijden van vandaag</div>
+                    <div class="tile-badge" data-i18n="home.tile.live.badge">LIVE</div>
+                </div>
+                <!-- ════════════════════════════ LIVE-FEATURE END ════════════════════════════ -->
+
             </div>
         </div>
 
@@ -1029,6 +1040,54 @@
                 </div>
             </div>
         </div>
+
+        <!-- ═══════════════════════════ LIVE-FEATURE START ═══════════════════════════ -->
+        <!-- Live: pre-WK scherm. Hergebruikt de WK/Borrel-modal-styling en flow.
+             Bij rollback: dit blok + de andere LIVE-FEATURE-blokken weggooien. -->
+        <div id="screen-live" class="screen">
+            <div class="screen-header">
+                <button class="btn-back" onclick="goHome()"><span data-i18n="common.back">← Terug</span></button>
+                <h2 data-i18n="live.header">⚡ Live: pre-WK</h2>
+            </div>
+
+            <div class="wk-intro live-intro">
+                <div class="wk-intro-title" data-i18n="live.introTitle">⚡ Speel nu, met écht voetbal</div>
+                <p data-i18n="live.introText" style="font-family:'Playfair Display',serif;font-style:italic;font-size:.85rem;color:#3d2914;margin:0;line-height:1.4;">Kies een interland van vandaag of de komende dagen, en speel Bingo of BorrelBingo met de spelers en termen van beide landen.</p>
+            </div>
+
+            <div class="live-card">
+                <div class="live-card-header">
+                    <h3 class="live-card-title" data-i18n="live.currentMatches">Huidige wedstrijden</h3>
+                    <div class="live-meta" id="live-last-update"></div>
+                </div>
+                <div id="live-matches-list" class="live-matches-list">
+                    <div class="live-loading" data-i18n="live.loading">Wedstrijden laden…</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Klik-op-wedstrijd modal: kies Bingo Solo / Bingo MP / BorrelBingo -->
+        <div id="live-match-action-modal" class="wk-modal-overlay">
+            <div class="wk-modal">
+                <h3 class="wk-modal-title" id="live-match-action-title" data-i18n="wk.modalMatch">Wedstrijd</h3>
+                <div class="wk-match-action-sub" id="live-match-action-sub"></div>
+                <div class="wk-match-actions live-match-actions">
+                    <button class="wk-match-action-btn solo" type="button" id="live-action-bingo-solo">
+                        <span class="wk-action-icon">⚽</span><span data-i18n="live.bingoSolo">Bingo (Solo)</span>
+                    </button>
+                    <button class="wk-match-action-btn multi" type="button" id="live-action-bingo-mp">
+                        <span class="wk-action-icon">👥</span><span data-i18n="live.bingoMp">Bingo (Met vrienden)</span>
+                    </button>
+                    <button class="wk-match-action-btn borrel" type="button" id="live-action-borrel">
+                        <span class="wk-action-icon">🍻</span><span data-i18n="live.borrel">BorrelBingo</span>
+                    </button>
+                </div>
+                <div class="wk-modal-actions" style="margin-top:14px;">
+                    <button class="wk-mp-btn secondary" onclick="liveCloseModal()" data-i18n="common.cancel">Annuleren</button>
+                </div>
+            </div>
+        </div>
+        <!-- ════════════════════════════ LIVE-FEATURE END ════════════════════════════ -->
 
         <!-- Deel-keuze modal: WhatsApp + Kopieer -->
         <div id="wk-share-choice-modal" class="wk-modal-overlay">

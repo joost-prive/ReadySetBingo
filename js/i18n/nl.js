@@ -45,8 +45,29 @@ export default {
             spotify:   { title: "Spotify Bingo",          desc: "Bingo met jouw afspeellijst" },
             wk:        { title: "WK Bingo",               desc: "Bingo tijdens het WK", badge: "2026" },
             borrel:    { title: "BorrelBingo",            desc: "Term-roulette met je vrienden", badge: "NIEUW" },
+            // ═══ LIVE-FEATURE START ═══
+            live:      { title: "Live: pre-WK",           desc: "Speel met wedstrijden van vandaag", badge: "LIVE" },
+            // ═══ LIVE-FEATURE END ═══
         },
     },
+
+    // ═══ LIVE-FEATURE START ═══
+    live: {
+        header:         "⚡ Live: pre-WK",
+        introTitle:     "⚡ Speel nu, met écht voetbal",
+        introText:      "Kies een interland van vandaag of de komende dagen, en speel Bingo of BorrelBingo met de spelers en termen van beide landen.",
+        currentMatches: "Huidige wedstrijden",
+        loading:        "Wedstrijden laden…",
+        noneNow:        "Geen interlands binnen 48 uur. Kom later terug!",
+        error:          "Wedstrijden ophalen mislukt. Probeer het later opnieuw.",
+        offline:        "⚠ Wedstrijden zijn alleen online beschikbaar.",
+        lastUpdate:     "Bijgewerkt:",
+        bingoSolo:      "Bingo (Solo)",
+        bingoMp:        "Bingo (Met vrienden)",
+        borrel:         "BorrelBingo",
+        mpOffline:      "Multiplayer vereist een internetverbinding",
+    },
+    // ═══ LIVE-FEATURE END ═══
 
     mycards: {
         header:           "🃏 Mijn Bingo-kaarten",

@@ -1,0 +1,56 @@
+# ═════════════════════════════════════════════════════════════════════════════
+# LIVE: PRE-WK — scheduled precompute
+# ─────────────────────────────────────────────────────────────────────────────
+# Draait 3× per dag de cron die ESPN-interlands ophaalt, voor onbekende landen
+# OpenAI bevraagt, en het resultaat naar Firestore schrijft.
+#
+# Reversibility:
+#   - Workflow tijdelijk uit: GitHub → Actions → "Live precompute" → "..." → Disable
+#   - Volledig verwijderen: dit bestand weggooien (en evt. node_modules-cache)
+#   - Spoor in Firestore opruimen: liveConfig/liveMatches/liveTeams docs deleten
+#
+# Secrets die deze workflow nodig heeft (al ingericht door de gebruiker):
+#   - OPENAI_API_KEY            : voor team-metadata via gpt-4o-mini
+#   - FIREBASE_SERVICE_ACCOUNT  : JSON van Firebase Admin SDK service-account
+# ═════════════════════════════════════════════════════════════════════════════
+
+name: Live precompute
+
+on:
+  schedule:
+    # 06:00, 14:00, 20:00 UTC — drie momenten per dag. (UTC; Europe/Amsterdam = +1 of +2)
+    - cron: '0 6 * * *'
+    - cron: '0 14 * * *'
+    - cron: '0 20 * * *'
+  workflow_dispatch:
+    # Handmatige trigger via GitHub UI — handig voor eerste test of debugging.
+
+# Eén run tegelijk: voorkomt double-writes als 2 schedules per ongeluk overlappen.
+concurrency:
+  group: live-precompute
+  cancel-in-progress: false
+
+jobs:
+  precompute:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci --omit=dev || npm install --omit=dev
+
+      - name: Run precompute
+        env:
+          OPENAI_API_KEY:           ${{ secrets.OPENAI_API_KEY }}
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          LIVE_APP_ID:              thuisbingo-global
+        run: npm run live-precompute
