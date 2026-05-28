@@ -155,7 +155,13 @@ function matchItemHtml(m) {
     const kickoff = formatKickoff(m.kickoffUtc);
 
     return `
-        <div class="live-match-item" id="live-m-${safeId(m.id)}" role="button" tabindex="0">
+        <div class="live-match-item" id="live-m-${safeId(m.id)}" role="button" tabindex="0"
+             data-track="match_click"
+             data-track-match-id="${escapeHtml(m.id || '')}"
+             data-track-team1="${escapeHtml(t1.fifaCode || '')}"
+             data-track-team2="${escapeHtml(t2.fifaCode || '')}"
+             data-track-competition="${escapeHtml(m.competition || '')}"
+             data-track-context="live">
             <div class="live-match-row">
                 <div class="live-match-team">${t1flag} <span class="live-match-team-name">${t1name}</span></div>
                 <div class="live-match-vs">vs</div>
@@ -192,9 +198,21 @@ window.liveOpenModal = function(matchId) {
     btnMP.disabled = !canMP;
     btnMP.title = canMP ? '' : (t('live.mpOffline') || 'Multiplayer vereist een internetverbinding');
 
-    document.getElementById('live-action-bingo-solo').onclick = () => liveStart(m, 'bingo-solo');
-    btnMP.onclick = () => { if (canMP) liveStart(m, 'bingo-mp'); };
-    document.getElementById('live-action-borrel').onclick = () => liveStart(m, 'borrel');
+    const trackAction = (action) => {
+        if (typeof window.track !== 'function') return;
+        window.track('match_action', {
+            action,
+            match_id: m.id || '',
+            team1: (m.team1 && m.team1.fifaCode) || '',
+            team2: (m.team2 && m.team2.fifaCode) || '',
+            competition: m.competition || '',
+            context: 'live',
+        });
+    };
+
+    document.getElementById('live-action-bingo-solo').onclick = () => { trackAction('bingo-solo'); liveStart(m, 'bingo-solo'); };
+    btnMP.onclick = () => { if (canMP) { trackAction('bingo-mp'); liveStart(m, 'bingo-mp'); } };
+    document.getElementById('live-action-borrel').onclick = () => { trackAction('borrel'); liveStart(m, 'borrel'); };
 
     document.getElementById('live-match-action-modal').classList.add('show');
 };
