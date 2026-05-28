@@ -200,6 +200,8 @@ function buildJsonLd(m, isCom, canonical, faq) {
 
 function headExtras(m, canonical, isCom, faq) {
     return `
+    <link rel="preconnect" href="https://images.pexels.com">
+    <link rel="preload" as="image" fetchpriority="high" href="https://images.pexels.com/photos/14813312/pexels-photo-14813312.jpeg?auto=compress&cs=tinysrgb&w=1000&h=600">
     <meta name="description" content="${escapeHtml(m.description)}">
     <link rel="canonical" href="${canonical}">
     <link rel="alternate" hreflang="nl"        href="${URL_NL}">

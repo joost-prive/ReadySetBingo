@@ -1073,7 +1073,7 @@
         .wk-banner-photo {
             position: absolute; inset: 0;
             background-image:
-                url('https://images.pexels.com/photos/14813312/pexels-photo-14813312.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750');
+                url('https://images.pexels.com/photos/14813312/pexels-photo-14813312.jpeg?auto=compress&cs=tinysrgb&w=1000&h=600');
             background-size: cover; background-position: center 35%;
             /* Sepia-warm filter zodat de foto past bij vintage Panini-album */
             filter: sepia(0.55) saturate(1.15) contrast(1.05) brightness(0.85);

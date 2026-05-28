@@ -23,8 +23,12 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&family=Bebas+Neue&family=Anton&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
 
-    <!-- Flag-icons: echte SVG-vlaggen (lost Windows-emoji-vlag-issue op) -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.2.3/css/flag-icons.min.css">
+    <!-- Flag-icons: echte SVG-vlaggen (lost Windows-emoji-vlag-issue op).
+         Niet-blokkerend geladen — vlaggen staan niet boven de vouw, dus dit
+         haalt ~750 ms render-blocking uit de kritieke route (FCP/LCP). -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.2.3/css/flag-icons.min.css"
+          media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.2.3/css/flag-icons.min.css"></noscript>
 
     <link rel="stylesheet" href="css/styles.css">
 </head>
