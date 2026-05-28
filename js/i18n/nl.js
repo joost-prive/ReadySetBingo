@@ -238,6 +238,15 @@ export default {
         joinRoom:         "🔑 Doe mee aan een kamer",
         roomCode:         "Kamercode (4 cijfers)",
         joinAction:       "Doe mee",
+        broadcast: {
+            title:        "📻 Volg de wedstrijden live",
+            radioLabel:   "🎙️ Radio",
+            radioBody:    "NPO Radio 1 verzorgt Nederlandstalig commentaar via 'Langs de Lijn'.",
+            radioLinkNpo: "Luister via NPO Radio 1",
+            tvLabel:      "📺 TV",
+            tvBody:       "De NOS zendt de wedstrijden uit op NPO 1 en NPO 3. Programmering wordt vlak voor aftrap definitief.",
+            note:         "ℹ️ Uitzendrechten kunnen wijzigen — check vlak voor aftrap zelf even.",
+        },
     },
 
     generator: {

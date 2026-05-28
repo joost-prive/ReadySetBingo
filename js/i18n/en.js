@@ -228,6 +228,16 @@ export default {
         joinRoom:         "🔑 Join a room",
         roomCode:         "Room code (4 digits)",
         joinAction:       "Join",
+        broadcast: {
+            title:        "📻 Follow the matches live",
+            radioLabel:   "🎙️ Radio",
+            radioBody:    "English commentary on BBC Radio 5 Live (worldwide via BBC Sounds). Dutch commentary on NPO Radio 1 (\"Langs de Lijn\").",
+            radioLinkBbc: "Listen on BBC 5 Live",
+            radioLinkNpo: "Listen on NPO Radio 1",
+            tvLabel:      "📺 TV",
+            tvBody:       "Coverage varies by country — e.g. NOS (Netherlands), BBC/ITV (UK), Fox/Telemundo (US), beIN (MENA). Check your local broadcaster for the exact schedule.",
+            note:         "ℹ️ Broadcast rights can change — please verify before kick-off.",
+        },
     },
 
     generator: {
