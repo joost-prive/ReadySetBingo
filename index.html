@@ -13,6 +13,9 @@
       gtag('config', 'G-QC1Q49WDL6');
     </script>
 
+    <!-- Click-tracking via data-track-* attributen (zie js/analytics.js) -->
+    <script defer src="js/analytics.js"></script>
+
     <title>Ready Set Bingooooo!</title>
     <link rel="icon" id="site-favicon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='46' fill='%23ff5e62'/%3E%3Ccircle cx='50' cy='50' r='30' fill='%23fef9e7'/%3E%3Ctext x='50' y='66' font-family='Arial Black,sans-serif' font-size='42' font-weight='900' text-anchor='middle' fill='%233d2914'%3E7%3C/text%3E%3C/svg%3E">
 
@@ -130,44 +133,51 @@
 
             <div class="menu-grid">
 
-                <div class="menu-tile" onclick="goTo('screen-generate')">
+                <div class="menu-tile" onclick="goTo('screen-generate')"
+                     data-track="tile_click" data-track-tile="generate">
                     <div class="tile-icon">🎲</div>
                     <div class="tile-title" data-i18n="home.tile.generate.title">Genereer Bingo-kaarten</div>
                     <div class="tile-desc" data-i18n="home.tile.generate.desc">Maak je eigen kaarten</div>
                 </div>
 
-                <div class="menu-tile" onclick="goTo('screen-mycards')">
+                <div class="menu-tile" onclick="goTo('screen-mycards')"
+                     data-track="tile_click" data-track-tile="mycards">
                     <div class="tile-icon">🃏</div>
                     <div class="tile-title" data-i18n="home.tile.mycards.title">Mijn Bingo-kaarten</div>
                     <div class="tile-desc" data-i18n="home.tile.mycards.desc">Speel je opgeslagen kaarten</div>
                 </div>
 
-                <div class="menu-tile" onclick="goTo('screen-select')">
+                <div class="menu-tile" onclick="goTo('screen-select')"
+                     data-track="tile_click" data-track-tile="tv">
                     <div class="tile-icon">📺</div>
                     <div class="tile-title" data-i18n="home.tile.tv.title">TV Bingo</div>
                     <div class="tile-desc" data-i18n="home.tile.tv.desc">Bingo bij series, films en programma's</div>
                 </div>
 
-                <div class="menu-tile" onclick="goTo('screen-scenario')">
+                <div class="menu-tile" onclick="goTo('screen-scenario')"
+                     data-track="tile_click" data-track-tile="scenario">
                     <div class="tile-icon">🎪</div>
                     <div class="tile-title" data-i18n="home.tile.scenario.title">Scenario Bingo</div>
                     <div class="tile-desc" data-i18n="home.tile.scenario.desc">Festival, kermis en meer</div>
                 </div>
 
-                <div class="menu-tile" onclick="goTo('screen-spotify')">
+                <div class="menu-tile" onclick="goTo('screen-spotify')"
+                     data-track="tile_click" data-track-tile="spotify">
                     <div class="tile-icon">🎵</div>
                     <div class="tile-title" data-i18n="home.tile.spotify.title">Spotify Bingo</div>
                     <div class="tile-desc" data-i18n="home.tile.spotify.desc">Bingo met jouw afspeellijst</div>
                 </div>
 
-                <div class="menu-tile wc-tile" onclick="goTo('screen-wk')">
+                <div class="menu-tile wc-tile" onclick="goTo('screen-wk')"
+                     data-track="tile_click" data-track-tile="wk">
                     <div class="tile-icon">⚽</div>
                     <div class="tile-title" data-i18n="home.tile.wk.title">WK Bingo</div>
                     <div class="tile-desc" data-i18n="home.tile.wk.desc">Bingo tijdens het WK</div>
                     <div class="tile-badge" data-i18n="home.tile.wk.badge">2026</div>
                 </div>
 
-                <div class="menu-tile wc-tile" onclick="goTo('screen-borrel')">
+                <div class="menu-tile wc-tile" onclick="goTo('screen-borrel')"
+                     data-track="tile_click" data-track-tile="borrel">
                     <div class="tile-icon">🍻</div>
                     <div class="tile-title" data-i18n="home.tile.borrel.title">BorrelBingo</div>
                     <div class="tile-desc" data-i18n="home.tile.borrel.desc">Term-roulette met je vrienden</div>
@@ -177,7 +187,8 @@
                 <!-- ═══════════════════════════ LIVE-FEATURE START ═══════════════════════════ -->
                 <!-- Tegel is verborgen tot kill-switch in Firestore (liveConfig.enabled) op true staat.
                      Bij rollback: dit blok + de andere LIVE-FEATURE-blokken weggooien, klaar. -->
-                <div class="menu-tile wc-tile live-tile" id="live-tile" onclick="goTo('screen-live')" style="display:none;">
+                <div class="menu-tile wc-tile live-tile" id="live-tile" onclick="goTo('screen-live')" style="display:none;"
+                     data-track="tile_click" data-track-tile="live">
                     <div class="tile-icon">⚡</div>
                     <div class="tile-title" data-i18n="home.tile.live.title">Live: pre-WK</div>
                     <div class="tile-desc" data-i18n="home.tile.live.desc">Speel met wedstrijden van vandaag</div>
