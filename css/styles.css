@@ -3122,6 +3122,48 @@
             }
         }
 
+        /* ── FAQ (subtiel, ingeklapt by default) ──────────────────────────────
+           Server-side gevuld door functions/_middleware.js op WK-domeinen.
+           Op andere domeinen blijft het element leeg en verborgen.
+           Visuele richtlijn van Joost: "héél subtiel, mag niet opvallen". */
+        .wc-faq { display: none; }
+
+        body.wc-mode .wc-faq {
+            display: block;
+            margin: 18px auto 4px;
+            max-width: 460px;
+            font-size: .72rem;
+            color: var(--text-muted, #8a8a8a);
+            opacity: .75;
+            line-height: 1.5;
+        }
+        body.wc-mode .wc-faq > summary {
+            cursor: pointer;
+            list-style: none;
+            user-select: none;
+            padding: 4px 0;
+            color: var(--text-muted, #8a8a8a);
+            font-weight: 500;
+        }
+        body.wc-mode .wc-faq > summary::-webkit-details-marker { display: none; }
+        body.wc-mode .wc-faq > summary::before {
+            content: '›';
+            display: inline-block;
+            margin-right: 6px;
+            transition: transform .15s ease;
+        }
+        body.wc-mode .wc-faq[open] > summary::before {
+            transform: rotate(90deg);
+        }
+        body.wc-mode .wc-faq dl { margin: 4px 0 0; padding: 0; }
+        body.wc-mode .wc-faq dt {
+            font-weight: 600;
+            margin-top: 8px;
+            color: var(--text, #555);
+        }
+        body.wc-mode .wc-faq dt:first-of-type { margin-top: 4px; }
+        body.wc-mode .wc-faq dd { margin: 2px 0 0; }
+
         /* ── Taalswitcher (vast rechtsboven, ook in wc-mode zichtbaar) ─────────
            Right schuift mee met de 500px-content op brede schermen, zodat hij
            op desktop niet eenzaam in de hoek hangt. Op mobiel valt-ie netjes
