@@ -1880,6 +1880,69 @@
         }
         .wk-mp-offline-note.show { display: block; }
 
+        /* ── Broadcast-blok (radio + TV-tips) ── */
+        .wk-broadcast-card {
+            background:
+                linear-gradient(135deg, rgba(255,255,255,.5) 0%, transparent 45%),
+                linear-gradient(180deg, #fef9e7 0%, #f3e9d2 100%);
+            border: 3px solid;
+            border-image: linear-gradient(135deg, #d4af37 0%, #fbbf24 50%, #8b6914 100%) 1;
+            border-radius: 8px; padding: 14px 16px; margin-top: 16px;
+            box-shadow: 0 4px 12px rgba(61,41,20,.3), inset 0 0 0 1px rgba(254,249,231,.6);
+            color: #3d2914;
+            transform: rotate(-0.3deg);
+        }
+        .wk-broadcast-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1rem; font-weight: 400; letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: #c8102e;
+            margin-bottom: 10px;
+            display: flex; align-items: center; gap: 6px;
+        }
+        .wk-broadcast-row {
+            display: flex; gap: 10px;
+            margin-bottom: 10px;
+            font-family: 'Playfair Display', serif;
+            font-size: .8rem; line-height: 1.4;
+            color: #3d2914;
+        }
+        .wk-broadcast-label {
+            flex: 0 0 auto;
+            font-family: 'Bebas Neue', sans-serif;
+            letter-spacing: 1px;
+            color: #8b6914;
+            min-width: 60px;
+            padding-top: 1px;
+        }
+        .wk-broadcast-body { flex: 1; min-width: 0; }
+        .wk-broadcast-links {
+            display: flex; flex-wrap: wrap; gap: 6px 10px;
+            margin-top: 6px;
+        }
+        .wk-broadcast-link {
+            font-family: 'Bebas Neue', sans-serif;
+            letter-spacing: 1px;
+            font-size: .78rem;
+            color: #c8102e;
+            text-decoration: none;
+            border-bottom: 1px solid rgba(200,16,46,.35);
+            padding-bottom: 1px;
+            transition: color .15s, border-color .15s;
+        }
+        .wk-broadcast-link:hover {
+            color: #8b0a1f;
+            border-bottom-color: #8b0a1f;
+        }
+        .wk-broadcast-note {
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            font-size: .72rem; color: #8b6914;
+            margin-top: 4px;
+        }
+        /* Op .nl-domein: BBC-link verbergen (alleen NOS/NPO tonen). */
+        html[lang="nl"] .wk-broadcast-bbc { display: none; }
+
         /* ── Modal voor kamer maken / joinen - uitscheurbare kaart ── */
         .wk-modal-overlay {
             position: fixed; inset: 0; z-index: 1100;
@@ -3122,47 +3185,91 @@
             }
         }
 
-        /* ── FAQ (subtiel, ingeklapt by default) ──────────────────────────────
+        /* ── FAQ (subtiel, Panini-stijl) ──────────────────────────────────────
            Server-side gevuld door functions/_middleware.js op WK-domeinen.
-           Op andere domeinen blijft het element leeg en verborgen.
-           Visuele richtlijn van Joost: "héél subtiel, mag niet opvallen". */
+           Default ingeklapt; opent als een klein Panini-kaartje dat past bij
+           de "ZO WERKT HET"-stijl erboven, maar gedempter (lichtere rand,
+           minder schaduw, geen rotatie). */
         .wc-faq { display: none; }
 
         body.wc-mode .wc-faq {
             display: block;
-            margin: 18px auto 4px;
-            max-width: 460px;
-            font-size: .72rem;
-            color: var(--text-muted, #8a8a8a);
-            opacity: .75;
-            line-height: 1.5;
+            margin: 16px auto 12px;
+            max-width: 480px;
+            background:
+                linear-gradient(135deg, rgba(255,255,255,.45) 0%, transparent 50%),
+                linear-gradient(180deg, rgba(254,249,231,.92) 0%, rgba(243,233,210,.85) 100%);
+            border: 2px solid;
+            border-image: linear-gradient(135deg,
+                rgba(212,175,55,.55) 0%,
+                rgba(251,191,36,.55) 50%,
+                rgba(139,105,20,.55) 100%) 1;
+            border-radius: 6px;
+            color: #3d2914;
+            box-shadow: 0 2px 8px rgba(61,41,20,.15);
+            overflow: hidden;
         }
+
         body.wc-mode .wc-faq > summary {
+            /* display:block schakelt list-item-rendering uit; daarmee verdwijnt
+               de standaard ▼/▶ marker in zowel oude als nieuwe browsers. */
+            display: block;
             cursor: pointer;
-            list-style: none;
             user-select: none;
-            padding: 4px 0;
-            color: var(--text-muted, #8a8a8a);
-            font-weight: 500;
+            padding: 10px 16px;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: .95rem;
+            font-weight: 400;
+            letter-spacing: 1.8px;
+            text-transform: uppercase;
+            color: #c8102e;
+            line-height: 1;
         }
+        /* Belt-and-braces voor oude Chrome/Safari */
         body.wc-mode .wc-faq > summary::-webkit-details-marker { display: none; }
+
         body.wc-mode .wc-faq > summary::before {
             content: '›';
             display: inline-block;
-            margin-right: 6px;
-            transition: transform .15s ease;
+            width: 14px;
+            margin-right: 8px;
+            font-family: system-ui, -apple-system, sans-serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+            line-height: .8;
+            vertical-align: -2px;
+            color: #c8102e;
+            transition: transform .2s ease;
         }
         body.wc-mode .wc-faq[open] > summary::before {
             transform: rotate(90deg);
         }
-        body.wc-mode .wc-faq dl { margin: 4px 0 0; padding: 0; }
-        body.wc-mode .wc-faq dt {
-            font-weight: 600;
-            margin-top: 8px;
-            color: var(--text, #555);
+
+        body.wc-mode .wc-faq dl {
+            margin: 0;
+            padding: 4px 16px 14px;
+            border-top: 1px solid rgba(212,175,55,.35);
         }
-        body.wc-mode .wc-faq dt:first-of-type { margin-top: 4px; }
-        body.wc-mode .wc-faq dd { margin: 2px 0 0; }
+        body.wc-mode .wc-faq dt {
+            margin: 14px 0 0 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+            font-size: .82rem;
+            font-weight: 700;
+            color: #3d2914;
+            line-height: 1.4;
+        }
+        body.wc-mode .wc-faq dt:first-of-type { margin-top: 10px; }
+        body.wc-mode .wc-faq dd {
+            /* Vier waarden expliciet zodat user-agent margin-left: 40px wordt
+               overruled; anders krijgen de antwoorden een lelijke inspring. */
+            margin: 4px 0 0 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+            font-size: .78rem;
+            color: #5d4029;
+            line-height: 1.5;
+        }
 
         /* ── Taalswitcher (vast rechtsboven, ook in wc-mode zichtbaar) ─────────
            Right schuift mee met de 500px-content op brede schermen, zodat hij
