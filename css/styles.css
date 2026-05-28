@@ -2172,6 +2172,11 @@
             transform: rotate(-1deg);
         }
         body.light .wk-lobby-code { color: #c8102e; }
+        .wk-lobby-share-btn {
+            display: inline-flex; width: auto;
+            margin: 2px auto 10px; padding: 7px 16px;
+            font-size: .8rem; letter-spacing: 1px;
+        }
         .wk-lobby-match {
             font-family: 'Bebas Neue', sans-serif;
             font-size: 1rem; font-weight: 400; letter-spacing: 1px;

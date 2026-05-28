@@ -2386,6 +2386,61 @@ h1{font-size:13pt;text-align:center;margin-bottom:6mm;}
         }
 
         // ═══════════════════════════════════════════════════════════════════════
+        // ─── Deel kamercode (WhatsApp / kopieer — zelfde stijl als bingo-share) ───
+        let _roomShareText = '';
+
+        window.shareRoomCode = function(code) {
+            if (!code) return;
+            const origin = window.location.origin || 'https://worldcupbingo2026.nl';
+            _roomShareText = t('roomShare.text', { code, url: origin });
+            const errEl = document.getElementById('room-share-error');
+            if (errEl) errEl.textContent = '';
+            const waLabel = document.querySelector('#room-share-whatsapp .wk-share-choice-label');
+            const cpLabel = document.querySelector('#room-share-copy .wk-share-choice-label');
+            if (waLabel) waLabel.textContent = t('wkShare.whatsapp');
+            if (cpLabel) cpLabel.textContent = t('wkShare.copy');
+            document.getElementById('room-share-whatsapp').disabled = false;
+            document.getElementById('room-share-copy').disabled = false;
+            document.getElementById('room-share-modal').classList.add('show');
+        };
+
+        window.closeRoomShare = function() {
+            document.getElementById('room-share-modal').classList.remove('show');
+        };
+
+        window.roomShareWhatsApp = function() {
+            // Tekst-share: window.open direct in de click → geen popup-blokkade.
+            const url = `https://wa.me/?text=${encodeURIComponent(_roomShareText)}`;
+            window.open(url, '_blank', 'noopener');
+            closeRoomShare();
+        };
+
+        window.roomShareCopy = async function() {
+            const btn   = document.getElementById('room-share-copy');
+            const label = btn.querySelector('.wk-share-choice-label');
+            const errEl = document.getElementById('room-share-error');
+            errEl.textContent = '';
+            try {
+                if (navigator.clipboard) {
+                    await navigator.clipboard.writeText(_roomShareText);
+                    btn.disabled = true;
+                    label.textContent = t('wkShare.copied');
+                    setTimeout(() => {
+                        label.textContent = t('wkShare.copy');
+                        btn.disabled = false;
+                        closeRoomShare();
+                    }, 1300);
+                } else {
+                    // Geen clipboard-API → toon de tekst zodat de gebruiker zelf kan kopiëren.
+                    bingoPrompt(t('alerts.copyLink'), _roomShareText, { title: t('roomShare.modalTitle'), icon: '📲', okLabel: t('common.continue') });
+                    closeRoomShare();
+                }
+            } catch (e) {
+                console.error('Kamercode kopiëren mislukt:', e);
+                errEl.textContent = t('wkShare.copyFailed');
+            }
+        };
+
         // ─── WK MULTIPLAYER (kamer + live leaderboard) ─────────────────────────
         // ═══════════════════════════════════════════════════════════════════════
 
@@ -2713,6 +2768,7 @@ h1{font-size:13pt;text-align:center;margin-bottom:6mm;}
                     <div class="wk-lobby-header">
                         <div class="wk-lobby-label">Kamercode — deel met vrienden</div>
                         <div class="wk-lobby-code">${wkRoomCode}</div>
+                        <button class="wk-mp-btn secondary wk-lobby-share-btn" onclick="shareRoomCode('${wkRoomCode}')">${t('roomShare.button')}</button>
                         <div class="wk-lobby-match">${wkMatchLabel(data.matchId)}</div>
                         <div class="wk-lobby-meta">${[matchFase(match?.fase), formatMatchDate(match?.datum)].filter(Boolean).join(' · ')}</div>
                     </div>
@@ -3965,6 +4021,7 @@ h1{font-size:13pt;text-align:center;margin-bottom:6mm;}
                     <div class="wk-lobby-header">
                         <div class="wk-lobby-label">Kamercode</div>
                         <div class="wk-lobby-code">${bbRoomCode}</div>
+                        <button class="wk-mp-btn secondary wk-lobby-share-btn" onclick="shareRoomCode('${bbRoomCode}')">${t('roomShare.button')}</button>
                         <div class="wk-lobby-match">${bbMatchLabel(data.matchId)}</div>
                         <div class="wk-lobby-meta">${isHost ? 'Jij bent de host' : 'Wachten op host'}</div>
                     </div>

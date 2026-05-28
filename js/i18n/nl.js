@@ -96,6 +96,12 @@ export default {
         whatsappText:        "🏆 GOAAAL! Bingo bij {{match}}!",
     },
 
+    roomShare: {
+        modalTitle:          "📲 Deel je kamer",
+        button:              "📲 Deel code",
+        text:                "🎉 Doe mee met mijn Bingo! Kamercode: {{code}}\n{{url}}",
+    },
+
     ingezonden: {
         header:              "📬 Ingezonden Kaarten",
         empty:               "Nog geen ingezonden kaarten.",

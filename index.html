@@ -1083,6 +1083,29 @@
         </div>
     </div>
 
+    <!-- Deel-kamer modal: WhatsApp + Kopieer (tekst: code + site-URL) -->
+    <div id="room-share-modal" class="wk-modal-overlay">
+        <div class="wk-modal">
+            <h3 class="wk-modal-title" data-i18n="roomShare.modalTitle">📲 Deel je kamer</h3>
+            <div class="wk-share-choice-actions">
+                <button class="wk-share-choice-btn whatsapp" id="room-share-whatsapp"
+                        onclick="roomShareWhatsApp()">
+                    <span class="wk-share-choice-icon">💬</span>
+                    <span class="wk-share-choice-label" data-i18n="wkShare.whatsapp">Deel op WhatsApp</span>
+                </button>
+                <button class="wk-share-choice-btn" id="room-share-copy"
+                        onclick="roomShareCopy()">
+                    <span class="wk-share-choice-icon">📋</span>
+                    <span class="wk-share-choice-label" data-i18n="wkShare.copy">Kopieer</span>
+                </button>
+            </div>
+            <div class="wk-modal-error" id="room-share-error"></div>
+            <div class="wk-modal-actions">
+                <button class="wk-mp-btn secondary" onclick="closeRoomShare()" data-i18n="wkShare.close">Sluiten</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Off-screen render-target voor screenshot -->
     <div id="wk-share-render" class="wk-share-render" aria-hidden="true">
         <div class="wk-share-header">
