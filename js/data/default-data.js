@@ -1,6 +1,6 @@
 // ─── Standaard data ───────────────────────────────────────────────────────
 // Standaard bingo-programma's en categorieën. Worden ge-injecteerd in
-// appData bij eerste start; daarna kan de gebruiker via admin uitbreiden.
+// appData bij eerste start.
 export const defaultData = {
     "Expeditie Robinson": {
         "De Uitzending": ["Immuniteit","Eilandraad","Strijdlust","Winnaarseiland","Rijst","Wat kies je?","Gefeliciteerd","Mes in de rug","Kampvuur","Proef","Samensmelting","Het lot","Bondje","Strategie","Honger","Overleven","Afvallerseiland","Fysieke proef","Mentale proef","Sabotage","Held","Rugzak","Regen en storm","Wat een avontuur","Confession"]

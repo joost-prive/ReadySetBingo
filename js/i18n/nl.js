@@ -103,18 +103,11 @@ export default {
     },
 
     alerts: {
-        // Admin
-        passwordWrong:    "Wachtwoord onjuist!",
-        fillProgCat:      "Vul zowel Programma-naam als Categorie-naam in.",
-        fillOneWord:      "Vul minimaal 1 woord in.",
-        savedLocal:       "Lokaal opgeslagen!",
-        savedDb:          "Opgeslagen in database!",
-        errSave:          "Fout bij opslaan: {{msg}}",
-        errMove:          "Fout bij verplaatsen: {{msg}}",
         // Themes
         themeName:        "Geef het thema een naam.",
         themeDeleteConfirm: "Thema verwijderen?",
         themeDeleteTitle: "Thema verwijderen",
+        themeDeleteAction: "Verwijderen",
         // Save cards
         noCardsToSave:    "Geen kaarten om op te slaan.",
         cardSetName:      "Naam voor deze kaartset?",
@@ -319,32 +312,6 @@ export default {
         looseImages:             "Losse afbeeldingen",
         addImage:                "+ Afbeelding uploaden",
         saveTheme:               "Opslaan",
-    },
-
-    admin: {
-        header:           "Admin Panel",
-        savedNote:        "Wijzigingen worden opgeslagen op basis van je modus (Online/Offline).",
-        program:          "Programma",
-        newProgramOpt:    "-- Nieuw Programma --",
-        programPlaceholder: "Naam van programma...",
-        up:               "Omhoog",
-        down:             "Omlaag",
-        delete:           "Verwijder",
-        category:         "Categorie / Scenario",
-        newCatOpt:        "-- Nieuwe Categorie --",
-        catPlaceholder:   "Naam van categorie...",
-        deleteCategory:   "Verwijder Categorie",
-        wordsLabel:       "Woordenlijst (1 per regel)",
-        wordsPlaceholder: "Typ woorden...",
-        save:             "💾 Opslaan",
-        deleteProgramConfirm: "Programma verwijderen",
-        deleteCatConfirm: "Scenario verwijderen",
-        deleteAction:     "Verwijderen",
-        login:            "Admin Login",
-        loginIntro:       "Voer het wachtwoord in om de lijsten te beheren.",
-        password:         "Wachtwoord",
-        loginBtn:         "Inloggen",
-        firstSaveProgram: "-- Eerst programma opslaan --",
     },
 
     spotify: {

@@ -445,9 +445,6 @@
         .btn-shuffle:disabled { opacity:.4; cursor:default; border-color:transparent; }
         .shuffle-count { font-weight:800; color:var(--brand-primary); }
 
-        /* Admin icon-knoppen */
-        .admin-actions { display:flex; gap:10px; margin-bottom:10px; }
-        .btn-icon  { padding:12px; width:auto; flex-grow:0; margin-bottom:0; }
         .btn-full  { flex-grow:1; margin-bottom:0; }
 
         /* ── BINGO GRID ── */

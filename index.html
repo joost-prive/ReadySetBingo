@@ -260,45 +260,6 @@
             </div>
         </div>
 
-        <div id="screen-admin" class="screen">
-            <div class="screen-header">
-                <button class="btn-back" onclick="closeAdmin()"><span data-i18n="common.back">← Terug</span></button>
-                <h2 data-i18n="admin.header">Admin Panel</h2>
-            </div>
-            <p style="font-size:.8rem; color:var(--text-muted); margin-top:0;" data-i18n="admin.savedNote">
-                Wijzigingen worden opgeslagen op basis van je modus (Online/Offline).
-            </p>
-
-            <label data-i18n="admin.program">Programma</label>
-            <select id="admin-prog-select" onchange="adminSelectProgram()">
-                <option value="" data-i18n="admin.newProgramOpt">-- Nieuw Programma --</option>
-            </select>
-            <div style="margin-bottom:20px;">
-                <input type="text" id="admin-prog-input" placeholder="Naam van programma..." style="margin-bottom:10px;" data-i18n-attr="placeholder:admin.programPlaceholder">
-                <div class="admin-actions" id="admin-prog-actions" style="display:none;">
-                    <button class="btn-secondary btn-icon" onclick="moveProgram(-1)" title="Omhoog" data-i18n-attr="title:admin.up">↑</button>
-                    <button class="btn-secondary btn-icon" onclick="moveProgram(1)"  title="Omlaag" data-i18n-attr="title:admin.down">↓</button>
-                    <button class="btn-danger btn-full" onclick="deleteProgram()" data-i18n="admin.delete">Verwijder</button>
-                </div>
-            </div>
-
-            <div id="admin-cat-container" style="display:none; margin-top:20px;">
-                <label data-i18n="admin.category">Categorie / Scenario</label>
-                <select id="admin-cat-select" onchange="adminSelectCategory()">
-                    <option value="" data-i18n="admin.newCatOpt">-- Nieuwe Categorie --</option>
-                </select>
-                <input type="text" id="admin-cat-input" placeholder="Naam van categorie..." data-i18n-attr="placeholder:admin.catPlaceholder">
-                <button class="btn-danger" id="btn-del-cat" onclick="deleteCategory()"
-                        style="display:none; padding:10px; font-size:.8rem;" data-i18n="admin.deleteCategory">Verwijder Categorie</button>
-            </div>
-
-            <div id="admin-word-container" style="display:none; margin-top:20px;">
-                <label data-i18n="admin.wordsLabel">Woordenlijst (1 per regel)</label>
-                <textarea id="word-editor" placeholder="Typ woorden..." data-i18n-attr="placeholder:admin.wordsPlaceholder"></textarea>
-                <button class="btn-primary" onclick="saveAdminData()" data-i18n="admin.save">💾 Opslaan</button>
-            </div>
-        </div>
-
         <!-- ══════════════════════════ GENEREER BINGO-KAARTEN ════════════════════ -->
         <div id="screen-generate" class="screen">
             <div class="screen-header">
@@ -1141,16 +1102,6 @@
         <div class="bingo-text" data-i18n="common.bingo">BINGO!</div>
         <p id="bingo-win-msg">Lekker gewerkt!</p>
         <button class="btn-primary" onclick="closeOverlay()" style="max-width:200px;" data-i18n="common.continue">Doorgaan</button>
-    </div>
-
-    <div id="login-overlay" class="overlay">
-        <h2 style="margin-bottom:10px;" data-i18n="admin.login">Admin Login</h2>
-        <p style="margin-bottom:20px; font-size:.9rem; color:#ccc;" data-i18n="admin.loginIntro">
-            Voer het wachtwoord in om de lijsten te beheren.
-        </p>
-        <input type="password" id="admin-password" placeholder="Wachtwoord" style="max-width:300px;" data-i18n-attr="placeholder:admin.password">
-        <button class="btn-primary" onclick="checkLogin()" style="max-width:300px;" data-i18n="admin.loginBtn">Inloggen</button>
-        <button class="btn-link" onclick="closeLogin()" data-i18n="common.cancel">Annuleren</button>
     </div>
 
     <!-- Generieke Panini-dialoog (alert/confirm/prompt) -->

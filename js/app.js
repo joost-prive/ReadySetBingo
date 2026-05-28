@@ -136,17 +136,6 @@
                 o.value = o.innerText = prog;
                 programSelect.appendChild(o);
             });
-
-            const adminSel   = document.getElementById('admin-prog-select');
-            const prevAdmin  = adminSel.value;
-            adminSel.innerHTML = `<option value="">${t('admin.newProgramOpt')}</option>`;
-            (appOrder || []).forEach(prog => {
-                if (!appData[prog]) return;
-                const o = document.createElement('option');
-                o.value = o.innerText = prog;
-                adminSel.appendChild(o);
-            });
-            if (prevAdmin && appData[prevAdmin]) adminSel.value = prevAdmin;
         }
         window.populateSelects = populateSelects;
 
@@ -292,141 +281,6 @@
 
         window.closeOverlay = () => document.getElementById('bingo-overlay').classList.remove('show');
         window.resetGame    = () => switchScreen('screen-select');
-
-        // ─── Admin ────────────────────────────────────────────────────────────────
-        window.openAdminLogin = function() {
-            document.getElementById('login-overlay').classList.add('show');
-            document.getElementById('admin-password').value = '';
-            document.getElementById('admin-password').focus();
-        };
-        window.closeLogin = () => document.getElementById('login-overlay').classList.remove('show');
-        window.checkLogin = function() {
-            if (document.getElementById('admin-password').value === "poema") {
-                closeLogin(); showAdmin();
-            } else { alert(t('alerts.passwordWrong')); }
-        };
-
-        const adminProgSel  = document.getElementById('admin-prog-select');
-        const adminProgInput = document.getElementById('admin-prog-input');
-        const adminCatSel   = document.getElementById('admin-cat-select');
-        const adminCatInput = document.getElementById('admin-cat-input');
-        const wordEditor    = document.getElementById('word-editor');
-
-        function showAdmin() {
-            resetAdminInputs(); populateSelects();
-            switchScreen('screen-admin');
-        }
-
-        window.adminSelectProgram = function() {
-            const prog = adminProgSel.value;
-            if (!prog) {
-                adminProgInput.value = ''; adminProgInput.disabled = false;
-                document.getElementById('admin-prog-actions').style.display = 'none';
-                document.getElementById('admin-cat-container').style.display = 'block';
-                adminCatSel.innerHTML = `<option value="">${t('admin.firstSaveProgram')}</option>`;
-                adminCatSel.disabled = true;
-                adminCatInput.value = ''; adminCatInput.disabled = false;
-                document.getElementById('admin-word-container').style.display = 'block';
-                wordEditor.value = '';
-            } else {
-                adminProgInput.value = prog; adminProgInput.disabled = true;
-                document.getElementById('admin-prog-actions').style.display = 'flex';
-                document.getElementById('admin-cat-container').style.display = 'block';
-                adminCatSel.disabled = false;
-                loadAdminCats(prog);
-            }
-        };
-
-        function loadAdminCats(prog) {
-            adminCatSel.innerHTML = `<option value="">${t('admin.newCatOpt')}</option>`;
-            adminCatSel.value = ''; adminCatInput.value = ''; adminCatInput.disabled = false;
-            document.getElementById('btn-del-cat').style.display = 'none';
-            document.getElementById('admin-word-container').style.display = 'block';
-            wordEditor.value = '';
-            if (appData[prog]) Object.keys(appData[prog]).forEach(cat => {
-                const o = document.createElement('option');
-                o.value = o.innerText = cat; adminCatSel.appendChild(o);
-            });
-        }
-
-        window.adminSelectCategory = function() {
-            const prog = adminProgSel.value, cat = adminCatSel.value;
-            if (!cat) {
-                adminCatInput.value = ''; adminCatInput.disabled = false;
-                adminCatInput.placeholder = 'Typ naam van nieuwe categorie...';
-                adminCatInput.focus();
-                document.getElementById('btn-del-cat').style.display = 'none';
-                document.getElementById('admin-word-container').style.display = 'block';
-                wordEditor.value = '';
-            } else {
-                adminCatInput.value = cat; adminCatInput.disabled = true;
-                document.getElementById('btn-del-cat').style.display = 'inline-block';
-                document.getElementById('admin-word-container').style.display = 'block';
-                wordEditor.value = (appData[prog][cat] || []).join('\n');
-            }
-        };
-
-        window.saveAdminData = async function() {
-            const prog  = adminProgInput.value.trim();
-            const cat   = adminCatInput.value.trim();
-            const words = wordEditor.value.split('\n').map(w => w.trim()).filter(Boolean);
-            if (!prog || !cat) return alert(t('alerts.fillProgCat'));
-            if (!words.length) return alert(t('alerts.fillOneWord'));
-            if (!appData[prog]) { appData[prog] = {}; if (!appOrder.includes(prog)) appOrder.push(prog); }
-            appData[prog][cat] = words;
-            if (isLocalMode) { saveToLocal(); alert(t('alerts.savedLocal')); refreshAdminAfterSave(prog, cat); return; }
-            try {
-                await setDoc(docRef, { programs: appData, order: appOrder }, { merge: true });
-                alert(t('alerts.savedDb'));
-                refreshAdminAfterSave(prog, cat);
-            } catch(e) { alert(t('alerts.errSave', { msg: e.message })); }
-        };
-
-        function refreshAdminAfterSave(prog, cat) {
-            populateSelects();
-            adminProgSel.value = prog;
-            loadAdminCats(prog);
-            adminCatSel.value = cat;
-            window.adminSelectCategory();
-        }
-
-        window.moveProgram = async function(dir) {
-            const prog = adminProgSel.value; if (!prog) return;
-            const idx  = appOrder.indexOf(prog); if (idx === -1) return;
-            if (dir === -1 && idx > 0)                    [appOrder[idx], appOrder[idx-1]] = [appOrder[idx-1], appOrder[idx]];
-            else if (dir === 1 && idx < appOrder.length-1) [appOrder[idx], appOrder[idx+1]] = [appOrder[idx+1], appOrder[idx]];
-            else return;
-            if (isLocalMode) { saveToLocal(); populateSelects(); adminProgSel.value = prog; return; }
-            try { await setDoc(docRef, { programs: appData, order: appOrder }, { merge: true }); populateSelects(); adminProgSel.value = prog; }
-            catch(e) { alert(t('alerts.errMove', { msg: e.message })); }
-        };
-
-        window.deleteProgram = async function() {
-            const prog = adminProgSel.value;
-            if (!await bingoConfirm(t('admin.delete') + ` "${prog}"?`, { title: t('admin.deleteProgramConfirm'), icon: '🗑️', type: 'error', okLabel: t('admin.deleteAction') })) return;
-            delete appData[prog]; appOrder = appOrder.filter(p => p !== prog);
-            if (isLocalMode) { saveToLocal(); populateSelects(); resetAdminInputs(); return; }
-            await setDoc(docRef, { programs: appData, order: appOrder });
-            populateSelects(); resetAdminInputs();
-        };
-
-        window.deleteCategory = async function() {
-            const prog = adminProgSel.value, cat = adminCatSel.value;
-            if (!await bingoConfirm(t('admin.delete') + ` "${cat}"?`, { title: t('admin.deleteCatConfirm'), icon: '🗑️', type: 'error', okLabel: t('admin.deleteAction') })) return;
-            delete appData[prog][cat];
-            if (isLocalMode) { saveToLocal(); loadAdminCats(prog); return; }
-            await setDoc(docRef, { programs: appData, order: appOrder });
-            loadAdminCats(prog);
-        };
-
-        function resetAdminInputs() {
-            adminProgInput.value = ''; adminCatInput.value = ''; wordEditor.value = '';
-            document.getElementById('admin-prog-actions').style.display  = 'none';
-            document.getElementById('admin-cat-container').style.display  = 'none';
-            document.getElementById('admin-word-container').style.display = 'none';
-        }
-
-        window.closeAdmin = function() { populateSelects(); switchScreen('screen-select'); };
 
         // ─── Info overlay ─────────────────────────────────────────────────────────
         window.openInfo  = () => document.getElementById('info-overlay').classList.add('show');
@@ -1237,7 +1091,7 @@
         };
 
         window.deleteTheme = async function(id) {
-            if (!await bingoConfirm(t('alerts.themeDeleteConfirm'), { title: t('alerts.themeDeleteTitle'), icon: '🗑️', type: 'error', okLabel: t('admin.deleteAction') })) return;
+            if (!await bingoConfirm(t('alerts.themeDeleteConfirm'), { title: t('alerts.themeDeleteTitle'), icon: '🗑️', type: 'error', okLabel: t('alerts.themeDeleteAction') })) return;
             const custom = JSON.parse(localStorage.getItem('bingoThemes') || '[]').filter(t => t.id !== id);
             localStorage.setItem('bingoThemes', JSON.stringify(custom));
             if (_activeThemeId === id) setActiveTheme('default');
@@ -1780,7 +1634,7 @@ h1{font-size:13pt;text-align:center;margin-bottom:6mm;}
         // ─── Init: restore screen from hash ──────────────────────────────────────
         (function initExtras() {
             const hash = window.location.hash.replace('#', '');
-            const knownScreens = ['home','select','game','admin','generate','mycards',
+            const knownScreens = ['home','select','game','generate','mycards',
                                   'spotify','scenario','wk','card-picker','saved-game','themes','ingezonden'];
             if (hash && knownScreens.includes(hash)) {
                 sessionStorage.setItem('restoreScreen', 'screen-' + hash);
