@@ -4,13 +4,32 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-QC1Q49WDL6"></script>
+    <!-- Google tag (gtag.js) — uitgesteld geladen voor betere TBT/LCP.
+         De gtag-commando's queuen veilig in dataLayer; de zware gtag.js
+         wordt pas opgehaald bij de eerste interactie of na een idle-fallback,
+         zodat hij de eerste render niet belast. -->
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-QC1Q49WDL6');
+
+      (function () {
+        var loaded = false;
+        var events = ['pointerdown', 'keydown', 'touchstart', 'scroll'];
+        function loadGtag() {
+          if (loaded) return;
+          loaded = true;
+          events.forEach(function (e) { window.removeEventListener(e, loadGtag); });
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = 'https://www.googletagmanager.com/gtag/js?id=G-QC1Q49WDL6';
+          document.head.appendChild(s);
+        }
+        events.forEach(function (e) { window.addEventListener(e, loadGtag, { passive: true, once: true }); });
+        // Fallback: ook zonder interactie laden, kort na page load.
+        window.addEventListener('load', function () { setTimeout(loadGtag, 3000); });
+      })();
     </script>
 
     <!-- Click-tracking via data-track-* attributen (zie js/analytics.js) -->
