@@ -7,9 +7,6 @@
         import { defaultData, winMessages } from "./data/default-data.js";
         import { FIFA_TO_ISO, flagSpan, WK_TEAMS, WK_GROEPEN, WK_GROEPSWEDSTRIJDEN, WK_KNOCKOUT_WEDSTRIJDEN, teamName, teamWoorden, teamNickname, formatMatchDate, matchFase, translateWord, isVoetbalTerm } from "./data/wk-data.js";
         import { t, setLang, getLang, supportedLangs, applyDomTranslations } from "./i18n/i18n.js";
-        // ═══ LIVE-FEATURE START ═══ (side-effect import: registreert window.initLiveScreen + bootstrap)
-        import { liveBootstrap } from "./live.js";
-        // ═══ LIVE-FEATURE END ═══
 
         // ─── Firebase config ───────────────────────────────────────────────────────
         const manualConfig = {
@@ -104,10 +101,6 @@
         function setupRealtimeListener() {
             isLocalMode = false; // Firebase is beschikbaar
             document.getElementById('offline-badge').style.display = 'none';
-            // ═══ LIVE-FEATURE START ═══
-            // Lees kill-switch + tegel-zichtbaarheid via Firestore (luistert continu).
-            try { liveBootstrap({ db, appId: myAppId }); } catch (e) { console.warn('[live] bootstrap fail', e); }
-            // ═══ LIVE-FEATURE END ═══
             onSnapshot(docRef, async snap => {
                 if (snap.exists()) {
                     const d = snap.data();
@@ -3441,11 +3434,6 @@ h1{font-size:13pt;text-align:center;margin-bottom:6mm;}
             if (id === 'screen-wk')       initWkScreen();
             if (id === 'screen-wk-stats') initWkStatsScreen();
             if (id === 'screen-borrel')   initBbSelector();
-            // ═══ LIVE-FEATURE START ═══
-            if (id === 'screen-live' && typeof window.initLiveScreen === 'function') {
-                window.initLiveScreen();
-            }
-            // ═══ LIVE-FEATURE END ═══
             _prevGoTo(id);
         };
         window.goHome = () => { window.goTo('screen-home'); };
