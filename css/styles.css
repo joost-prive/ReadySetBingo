@@ -1053,7 +1053,7 @@
         /* Banner - Panini-album-omslag */
         .wk-banner {
             margin: -22px -22px 18px;
-            border-radius: 0 0 10px 10px;
+            border-radius: 12px 12px 10px 10px;
             position: relative; overflow: hidden;
             text-align: center;
             min-height: 220px;
