@@ -48,6 +48,10 @@ export default {
         },
     },
 
+    faq: {
+        summary: "Frequently asked questions",
+    },
+
     mycards: {
         header:           "🃏 My Bingo cards",
         empty:            "No cards yet",

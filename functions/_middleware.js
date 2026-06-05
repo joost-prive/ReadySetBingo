@@ -220,11 +220,19 @@ function headExtras(m, canonical, isCom, faq) {
 `;
 }
 
-function buildFaqInner(m, faq) {
-    const items = faq
-        .map(({ q, a }) => `<dt>${escapeHtml(q)}</dt><dd>${escapeHtml(a)}</dd>`)
-        .join('');
-    return `<summary>${escapeHtml(m.faqLabel)}</summary><dl>${items}</dl>`;
+function buildFaqInner(m) {
+    // Beide talen in de HTML; CSS toont het juiste <dl> op basis van
+    // <html lang>, die de client-side i18n (js/i18n/i18n.js) bij de
+    // NL/EN-toggle bijwerkt. <summary> krijgt data-i18n zodat het label
+    // óók mee-switcht. Server-side wordt de host-taal als first paint
+    // gebruikt — geen FOUC voor bezoekers die op de host-taal blijven.
+    const buildDl = (lang, items) => {
+        const inner = items
+            .map(({ q, a }) => `<dt>${escapeHtml(q)}</dt><dd>${escapeHtml(a)}</dd>`)
+            .join('');
+        return `<dl lang="${lang}" data-faq-lang="${lang}">${inner}</dl>`;
+    };
+    return `<summary data-i18n="faq.summary">${escapeHtml(m.faqLabel)}</summary>${buildDl('nl', FAQ.nl)}${buildDl('en', FAQ.en)}`;
 }
 
 function buildLlmsTxt(m, isCom, canonical, faq) {
@@ -342,7 +350,7 @@ export const onRequest = async (context) => {
         // (andere pagina/screen), dan firet de handler simpelweg niet.
         .on('#wc-faq', {
             element(el) {
-                el.setInnerContent(buildFaqInner(m, faq), { html: true });
+                el.setInnerContent(buildFaqInner(m), { html: true });
             },
         })
         .transform(response);

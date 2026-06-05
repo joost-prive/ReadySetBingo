@@ -49,6 +49,10 @@ export default {
         },
     },
 
+    faq: {
+        summary: "Veelgestelde vragen",
+    },
+
     mycards: {
         header:           "🃏 Mijn Bingo-kaarten",
         empty:            "Nog geen kaarten",

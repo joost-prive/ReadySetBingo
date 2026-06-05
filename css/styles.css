@@ -3249,6 +3249,12 @@
             padding: 4px 16px 14px;
             border-top: 1px solid rgba(212,175,55,.35);
         }
+        /* De middleware injecteert beide talen (NL + EN). Toon het <dl> dat
+           matcht met de actieve UI-taal — die staat op <html lang> en wordt
+           door js/i18n/i18n.js bij de NL/EN-toggle bijgewerkt. */
+        body.wc-mode .wc-faq dl[data-faq-lang]                                { display: none; }
+        html[lang="nl"] body.wc-mode .wc-faq dl[data-faq-lang="nl"],
+        html[lang="en"] body.wc-mode .wc-faq dl[data-faq-lang="en"]           { display: block; }
         body.wc-mode .wc-faq dt {
             margin: 14px 0 0 0;
             padding: 0;
