@@ -409,7 +409,7 @@ export const EN_WORD_MAP = {
     "Afgekeurd":               "Disallowed",
     "Uittrap":                 "Goal kick",
     "Inworp":                  "Throw-in",
-    "Fluitconcert":            "Boos",
+    "Fluitconcert":            "Booing",
     "Redding":                 "Save",
     "Eigen doelpunt":          "Own goal",
     "Paal":                    "Post",
